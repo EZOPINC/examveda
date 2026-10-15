@@ -1,6 +1,6 @@
 # Initial Architecture
 
-**Status:** Approved baseline; Phase 1 Django foundation implemented. PostgreSQL connectivity remains unverified because no local service is available.  
+**Status:** Approved baseline; Phase 2 free-content implementation complete and owner-approved on 2026-10-15 after local PostgreSQL 18.6 verification.
 **Scope:** Planning baseline for the WBPSC Mock Exam Platform.
 
 ## Goals and constraints
@@ -25,6 +25,19 @@ Canonical application boundaries are reserved as follows. Create an application 
 | `access_control` | Reusable access and entitlement policy | When multiple features need shared policies |
 | `payments` | Payment transactions, memberships and provider integration | Future paid-access phase |
 | `file_delivery` | Authorization-gated protected files | When protected file delivery is required |
+
+### Implemented content modules
+
+| Module | Responsibility |
+| --- | --- |
+| `content.models` | Approved exam/subject taxonomy, editorial page lifecycle, resource classification and PDF metadata. |
+| `content.forms` | Admin server-side validation of taxonomy relationships, publication state and PDF upload constraints. |
+| `content.views` | Published listings/detail pages, staff-only preview and published-public PDF streaming. |
+| `content.urls` | Namespaced approved public archive and detail routes plus preview/file routes. |
+| `content.admin` | Staff editing, classification inline, preview link, publication controls and file visibility administration. |
+| `content.tests` | PostgreSQL-backed route, rendering, publication and preview boundary tests. |
+
+The app also uses its standard `apps.py` registration, migration package, templates under `templates/content/`, and stylesheet `static/content/content.css`. It does not create a separate file-delivery app; restricted file delivery remains deferred.
 
 Use Django `auth` and `admin`; do not duplicate them. Keep business logic out of templates. Add standard modules such as `services.py`, `selectors.py`, or `permissions.py` only when a real feature needs the responsibility. Do not introduce React, microservices, Kubernetes, Redis, Celery, or other infrastructure without a documented requirement and evidence.
 

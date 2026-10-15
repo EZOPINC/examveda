@@ -2,10 +2,29 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-15 — Phase 2 approved
+
+- Owner approved the completed Phase 2 free-content implementation and requirements.
+- Recorded approval in the roadmap, architecture status, content decision, and requirements documents. Phase 3 remains unauthorized.
+
+## 2026-10-15 — Phase 2 free educational content implemented
+
+- Added the `content` app with the approved seven-model taxonomy, publication lifecycle, resource classification, and PDF metadata.
+- Added paginated, responsive public listings and stable archive/detail URLs for categories, stages, years, resource types, subjects, topics, and editorial pages.
+- Added Django admin draft editing, staff-only preview, publication/unpublication, and public/restricted PDF visibility controls.
+- Public PDF streaming requires a published page and public file metadata; private media paths have no direct application route.
+- Added PostgreSQL-backed coverage for public visibility, drafts, preview, rendering, and canonical URL reversal.
+- Phase 2 verification completed locally; implementation approval is recorded above.
+
+## 2026-10-15 — Phase 2 content model approved
+
+- Approved the content taxonomy, page/resource/file metadata entities, and canonical public URL scheme in Decision 0003.
+- Confirmed draft preview and public PDF delivery boundaries; restricted files remain private and unserved until an authorized delivery feature exists.
+
 ## 2026-10-15 — Phase 1 foundation
 
 - Established the `config` Django project package with separated base, development, and production settings.
 - Added the home page, low-information health endpoint, custom error templates, and initial HTTP tests.
 - Pinned the Python/Django/PostgreSQL adapter baseline and documented local setup.
 - Production settings now require explicit secrets, allowed hosts, and PostgreSQL environment variables.
-- Verified local SQLite migrations, three initial tests, static collection, and local HTTP smoke requests. PostgreSQL connectivity could not be verified because no service was available.
+- Verified local SQLite foundation migrations, three initial tests, static collection, and local HTTP smoke requests. Phase 2 also verified authenticated connectivity to local PostgreSQL 18.6.

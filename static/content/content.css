@@ -1,0 +1,18 @@
+/* Keep editorial pages readable on narrow screens without a CSS framework. */
+:root { color-scheme: light; font-family: system-ui, sans-serif; color: #17212b; background: #f7f9fb; }
+* { box-sizing: border-box; }
+body { margin: 0; line-height: 1.65; }
+a { color: #075c9e; }
+a:focus-visible { outline: 3px solid #d17b00; outline-offset: 3px; }
+.site-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; padding: .8rem max(1rem, calc((100% - 70rem) / 2)); background: #fff; border-bottom: 1px solid #dce3e9; }
+.site-header a { font-weight: 650; }
+.page-shell { max-width: 70rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.resource-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1rem; list-style: none; padding: 0; }
+.resource-card { padding: 1rem; background: #fff; border: 1px solid #dce3e9; border-radius: .4rem; overflow-wrap: anywhere; }
+.resource-card h2 { font-size: 1.2rem; margin: 0; }
+.resource-meta { color: #536270; font-size: .9rem; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 1.25rem; margin-top: 2rem; }
+.article { max-width: 54rem; }
+.article-body { overflow-wrap: anywhere; }
+.lead { font-size: 1.15rem; color: #425364; }
+.preview-notice { padding: .75rem; background: #fff0c2; border: 1px solid #d9a900; }

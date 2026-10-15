@@ -1,6 +1,6 @@
 # Development Roadmap
 
-**Status:** Phase 1 foundation implemented; PostgreSQL connectivity verification remains blocked by the unavailable local service. Each phase requires explicit authorization before work begins.
+**Status:** Phase 2 free-content implementation was approved by the owner on 2026-10-15. Phase 3 has not been authorized. Each phase requires explicit authorization before work begins.
 
 ## Working rules for every phase
 
@@ -17,7 +17,7 @@
 | --- | --- | --- |
 | 0. Analysis and planning | Repository inventory, requirements, architecture and decision record | Owner reviews and approves these documents; no application code is part of this phase |
 | 1. Foundation | Supported version selection, Django `config` foundation, environment configuration, database connection, initial account-model decision, baseline checks | Configuration and security settings reviewed; migrations reviewed before application; local setup documented; smoke checks recorded |
-| 2. Free content | `content` models and public pages, publication workflow, language-aware content, stable public URLs | Published content is reachable, drafts are private, URL and mobile behavior verified |
+| 2. Free content | `content` models and public pages, publication workflow, language-aware content, stable public URLs | Approved complete on 2026-10-15; PostgreSQL checks and tests pass, and published/draft workflow is covered through automated HTTP/admin-path tests |
 | 3. Exam engine | `exam_engine` question/test authoring, attempt lifecycle, server-side timing, autosave, submission, score, permitted review | Lifecycle, boundary times, ownership, duplicate requests, scoring, and review permissions verified with automated tests |
 | 4. Accounts and access | Registration/login, profile needs, history, shared policies where needed | Authentication, account recovery policy, ownership isolation, and entitlement decisions verified |
 | 5. Security and quality | Cross-feature security review, accessibility, mobile/slow-network checks, performance baseline, backup/restore rehearsal, monitoring design | Findings and accepted risks documented; tests and measured performance evidence reviewed |

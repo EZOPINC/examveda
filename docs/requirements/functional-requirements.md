@@ -1,6 +1,6 @@
 # Functional Requirements
 
-**Status:** Phase 0 baseline for review. Product policies marked open must be decided before the affected feature is implemented.
+**Status:** Phase 0 baseline; Phase 2 free-content requirements and URL scheme approved and implemented. Product policies marked open must be decided before the affected feature is implemented.
 
 ## Roles and journeys
 
@@ -22,11 +22,24 @@
 
 ## Free content and public URLs
 
-- Public content has stable, lowercase, hyphenated slugs and can be linked directly.
-- Proposed patterns are `/free-resources/`, `/free-resources/<exam>/`, `/free-resources/<exam>/<stage>/<year>/`, `/mock-tests/`, and `/mock-tests/<test-slug>/`.
+- Public content has stable, lowercase, hyphenated slugs and can be linked directly. The Phase 2 content URL scheme is approved as follows:
+  - `/free-resources/` — all published free materials.
+  - `/free-resources/<exam>/` — an exam category such as WBCS.
+  - `/free-resources/<exam>/<stage>/` — a stage such as prelims or mains within that category.
+  - `/free-resources/<exam>/<stage>/<year>/` — a year archive.
+  - `/free-resources/<exam>/<stage>/<year>/<resource-type>/` — a year archive filtered by type, including `solutions`.
+  - `/free-resources/<exam>/<stage>/<year>/<resource-type>/<resource-slug>/` — one resource.
+  - `/free-resources/subjects/<subject>/` — a subject listing.
+  - `/free-resources/subjects/<subject>/topics/<topic>/` — a topic listing.
+  - `/free-resources/pages/<page-slug>/` — an editorial content page.
+- Resource type archive slugs are controlled values, not arbitrary user input. Route names are namespaced under `content`; internal links use Django URL reversal.
+- `/mock-tests/` and `/mock-tests/<test-slug>/` remain reserved for the exam engine and are not implemented in this phase.
+- Category, stage, year, resource type, subject, and topic pages list only published content. An empty or unknown filter returns a normal not-found response rather than revealing draft records.
 - Content can be authored in Bengali or English. Language selection, search behavior, and whether individual resources can have parallel translations remain open decisions.
 - Only published items intended for public access are visible to anonymous visitors. Preview and draft routes require staff authorization.
+- Staff preview requires an authenticated staff account and is served through a protected application view; an unpublished page or its files are never exposed by a public detail or PDF route.
 - Public content pages should include descriptive titles and metadata suitable for search indexing; private student data and attempts must not be indexed.
+- Public PDF resources may be displayed inline in a browser where supported. Browser display cannot prevent saving, printing, screenshots, or copying; do not promise copy protection.
 
 ## Questions, tests, attempts, and responses
 
@@ -64,6 +77,8 @@ Open decisions before implementation: whether expiry auto-submits saved response
 - Public educational downloads may be delivered from public storage.
 - Protected files require an authorization check before the file is delivered or a short-lived storage URL is issued.
 - A concealed link or filename is not an authorization mechanism.
+- Phase 2 file metadata distinguishes `public` from `restricted`. Only published resources with a public file are served by the public PDF/download endpoint. Restricted files remain outside public web roots and receive no public delivery route in this phase; authorization-gated delivery is reserved for the approved `file_delivery` boundary.
+- The initial deployment must not expose `MEDIA_ROOT` through Nginx or another static URL mapping. Production object-storage routing is a separate deployment decision.
 - File type, size, retention, malware scanning needs, and user upload support are open decisions; avoid user uploads unless a feature requires them.
 
 ## Future memberships and payments
