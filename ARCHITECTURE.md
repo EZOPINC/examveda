@@ -1,0 +1,81 @@
+# Initial Architecture
+
+**Status:** Approved baseline; Phase 1 Django foundation implemented. PostgreSQL connectivity remains unverified because no local service is available.  
+**Scope:** Planning baseline for the WBPSC Mock Exam Platform.
+
+## Goals and constraints
+
+The platform will provide free learning resources, timed mock examinations, student accounts and attempt history, administration, and a path to future memberships and paid tests. It must work on mobile devices and slower connections and support Bengali and English learning materials.
+
+The initial technology baseline is Python 3.13, Django 5.2.18 LTS, Psycopg 3.3.6, PostgreSQL, Django templates, HTML, CSS, vanilla JavaScript, Nginx, Gunicorn, OCI, and Git. Exact Python package pins are recorded in `requirements.txt`; rationale and official version references are in [Decision 0002](docs/decisions/0002-runtime-versions.md). The INR 5,000–15,000 monthly infrastructure figure is a planning target, not a guaranteed cost or capacity. Review supported versions and security updates deliberately; do not silently change major versions.
+
+## Application architecture
+
+Use a modular Django monolith. Keep request handling, business rules, and persistence in the server application. Use templates for rendered pages and JavaScript for browser interactions such as timer display and autosave. PostgreSQL is authoritative for accounts, content state, questions, tests, attempts, responses, and entitlements.
+
+The reserved Django project package is `config`. Preserve these planned entry points: `config.settings` with `base.py`, `development.py`, and `production.py`; `config/urls.py`; `config/wsgi.py`; `config/asgi.py`; `manage.py`; `.env.example`; and `requirements.txt`.
+
+Canonical application boundaries are reserved as follows. Create an application only when its feature is in scope; do not create empty applications to fill out this list.
+
+| Application | Responsibility | Initial timing |
+| --- | --- | --- |
+| `accounts` | Authentication, student profiles, account-related behavior | Foundation, if custom account behavior is confirmed |
+| `content` | Subjects, topics, public learning resources and publishing | Free content phase |
+| `exam_engine` | Questions, tests, attempts, responses, timers, scoring and permitted review | Exam engine phase |
+| `access_control` | Reusable access and entitlement policy | When multiple features need shared policies |
+| `payments` | Payment transactions, memberships and provider integration | Future paid-access phase |
+| `file_delivery` | Authorization-gated protected files | When protected file delivery is required |
+
+Use Django `auth` and `admin`; do not duplicate them. Keep business logic out of templates. Add standard modules such as `services.py`, `selectors.py`, or `permissions.py` only when a real feature needs the responsibility. Do not introduce React, microservices, Kubernetes, Redis, Celery, or other infrastructure without a documented requirement and evidence.
+
+## Data ownership and consistency
+
+The preliminary entities and relationships are described in [the data model requirements](docs/requirements/data-model.md). Keep the canonical names in that document stable once implementation begins. Use Django's normal primary keys, explicit foreign keys, transactions for multi-step state changes, and database constraints for invariants that must hold under concurrent requests.
+
+Question and test editing must not silently change the meaning of an existing attempt. Before the exam engine is implemented, decide whether attempts refer to immutable test versions or store a content snapshot. Choose the simplest approach that meets the approved historical-result and editing requirements; preserve existing data if that choice later changes.
+
+## Public and protected boundaries
+
+Publicly published resources and public test descriptions have stable, lowercase, hyphenated URLs. Draft and unpublished content must not be exposed. Student attempt operations require authentication and server-side ownership checks. Correct answers and explanations are returned only when the test's review policy permits them.
+
+Public educational files may use public object storage. Protected files require authorization before delivery; a hidden link is not protection. If object storage is used for protected files, authorize first and use short-lived access. Avoid shared caching for user-specific or permission-sensitive responses unless a tested cache key and invalidation policy exist.
+
+## Exam authority
+
+The server is authoritative for attempt ownership, state, allowed duration, expiry, submitted time, answer keys, and score. Record start and expiry timestamps on the server. A browser timer is only a display aid. Autosave and submission must verify the authenticated owner and valid state. Submission must be retry-safe, and score calculation must not trust client input. The lifecycle and scoring policy are defined in the functional requirements.
+
+## Security baseline
+
+Use Django password hashing, sessions, CSRF protection, validation, and permissions. Enforce authorization for every restricted object and action. Keep production secrets outside source control and use secure host, HTTPS, and cookie settings in production. Keep the database private. Do not log passwords, session identifiers, tokens, or unnecessary personal data. Review dependencies through controlled, tested updates.
+
+See [security requirements](docs/requirements/security-requirements.md) for the planning checklist and phase gates.
+
+## Deployment and operations
+
+Deploy on Linux OCI infrastructure with Nginx in front of Gunicorn and Django. Keep PostgreSQL private. Evaluate a single application/database host first against availability, backup, restore, and budget needs; a managed or separate database may be preferable if its verified cost fits the target and its reliability benefits justify it. This is a decision to validate, not a fixed promise of capacity or cost.
+
+Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Object Storage where appropriate, defined retention, and restore rehearsals. Monitor host and application health, errors, disk, database capacity, and backup completion. Measure traffic and slow queries before adding caching, Redis, Celery, a CDN, multiple application hosts, or a separate database host. Detailed phase gates are in [the development roadmap](DEVELOPMENT_ROADMAP.md).
+
+## Naming and change control
+
+`PROJECT_AI_RULES.md` and `AGENTS.md` govern future work. Before each phase, inspect the repository, Git status, and relevant documentation. Reuse established modules, names, fields, URLs, configuration keys, and patterns. Do not rename, replace, or refactor working components without an explicit reviewed reason and approval. Do not add a module, variable, dependency, framework, or infrastructure component merely for convention or speculation. When a feature truly needs a new one, document its responsibility and why an existing component cannot own it; update the decision and requirements documents as needed. Preserve all pre-existing user changes.
+
+## Decisions to revisit with evidence
+
+| Decision | Starting choice and reason | Evidence to justify change |
+| --- | --- | --- |
+| Application style | Modular Django monolith for a small team and cohesive workflows | Measured deployment or scaling constraints that cannot be addressed within the monolith |
+| Front end | Django templates and vanilla JavaScript for low complexity and broad device support | Accessibility, interaction, or measured performance requirements that templates cannot meet |
+| Database | PostgreSQL as authoritative relational store for attempts and constraints | Verified workload or managed-service constraint with a reviewed migration path |
+| Hosting shape | Begin with the simplest OCI Linux deployment that fits verified reliability and budget | Load, recovery objectives, operational risk, or actual pricing justifies service separation |
+| Background jobs/cache | None initially, to avoid operating unused services | Measured need for asynchronous work or caching with a safe invalidation design |
+| Account model | Use Django's built-in user model for the foundation; no custom account behavior is confirmed | Confirmed product requirements that require custom authentication identity fields, with a reviewed migration and maintenance plan before account features are built |
+| Test history | Resolve immutable version versus snapshot before exam implementation | Editorial workflow, storage cost, and historical result requirements |
+
+## Related documents
+
+- [Development roadmap](DEVELOPMENT_ROADMAP.md)
+- [Functional requirements](docs/requirements/functional-requirements.md)
+- [Data model requirements](docs/requirements/data-model.md)
+- [Security requirements](docs/requirements/security-requirements.md)
+- [Decision record 0001](docs/decisions/0001-initial-architecture.md)
