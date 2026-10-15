@@ -2,7 +2,7 @@
 This is for the learning and mock test platform for all Public service exams
 
 This is the details for this project.
-wbcs-mock-platform/
+wbpsc-mock-platform/
 ├── PROJECT_AI_RULES.md
 ├── DEVELOPMENT_ROADMAP.md
 ├── CHANGELOG.md
