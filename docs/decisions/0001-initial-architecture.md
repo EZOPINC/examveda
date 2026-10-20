@@ -39,7 +39,7 @@ Starting with a measured, simple OCI topology respects the cost target while lea
 ## Consequences and follow-up
 
 - Use Django's built-in user model for the foundation because no custom authentication identity fields are confirmed. Revisit only if confirmed account requirements justify a custom model, and before account features are built.
-- Before implementing exams, define question types, scoring rules, late/expiry behavior, retakes, result review, and immutable version versus attempt snapshot strategy.
+- The initial exam policies were later resolved and approved in [Decision 0004](0004-exam-engine-policies.md) before Phase 3 implementation: single-choice scoring, unlimited attempts, expiry handling, immediate finalized review, and a frozen authored graph without version/snapshot tables.
 - Before production, obtain workload and recovery objectives, validate OCI costs, and rehearse backup restoration.
 - Requirements and phase gates are maintained in `docs/requirements/` and `DEVELOPMENT_ROADMAP.md`.
 

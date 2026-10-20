@@ -1,6 +1,6 @@
 # Functional Requirements
 
-**Status:** Phase 0 baseline; Phase 2 free-content requirements and URL scheme approved and implemented. Product policies marked open must be decided before the affected feature is implemented.
+**Status:** Phase 2 free-content requirements and Phase 3 exam-engine policies are approved. Product policies still marked open must be decided before their affected future feature is implemented.
 
 ## Roles and journeys
 
@@ -18,7 +18,7 @@
 - Authorized staff can create, edit, preview, publish, unpublish, and archive educational content.
 - Authorized staff can create and maintain subjects, topics, questions, options, explanations, tests, ordering, duration, scoring, availability, and review policy.
 - Staff permissions should distinguish administration from ordinary student capabilities. The initial editorial workflow may use Django admin; a custom interface needs a demonstrated requirement.
-- Editing published questions or tests must not silently alter existing attempt results. Versioning or snapshots must be selected before exam implementation.
+- Once an attempt exists, test identity/description/duration, ordered question composition, scoring values, question text, options, answer key, and explanations are immutable. Staff may unpublish a test or change its availability to stop new starts; existing attempts remain accessible until their deadline. Revisions use new question/test records; separate version and result entities are not required for the initial workflow.
 
 ## Free content and public URLs
 
@@ -43,34 +43,42 @@
 
 ## Questions, tests, attempts, and responses
 
-- A question belongs to the appropriate subject/topic taxonomy and contains prompt content, answer options, explanation, language, and publication state.
-- A test defines ordered questions, duration, availability, scoring rules, and result-review policy. These values must be validated server-side.
-- The platform supports an attempt tied to its student and test. The exact retake/attempt limit is an open policy.
-- A response records the student's selected option or options and server-managed save/update times. Question type and whether multiple selections are allowed must be explicit in the test/question design.
-- The server calculates marks from stored responses and the configured scoring policy. The browser cannot provide authoritative marks or correct answers.
-- Result display may include score, correct/incorrect/unanswered counts, and explanations only when allowed by the review policy.
+- A question belongs to the appropriate subject/topic taxonomy and contains prompt content, answer options, explanation, language, and publication state. Phase 3 supports single-choice questions only. A published question must have at least two options and exactly one correct option.
+- A test defines ordered published questions, duration, availability, and per-question marks and negative marks. Duration is 1–240 minutes; positive marks are required; negative marks range from zero through the question's positive marks.
+- Every authenticated student may make unlimited attempts. Starting an available test resumes that student's existing unexpired attempt; after a terminal attempt, another start creates a new attempt.
+- A response selects one option or clears the selection. It is unique per attempt/question and can be changed only while the attempt is in progress and before its server deadline.
+- Correct responses earn the configured marks, incorrect responses lose the configured negative marks, and unanswered responses earn zero. There is no partial credit. Scores may be negative; the server records score and correct/incorrect/unanswered counts at finalization.
+- Result scores/counts and answer key/explanation review become available immediately after student submission or expiry finalization. No result details or answer key are sent in the active exam response.
 
 ## Exam lifecycle
 
 Proposed states: `in_progress`, `submitted`, and `expired`. A separate pre-start record is unnecessary unless a confirmed workflow requires it.
 
-1. On start, the server checks authentication, availability, eligibility, and attempt limit, then records `started_at` and the server-computed `expires_at`.
+1. On start, the server checks authentication, availability, and question-set validity, resumes an owned active attempt when present, or records `started_at` and the server-computed `expires_at` for a new attempt. Attempts are unlimited.
 2. The browser displays remaining time using server-provided timing data. It is not trusted to enforce duration.
 3. Autosave verifies the authenticated owner, attempt state, expiry, question membership, and valid response data. Retries must not create duplicate responses.
-4. Resume is allowed only for an owned, in-progress attempt that has not expired and remains eligible under the policy.
+4. Resume is allowed only for an owned, in-progress attempt before its deadline. An active attempt remains resumable if staff closes the test to new starts.
 5. Submission verifies ownership and state, records a server timestamp, calculates and stores or reproducibly derives the result, and makes repeat submission requests safe.
-6. At or after expiry, the server prevents further answer changes and finalizes the attempt as expired according to the agreed treatment of saved answers.
-7. Result review reveals answer keys and explanations only at the configured review point.
+6. At or after expiry, the server prevents further answer changes and finalizes the attempt as expired, scoring its saved responses.
+7. Result review reveals scores, answer keys, and explanations immediately after submission or expiry finalization.
 
-Open decisions before implementation: whether expiry auto-submits saved responses, treatment of unanswered questions, negative marking, partial credit, late requests at the time boundary, test pause rules, retakes, and whether results are immediate or delayed.
+### Approved attempt lifecycle policies (Decision 0004)
+
+1. Starting requires authentication, a published and available test, and a valid published question set. The server records `started_at` and `expires_at = started_at + duration`.
+2. A student's in-progress attempt resumes until its deadline. The browser timer is only a display aid.
+3. A save or submit at `now >= expires_at` first finalizes the attempt as expired, scores all saved responses, and rejects further edits. Saved responses are retained and reviewed like a submitted attempt.
+4. Before the deadline, student submission finalizes and scores atomically. `submitted_at` records student submission; `finalized_at` records the terminal transition for either submitted or expired attempts.
+5. Repeated answer saves update the single attempt/question response. Repeated submission returns the same persisted result and cannot create duplicate results.
+6. Result scores/counts and answer explanations are immediately available after finalization. No pause or extension behavior is supported.
+7. Test identity/description/duration and question/scoring content are locked after the first attempt starts. Staff can still close or unpublish a test for new starts; existing attempts remain available until their own deadline. Editorial revisions use new Question and MockTest records; immutable version/snapshot tables are deferred unless evidence shows this workflow is insufficient.
 
 ## Authentication and authorization
 
-- Use Django authentication and permissions. Decide whether a custom user model is justified before initial migrations.
+- Use the established Django built-in user model, authentication, and permissions. Student registration, profile needs, and account recovery policy belong to the accounts phase; do not replace the user model without a reviewed, data-preserving migration and explicit approval.
 - Anonymous access is limited to public content and test descriptions.
 - Every attempt read/write and protected download checks the authenticated user's ownership or an explicit staff permission on the server.
 - Staff-only content and question management use explicit staff permissions.
-- Future paid access is based on server-verified entitlements, not browser state or client-supplied price/access values.
+- Future paid access is based on server-verified entitlements, not browser state or client-supplied price/access values. Paid access is not part of Phase 3.
 
 ## Public and protected files
 

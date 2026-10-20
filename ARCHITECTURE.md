@@ -26,6 +26,10 @@ Canonical application boundaries are reserved as follows. Create an application 
 | `payments` | Payment transactions, memberships and provider integration | Future paid-access phase |
 | `file_delivery` | Authorization-gated protected files | When protected file delivery is required |
 
+### Exam engine modules (Phase 3)
+
+Implemented modules are `exam_engine.models` (six exam entities), `exam_engine.services` (atomic lifecycle and score operations), `exam_engine.views` and `exam_engine.urls` (public descriptions and authenticated attempt requests), `exam_engine.forms` (Django admin inline validation), `exam_engine.admin` (staff authoring and read-only attempt inspection), `exam_engine.apps` (Django registration), `exam_engine.tests` (PostgreSQL-backed lifecycle and permission coverage), and `exam_engine.migrations.0001_initial` (initial schema). Templates live under `templates/exam_engine/`; browser behavior and styling are `static/exam_engine/exam.js` and `exam.css`. Keep these names and responsibilities stable. Do not add parallel modules or duplicate models; a new module requires an approved requirement that the existing responsibilities cannot reasonably own. Do not introduce `accounts`, `access_control`, or `payments` in this phase.
+
 ### Implemented content modules
 
 | Module | Responsibility |
@@ -45,7 +49,7 @@ Use Django `auth` and `admin`; do not duplicate them. Keep business logic out of
 
 The preliminary entities and relationships are described in [the data model requirements](docs/requirements/data-model.md). Keep the canonical names in that document stable once implementation begins. Use Django's normal primary keys, explicit foreign keys, transactions for multi-step state changes, and database constraints for invariants that must hold under concurrent requests.
 
-Question and test editing must not silently change the meaning of an existing attempt. Before the exam engine is implemented, decide whether attempts refer to immutable test versions or store a content snapshot. Choose the simplest approach that meets the approved historical-result and editing requirements; preserve existing data if that choice later changes.
+Question and test editing must not silently change the meaning of an existing attempt. Decision 0004 selects graph immutability after an attempt starts; editors create new Question and MockTest records for revisions. Revisit version/snapshot entities only if editorial evidence shows that creating new records is error-prone or fails a required historical reporting workflow.
 
 ## Public and protected boundaries
 
@@ -83,7 +87,7 @@ Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Obj
 | Hosting shape | Begin with the simplest OCI Linux deployment that fits verified reliability and budget | Load, recovery objectives, operational risk, or actual pricing justifies service separation |
 | Background jobs/cache | None initially, to avoid operating unused services | Measured need for asynchronous work or caching with a safe invalidation design |
 | Account model | Use Django's built-in user model for the foundation; no custom account behavior is confirmed | Confirmed product requirements that require custom authentication identity fields, with a reviewed migration and maintenance plan before account features are built |
-| Test history | Resolve immutable version versus snapshot before exam implementation | Editorial workflow, storage cost, and historical result requirements |
+| Test history | Freeze the question/test graph at first attempt; use new Question and MockTest records for revisions, avoiding version/snapshot/result tables | Demonstrated editorial errors or a required historical audit/reporting workflow that cannot be met by the frozen graph |
 
 ## Related documents
 

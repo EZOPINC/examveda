@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "content.apps.ContentConfig",
+    "exam_engine.apps.ExamEngineConfig",
 ]
 
 MIDDLEWARE = [

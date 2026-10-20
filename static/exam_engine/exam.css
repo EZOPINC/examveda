@@ -1,0 +1,8 @@
+/* Provide touch-friendly controls while retaining the shared site styling. */
+.question-navigation { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.question-navigation button, .answer-form button, #submit-attempt-form button { min-width: 2.75rem; min-height: 2.75rem; padding: .5rem .75rem; }
+.question-panel { padding: 1rem; margin: 1rem 0; background: #fff; border: 1px solid #dce3e9; border-radius: .4rem; }
+.answer-option { display: flex; gap: .65rem; align-items: flex-start; padding: .7rem .5rem; }
+.answer-option input { width: 1.2rem; height: 1.2rem; flex: 0 0 auto; }
+.score-summary { display: grid; grid-template-columns: auto 1fr; gap: .25rem 1rem; max-width: 22rem; }
+.score-summary dd { margin: 0; font-weight: 700; }

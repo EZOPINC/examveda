@@ -30,6 +30,14 @@ python manage.py runserver
 
 Open `http://127.0.0.1:8000/`, `/free-resources/`, or `/admin/`. Development settings may use SQLite if `DB_NAME` is unset; PostgreSQL is the intended application database and must be used to verify PostgreSQL behavior. Tests create a separate temporary database.
 
+## Mock exams (Phase 3)
+
+Authorized staff create questions and mock tests in `/admin/`. A question must have at least two options and exactly one correct option before it can be included in a test. Published tests need at least one valid question. After the first attempt starts, test identity and scoring content are frozen; create new question and test records for revisions. Staff may still unpublish a test or close its availability window to stop new starts.
+
+Students can browse `/mock-tests/` without signing in. The current foundation provides Django's built-in login at `/accounts/login/`; accounts, public registration, and recovery flows belong to Phase 4. A signed-in student can start a test, resume the active attempt until its server deadline, autosave answers, and submit. Expiry finalizes saved answers automatically when an attempt endpoint observes the deadline. Scores and answer explanations become available after submission or expiry. Attempts are unlimited, and the timer in the browser is only a display aid.
+
+Exam logic stays in the existing `exam_engine` modules: `models.py`, `services.py`, `views.py`, `urls.py`, `forms.py`, `admin.py`, and `tests.py`. Templates and browser assets are under `templates/exam_engine/` and `static/exam_engine/`. Do not create duplicate model or service modules; future work should extend these named boundaries unless an approved requirement demonstrates a responsibility they cannot own.
+
 ## Content editorial workflow
 
 1. Sign in to `/admin/` with an authorized staff account.
@@ -47,7 +55,8 @@ Public PDF display is a browser convenience; viewers can still save, print, scre
 python manage.py check
 python manage.py check --database default
 python manage.py test content config
+python manage.py test exam_engine content config
 python manage.py makemigrations --check --dry-run
 ```
 
-The Phase 2 content journey, permissions, stable routes, and publication rules are tested against PostgreSQL when PostgreSQL variables are configured in the process environment.
+The content and exam journeys, permissions, publication rules, lifecycle, scoring, and answer visibility are tested against PostgreSQL when PostgreSQL variables are configured in the process environment.

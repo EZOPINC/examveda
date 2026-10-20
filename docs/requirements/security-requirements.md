@@ -22,6 +22,9 @@
 - Server-recorded timestamps determine duration, expiry, and submission state. Client timers are display only.
 - Autosave and submit endpoints authenticate, verify ownership and lifecycle state, validate question membership and response data, and are safe to retry.
 - Calculate scores on the server. Use transactions and database constraints for race-sensitive invariants and finalization.
+- Lock the attempt row during answer updates and finalization. Lock the test row during start to serialize creation/resumption; enforce one active attempt per student/test in the database.
+- Lock test/question editorial data after an attempt starts so later edits cannot alter historical scoring or answer review.
+- At or after the server deadline, finalize saved responses as expired before returning the attempt; reject late saves regardless of the browser timer. Every attempt endpoint checks expiry, so no background worker is required for correctness.
 - Define boundary behavior for simultaneous save/submit, expiry, network retries, and duplicate requests; cover it with automated tests before release.
 - Rate-limit or otherwise protect sensitive authentication and high-impact endpoints when measured or threat-reviewed need warrants it; select mechanisms that fit the deployment rather than adding infrastructure without evidence.
 

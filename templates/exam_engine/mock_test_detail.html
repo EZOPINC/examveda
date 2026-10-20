@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ mock_test.title }} | Mock tests</title>
+    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
+</head>
+<body>
+    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a></nav></header>
+    <main class="page-shell article">
+        <h1>{{ mock_test.title }}</h1>
+        {% if mock_test.description %}<p>{{ mock_test.description }}</p>{% endif %}
+        <p>{{ question_count }} questions · {{ mock_test.duration_minutes }} minutes · single-choice</p>
+        {% if is_available %}<form method="post" action="{% url 'exam_engine:start_test' mock_test.slug %}">{% csrf_token %}<button type="submit">{% if user.is_authenticated %}Start or resume test{% else %}Sign in to start{% endif %}</button></form>{% else %}<p>This test is not currently open.</p>{% endif %}
+    </main>
+</body>
+</html>

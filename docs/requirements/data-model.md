@@ -1,6 +1,6 @@
 # Preliminary Data Model
 
-**Status:** Phase 0 exam model remains conceptual. The Phase 2 content model and URL scheme are approved and implemented; migration `content.0001_initial` was reviewed and applied to the local PostgreSQL database.
+**Status:** The Phase 2 content model and URL scheme are approved and implemented; migration `content.0001_initial` was applied locally. The Phase 3 exam model is approved in Decision 0004 and implemented in `exam_engine.models`.
 
 ## Relationship outline
 
@@ -11,19 +11,17 @@ Subject 1 ─── * Topic
 ContentPage 1 ─── 0..1 ResourceMetadata 1 ─── * ResourceFile
 Topic 1 ─── * ResourceMetadata
 
-User 1 ─── * TestAttempt * ─── 1 MockTest (or immutable TestVersion)
-                         |
-                         └── 1 * AttemptResponse * ─── 1 Question (or question snapshot)
-
-Subject/Topic 1 ─── * Question
-MockTest 1 ─── * TestQuestion * ─── 1 Question
+Subject/Topic 1 ─── * Question 1 ─── * QuestionOption
+MockTest 1 ─── * MockTestQuestion * ─── 1 Question
+User 1 ─── * TestAttempt 1 ─── * AttemptResponse * ─── 1 MockTestQuestion
+AttemptResponse 0..1 ─── 1 QuestionOption
 
 User 1 ─── * Entitlement (future)
 User 1 ─── * PaymentTransaction (future)
 LearningResource/Question/MockTest ─── * File reference (as required)
 ```
 
-This is a logical relationship sketch. The approved Phase 2 content entities are scoped below; exam and future-payment entities remain conceptual and must not be created in this phase. The foundation uses Django's built-in user model; revisit only if confirmed account requirements justify a custom model, and do so before account features are built. Prefer an explicit through model for ordered test questions where ordering or per-test marks are needed.
+This is a logical relationship sketch. The exam entities are scoped below. The foundation uses Django's built-in user model; account registration/profile work remains in the accounts phase. `MockTestQuestion` is the ordered through model and owns per-test marks. The approved immutability rule after a first attempt preserves historical meaning without version/snapshot tables.
 
 ## Approved Phase 2 content entities
 
@@ -57,39 +55,45 @@ Create database indexes for common public listings and filters (publication stat
 
 For example, `/free-resources/wbcs/prelims/2024/solutions/` is a public solution archive; adding a resource slug addresses one solution. This preserves the suggested archive URL while giving each resource a stable canonical URL. The route definitions, names, and reversal behavior must be covered by tests before release.
 
-## Candidate entities and responsibilities
+## Approved Phase 3 exam entities
+
+| Entity | Responsibilities and invariants |
+| --- | --- |
+| Question | Prompt, explanation, language, subject/topic, publication state. Phase 3 question type is single-choice. A published question has at least two options and exactly one correct option. |
+| QuestionOption | One option's text, correctness flag, and display order. Correctness is omitted from active exam responses. |
+| MockTest | Public title/slug/description, duration, availability interval, publication state, author. Only published, available tests can start. |
+| MockTestQuestion | Ordered test/question join, positive marks, non-negative negative marks no greater than positive marks. Test and question must be published; order and test/question pair are unique. |
+| TestAttempt | Student, test, state (`in_progress`, `submitted`, `expired`), server timestamps, score and correct/incorrect/unanswered totals. One active attempt per student/test. |
+| AttemptResponse | One row per attempt/test-question with nullable selected option and server update time. Selected option must belong to the joined question. |
+
+There is no separate result table: final score/counts live atomically on `TestAttempt`. There are no version tables: the test/question graph becomes immutable after its first attempt; editors create new records for revisions. `finalized_at` records the terminal transition for both submission and expiry; `submitted_at` is set only for student submission.
+
+## Future entities and responsibilities
+
+The Phase 3 entities above are implemented and must not be recreated under alternate names. `Subject` and `Topic` are owned by `content`; `Question`, `QuestionOption`, `MockTest`, `MockTestQuestion`, `TestAttempt`, and `AttemptResponse` are owned by `exam_engine`. Future phases may add only genuinely new entities after requirements and decisions are approved.
 
 | Entity | Candidate fields / relationships | Integrity and lifecycle notes |
 | --- | --- | --- |
-| User | Django identity and authentication fields; optional profile relation | Decide custom user model before migrations. Keep profile data minimal. |
-| Subject | Name, slug, publication/active state as needed | Avoid duplicate taxonomy representations across content and exams. |
-| Topic | Subject relation, name, slug, optional parent topic | If hierarchy is required, prevent cycles and keep queries bounded. |
-| LearningResource | Title, slug, language, content/body or file reference, topics, publication timestamps/state, metadata | Public only when published and explicitly public; slugs must be stable. |
-| Question | Prompt, language, type, explanation, publication state, subject/topic relation | Question changes must not mutate historical attempt meaning. |
-| QuestionOption | Question relation, option content, stable ordering | Correctness data is server-only until review is allowed. Enforce valid option/question combinations. |
-| MockTest | Name, slug, description, availability, duration, scoring policy, review policy, access policy | Validate duration and policy values; public description is distinct from protected test data. |
-| TestQuestion | Test/version relation, question or snapshot, position, optional marks | Unique ordering within the test; test membership defines which questions an attempt may answer. |
-| TestAttempt | User, test/version, state, `started_at`, `expires_at`, `submitted_at`, result fields if stored | Ownership and lifecycle enforced in server operations and constraints where possible. Store timestamps in UTC. |
-| AttemptResponse | Attempt, question/snapshot, selected option(s), save timestamps | At most one logical response per attempt-question; validate selected options belong to that question. |
+| User/profile extension | Existing Django user identity; optional separate profile only if an approved account requirement needs it | Preserve the established built-in user model; any later identity change requires a documented data migration and explicit approval. Keep profile data minimal. |
 | Entitlement (future) | User, entitlement type, validity interval, source/status | Server-authoritative access; auditable expiration/revocation. |
 | PaymentTransaction (future) | User, provider reference, amount/currency, status, timestamps, idempotency reference | Never store card credentials; reconcile provider state and duplicate callbacks. |
-| File reference | Storage key, visibility/classification, owning feature, metadata | Do not treat an unguessable key as authorization. Keep storage credentials private. |
+| Other future entity | Define only when an approved feature requires it | Avoid duplicating existing content and exam entities; document the decision and migration impact first. |
 
 Field lists are indicative, not a mandate to add every field. Add only fields required by approved behavior. Prefer Django-managed primary keys and conventional table/constraint names. Add named constraints and indexes only where they enforce an invariant or support measured query patterns.
 
-## Decisions required before exam implementation
+## Decision 0004 implementation notes
 
 ### Test and question history
 
-Choose either immutable test/question versions or snapshots associated with attempts. The required outcome is that later editing does not change the questions, answer key, scoring rules, or interpretation of a historical result. Compare editorial complexity, storage, auditability, and query needs before selecting an implementation.
+Test/question records are immutable after an attempt starts; use new records for revisions. This avoids extra version tables while preserving historical result meaning. Revisit if editorial workflows show that copied records are error-prone.
 
 ### Response representation
 
-Confirm supported question types (single choice, multiple choice, other) and whether an answer can be revised until submission/expiry. Model selected options with relationships and constraints rather than trusting arbitrary client JSON unless a reviewed requirement justifies another representation.
+Only single-choice is supported in this phase. A student may revise or clear an answer until submission or the deadline. Store a nullable option foreign key, not arbitrary answer JSON.
 
 ### Score persistence
 
-Decide which score components need to be retained for audit and history. Whether score is stored or derived, calculate it on the server from the attempt's effective test version and responses. If stored, write the result atomically at finalization and prevent later response edits.
+Store score, correct, incorrect, and unanswered counts on `TestAttempt`, calculated from the frozen test graph and saved responses in the same finalization transaction. There is no separate result entity because the relationship is one result per attempt.
 
 ### Constraints and transactions
 

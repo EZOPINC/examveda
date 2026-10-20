@@ -2,6 +2,18 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-20 — Phase 3 mock exam engine implemented
+
+- Added the approved six-model exam domain and initial `exam_engine.0001_initial` migration for questions, options, tests, ordered test questions, attempts, and saved responses.
+- Added staff authoring validation, test descriptions, authenticated start/resume, owner-scoped exam and result pages, CSRF-protected autosave, submission, expiry finalization, and server-side scoring.
+- Paginated public test listings and student attempt history without adding a dependency.
+- Added tests for valid/unauthorized starts, ownership, CSRF, response persistence, expiry, interrupted resumption, retry-safe submission, scoring, review visibility, and frozen exam content.
+- Verified locally against PostgreSQL: `check`, `check --database default`, `makemigrations --check --dry-run`, and the combined exam/content/config suite (30 tests passed). `exam_engine.0001_initial` is applied locally; no model changes are pending. Phase 3 remains at the owner approval gate.
+
+## 2026-10-20 — Phase 3 authorized
+
+- Owner approved the exam-engine policy defaults recorded in Decision 0004 and authorized Phase 3 implementation.
+
 ## 2026-10-15 — Phase 2 approved
 
 - Owner approved the completed Phase 2 free-content implementation and requirements.

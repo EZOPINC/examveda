@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My attempts | WBPSC Mock Exam Platform</title>
+    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
+</head>
+<body>
+    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a></header>
+    <main class="page-shell"><h1>My attempts</h1>
+        {% if attempts %}<ul class="resource-list">{% for attempt in attempts %}<li class="resource-card"><h2><a href="{% url 'exam_engine:attempt_detail' attempt.pk %}">{{ attempt.mock_test.title }}</a></h2><p>{{ attempt.get_state_display }} · Started {{ attempt.started_at }}</p>{% if attempt.score != None %}<p>Score: {{ attempt.score }}</p>{% endif %}</li>{% endfor %}</ul>{% else %}<p>You have not started a mock test yet.</p>{% endif %}
+        {% if page_obj.has_other_pages %}<nav aria-label="Attempt history pages" class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}</nav>{% endif %}
+        <p><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
+    </main>
+</body>
+</html>
