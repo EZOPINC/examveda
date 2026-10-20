@@ -8,7 +8,7 @@
     {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
 </head>
 <body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'content:resource_list' %}">Free resources</a></nav></header>
+    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'content:resource_list' %}">Free resources</a> <a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a>{% if user.is_authenticated %}<a href="{% url 'accounts:profile' %}">My account</a>{% else %}<a href="{% url 'login' %}">Sign in</a> <a href="{% url 'accounts:register' %}">Register</a>{% endif %}</nav></header>
     <main class="page-shell article">
         {% if is_preview %}<p class="preview-notice">Staff preview · This page is not published publicly.</p>{% endif %}
         <article><h1>{{ content_page.title }}</h1>{% if content_page.summary %}<p class="lead">{{ content_page.summary }}</p>{% endif %}<div class="article-body">{{ content_page.body|linebreaks }}</div></article>

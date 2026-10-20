@@ -17,6 +17,8 @@ from django.utils.http import urlencode
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from access_control.services import user_can_access
+
 from .models import MockTest, MockTestQuestion, TestAttempt
 from .services import TestUnavailable, finalize_expired_attempts, load_attempt, save_answer as save_attempt_answer, start_test as start_test_attempt, submit_attempt
 
@@ -29,7 +31,9 @@ def mock_test_list(request):
 
 def mock_test_detail(request, test_slug):
     """Show a published test description without exposing its questions."""
-    mock_test = get_object_or_404(MockTest, slug=test_slug, is_published=True)
+    mock_test = get_object_or_404(MockTest, slug=test_slug)
+    if not user_can_access(request.user, is_published=mock_test.is_published, is_public=True):
+        raise Http404
     question_count = mock_test.test_questions.count()
     now = timezone.now()
     is_available = not (

@@ -21,6 +21,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "accounts.apps.AccountsConfig",
+    "access_control.apps.AccessControlConfig",
     "content.apps.ContentConfig",
     "exam_engine.apps.ExamEngineConfig",
 ]

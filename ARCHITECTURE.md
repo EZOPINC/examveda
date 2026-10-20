@@ -19,10 +19,10 @@ Canonical application boundaries are reserved as follows. Create an application 
 
 | Application | Responsibility | Initial timing |
 | --- | --- | --- |
-| `accounts` | Authentication, student profiles, account-related behavior | Foundation, if custom account behavior is confirmed |
+| `accounts` | Registration and account self-service using Django's built-in user model | Phase 4; no custom user or profile model |
 | `content` | Subjects, topics, public learning resources and publishing | Free content phase |
 | `exam_engine` | Questions, tests, attempts, responses, timers, scoring and permitted review | Exam engine phase |
-| `access_control` | Reusable access and entitlement policy | When multiple features need shared policies |
+| `access_control` | Shared public/restricted access decision and future verified entitlement lookup | Phase 4; policy service only, no entitlement storage |
 | `payments` | Payment transactions, memberships and provider integration | Future paid-access phase |
 | `file_delivery` | Authorization-gated protected files | When protected file delivery is required |
 
@@ -40,6 +40,12 @@ Implemented modules are `exam_engine.models` (six exam entities), `exam_engine.s
 | `content.urls` | Namespaced approved public archive and detail routes plus preview/file routes. |
 | `content.admin` | Staff editing, classification inline, preview link, publication controls and file visibility administration. |
 | `content.tests` | PostgreSQL-backed route, rendering, publication and preview boundary tests. |
+
+### Accounts and access modules (Phase 4)
+
+`accounts.apps`, `accounts.forms`, `accounts.views`, `accounts.urls`, and `accounts.tests` implement student registration, owner-only account details, password changes, and authorization regression coverage using Django's existing user model. Templates are in `templates/accounts/`; the existing `templates/registration/login.html` remains the login page. Do not add a custom account model, profile table, reset-email flow, or role framework without an approved requirement. Lost-password recovery is administrator-assisted until verified email recovery and mail delivery are approved.
+
+`access_control.apps`, `access_control.services`, and `access_control.tests` provide the shared `user_can_access()` and `user_has_entitlement()` boundary used by exam availability and public file delivery. The current entitlement lookup always denies; payment and entitlement records remain future work. Do not create parallel access modules or entitlement tables in Phase 4.
 
 The app also uses its standard `apps.py` registration, migration package, templates under `templates/content/`, and stylesheet `static/content/content.css`. It does not create a separate file-delivery app; restricted file delivery remains deferred.
 

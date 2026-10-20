@@ -7,7 +7,7 @@
     {% load static exam_engine_tags %}<link rel="stylesheet" href="{% static 'content/content.css' %}"><link rel="stylesheet" href="{% static 'exam_engine/exam.css' %}">
 </head>
 <body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'exam_engine:attempt_history' %}">My attempts</a></nav></header>
+    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'accounts:profile' %}">My account</a> <a href="{% url 'exam_engine:attempt_history' %}">My attempts</a></nav></header>
     <main class="page-shell article">
         <h1>{{ attempt.mock_test.title }} result</h1>
         <p>State: {{ attempt.get_state_display }}</p>

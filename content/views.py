@@ -11,6 +11,8 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 
+from access_control.services import user_can_access
+
 from .models import ContentPage, ExamCategory, ExamStage, ResourceFile, ResourceMetadata, Subject, Topic
 
 
@@ -97,7 +99,14 @@ def preview_page(request, page_id):
 @cache_control(private=True, no_store=True)
 def public_file(request, file_id):
     """Stream a PDF only when its resource is published and explicitly public."""
-    resource_file = get_object_or_404(ResourceFile.objects.select_related("resource__page"), pk=file_id, visibility=ResourceFile.Visibility.PUBLIC, resource__page__is_published=True, resource__page__published_at__lte=timezone.now())
+    resource_file = get_object_or_404(ResourceFile.objects.select_related("resource__page"), pk=file_id)
+    page = resource_file.resource.page
+    if not user_can_access(
+        request.user,
+        is_published=bool(page.is_published and page.published_at and page.published_at <= timezone.now()),
+        is_public=resource_file.visibility == ResourceFile.Visibility.PUBLIC,
+    ):
+        raise Http404
     if not resource_file.file:
         raise Http404
     return FileResponse(resource_file.file.open("rb"), content_type="application/pdf", filename=resource_file.original_filename or "resource.pdf", as_attachment=False)

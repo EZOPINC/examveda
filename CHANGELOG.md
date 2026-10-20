@@ -2,6 +2,14 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-20 — Phase 4 accounts and access implementation
+
+- Owner explicitly authorized Phase 4. Phase 3 implementation and verification are complete; its approval gate had not been separately recorded, so no separate Phase 3 approval is claimed.
+- Added student registration, owner-only account details, Django password change, and regression tests without a custom user/profile model or additional dependency.
+- Added the shared fail-closed `access_control` policy for public files and test availability. No entitlement or payment model, payment gateway, or restricted-file delivery was added.
+- Recorded administrator-assisted lost-password recovery until verified email recovery and production mail delivery are approved.
+- Verified locally against PostgreSQL: `check`, `check --database default`, `makemigrations --check --dry-run`, and the combined account/access/exam/content/config suite (40 tests passed). No Phase 4 migrations are pending; the built-in user schema is unchanged.
+
 ## 2026-10-20 — Phase 3 mock exam engine implemented
 
 - Added the approved six-model exam domain and initial `exam_engine.0001_initial` migration for questions, options, tests, ordered test questions, attempts, and saved responses.

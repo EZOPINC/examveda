@@ -1,17 +1,21 @@
 # Security Requirements
 
-**Status:** Phase 0 baseline. These requirements must be translated into implementation checks and operational procedures during the relevant approved phases.
+**Status:** Baseline for all phases. Phase 4 account and access controls are recorded in Decision 0005 and are being implemented; deployment and payment controls remain future gates.
 
 ## Identity and sessions
 
 - Use Django's password hashing, authentication, session, CSRF, and permission mechanisms.
-- Decide account verification, recovery, password policy, session lifetime, and custom-user needs before the accounts foundation is implemented.
+- Use the established Django user model and password validators. Public registration cannot assign staff status, groups, or permissions.
+- Students may change their password only through Django's authenticated password-change flow. Lost-password recovery is administrator-assisted after identity verification until email verification and production mail delivery are approved and configured.
+- Do not treat an arbitrary, unverified account email as proof of identity or as a password-reset destination.
 - Use HTTPS in deployed environments; configure secure cookies, allowed hosts, and production debug settings appropriately.
 - Do not expose passwords, session identifiers, reset tokens, API secrets, or unnecessary personal information in logs or responses.
 
 ## Authorization and data privacy
 
 - Check authorization on the server for every protected object and state-changing action.
+- Use `access_control.user_can_access()` for shared public/restricted resource decisions. The current entitlement lookup is fail-closed; no browser-provided field, payment redirect, or unverified callback can grant access.
+- Keep account/profile and attempt history queries scoped to the authenticated owner. Django admin access requires an active staff account and per-model permission for edits.
 - Scope attempt access to the owner and explicitly permitted staff. Never rely on an identifier being hard to guess.
 - Enforce test availability and eligibility on the server. Do not trust client-provided ownership, score, entitlement, price, or timestamps.
 - Do not expose answer keys, explanations, private tests, unpublished materials, or another student's attempt through HTML, JavaScript, APIs, exports, or logs before policy permits it.

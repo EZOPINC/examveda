@@ -17,7 +17,8 @@
             <input type="hidden" name="next" value="{{ next }}">
             <button type="submit">Sign in</button>
         </form>
-        <p>Student account registration is not available yet. Accounts are provisioned by an administrator during this phase.</p>
+        <p><a href="{% url 'accounts:register' %}">Create a student account</a></p>
+        <p>If you have lost access to your account, contact an administrator for identity-verified recovery.</p>
     </main>
 </body>
 </html>

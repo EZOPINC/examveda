@@ -34,7 +34,13 @@ Open `http://127.0.0.1:8000/`, `/free-resources/`, or `/admin/`. Development set
 
 Authorized staff create questions and mock tests in `/admin/`. A question must have at least two options and exactly one correct option before it can be included in a test. Published tests need at least one valid question. After the first attempt starts, test identity and scoring content are frozen; create new question and test records for revisions. Staff may still unpublish a test or close its availability window to stop new starts.
 
-Students can browse `/mock-tests/` without signing in. The current foundation provides Django's built-in login at `/accounts/login/`; accounts, public registration, and recovery flows belong to Phase 4. A signed-in student can start a test, resume the active attempt until its server deadline, autosave answers, and submit. Expiry finalizes saved answers automatically when an attempt endpoint observes the deadline. Scores and answer explanations become available after submission or expiry. Attempts are unlimited, and the timer in the browser is only a display aid.
+Students can browse `/mock-tests/` without signing in. Django's built-in login is at `/accounts/login/`; public student registration is at `/accounts/register/`. A signed-in student can view `/accounts/profile/`, change their email or password, start a test, resume the active attempt until its server deadline, autosave answers, and submit. Expiry finalizes saved answers automatically when an attempt endpoint observes the deadline. Scores and answer explanations become available after submission or expiry. Attempts are unlimited, and the timer in the browser is only a display aid. Lost-password recovery is administrator-assisted after identity verification until verified-email recovery and production mail delivery are approved.
+
+## Accounts and access policies (Phase 4)
+
+Registration uses Django's built-in user model and creates ordinary student accounts only. It cannot assign staff status, groups, or permissions. Administrators grant staff access through Django admin or trusted operator commands. Authenticated students can view/update only their own account email and change their password; attempt pages remain owner-scoped. Django admin requires an active staff account and the relevant model permission.
+
+`access_control.services.user_can_access()` is the shared server-side policy for public/restricted resources. Published public resources are accessible to visitors; unpublished or restricted resources are denied unless a verified entitlement is available. In this phase `user_has_entitlement()` always returns false because no entitlement store or payment workflow exists. Restricted files have no delivery route, and payment processing remains disabled.
 
 Exam logic stays in the existing `exam_engine` modules: `models.py`, `services.py`, `views.py`, `urls.py`, `forms.py`, `admin.py`, and `tests.py`. Templates and browser assets are under `templates/exam_engine/` and `static/exam_engine/`. Do not create duplicate model or service modules; future work should extend these named boundaries unless an approved requirement demonstrates a responsibility they cannot own.
 
@@ -55,8 +61,8 @@ Public PDF display is a browser convenience; viewers can still save, print, scre
 python manage.py check
 python manage.py check --database default
 python manage.py test content config
-python manage.py test exam_engine content config
+python manage.py test accounts access_control exam_engine content config
 python manage.py makemigrations --check --dry-run
 ```
 
-The content and exam journeys, permissions, publication rules, lifecycle, scoring, and answer visibility are tested against PostgreSQL when PostgreSQL variables are configured in the process environment.
+The account, access, content and exam journeys, permissions, publication rules, lifecycle, scoring and answer visibility are tested against PostgreSQL when PostgreSQL variables are configured in the process environment.

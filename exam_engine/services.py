@@ -13,6 +13,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from access_control.services import user_can_access
+
 from .models import AttemptResponse, MockTest, MockTestQuestion, QuestionOption, TestAttempt
 
 
@@ -123,6 +125,8 @@ def start_test(user, test_slug, now=None):
 
     if not _test_is_available(mock_test, now):
         raise TestUnavailable("This test is not available at this time.")
+    if not user_can_access(user, is_published=mock_test.is_published, is_public=True):
+        raise TestUnavailable("This test is not available to this account.")
 
     _validate_test_question_set(mock_test)
     return TestAttempt.objects.create(

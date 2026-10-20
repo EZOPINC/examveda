@@ -1,6 +1,6 @@
 # Preliminary Data Model
 
-**Status:** The Phase 2 content model and URL scheme are approved and implemented; migration `content.0001_initial` was applied locally. The Phase 3 exam model is approved in Decision 0004 and implemented in `exam_engine.models`.
+**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model and adds no database entities; account and access policies are recorded in Decision 0005.
 
 ## Relationship outline
 
@@ -74,8 +74,8 @@ The Phase 3 entities above are implemented and must not be recreated under alter
 
 | Entity | Candidate fields / relationships | Integrity and lifecycle notes |
 | --- | --- | --- |
-| User/profile extension | Existing Django user identity; optional separate profile only if an approved account requirement needs it | Preserve the established built-in user model; any later identity change requires a documented data migration and explicit approval. Keep profile data minimal. |
-| Entitlement (future) | User, entitlement type, validity interval, source/status | Server-authoritative access; auditable expiration/revocation. |
+| User/profile extension | Existing Django user identity; no separate profile required by current approved behavior | Preserve the established built-in user model; any later identity change requires a documented data migration and explicit approval. |
+| Entitlement (future; not implemented) | User, entitlement code/scope, validity interval, verified source transaction, status/revocation timestamp | Server-authoritative access; auditable grants, expiry and revocation. Create only with approved paid-access requirements and migration review. |
 | PaymentTransaction (future) | User, provider reference, amount/currency, status, timestamps, idempotency reference | Never store card credentials; reconcile provider state and duplicate callbacks. |
 | Other future entity | Define only when an approved feature requires it | Avoid duplicating existing content and exam entities; document the decision and migration impact first. |
 
@@ -102,3 +102,5 @@ Use database uniqueness/check constraints for invariants such as one response pe
 ## Naming and migrations
 
 Canonical app names are `accounts`, `content`, `exam_engine`, `access_control`, `payments`, and `file_delivery`; their creation is feature-driven. Preserve established model, field, URL, and configuration names after adoption. Any later rename or schema restructure requires a data-preserving migration plan, impact review, backup considerations, and approval before production use.
+
+Phase 4 adds no model or migration: `accounts` uses Django's built-in user record, and `access_control` currently contains a policy service only. Do not create an `Entitlement` or payment transaction model until the separate paid-access phase is approved.

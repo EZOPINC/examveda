@@ -1,13 +1,14 @@
 # Functional Requirements
 
-**Status:** Phase 2 free-content requirements and Phase 3 exam-engine policies are approved. Product policies still marked open must be decided before their affected future feature is implemented.
+**Status:** Phase 2 content and Phase 3 exam policies are approved. Phase 4 account and access policies are recorded in Decision 0005 and are being implemented; future product policies remain open until their phases.
 
 ## Roles and journeys
 
 ### Visitor and student
 
 - A visitor can browse published free articles, notes, study materials, previous-year questions, solutions, and public test descriptions without an account.
-- A visitor can register, sign in, and sign out. Registration and account recovery details must be finalized before the accounts phase.
+- A visitor can register a student account at `/accounts/register/`, sign in, and sign out. Registration uses Django's built-in user model and cannot grant staff or administrator privileges.
+- A signed-in student can view their own account, update their email, change their password, and view their own attempt history. A lost password is recovered through an administrator after identity verification until verified-email recovery is approved and configured.
 - An authenticated student can start an available test, answer questions, save responses, resume an eligible attempt, submit, and view permitted results.
 - A student can view only their own attempt history and details.
 - A student can access protected materials only when the configured access rule grants it.
@@ -17,7 +18,7 @@
 
 - Authorized staff can create, edit, preview, publish, unpublish, and archive educational content.
 - Authorized staff can create and maintain subjects, topics, questions, options, explanations, tests, ordering, duration, scoring, availability, and review policy.
-- Staff permissions should distinguish administration from ordinary student capabilities. The initial editorial workflow may use Django admin; a custom interface needs a demonstrated requirement.
+- Staff and administrator privileges are granted only through Django admin or trusted operator commands. Public registration cannot assign staff status, groups, or permissions. Staff permissions continue to use Django's built-in model permissions; a custom interface needs a demonstrated requirement.
 - Once an attempt exists, test identity/description/duration, ordered question composition, scoring values, question text, options, answer key, and explanations are immutable. Staff may unpublish a test or change its availability to stop new starts; existing attempts remain accessible until their deadline. Revisions use new question/test records; separate version and result entities are not required for the initial workflow.
 
 ## Free content and public URLs
@@ -33,7 +34,7 @@
   - `/free-resources/subjects/<subject>/topics/<topic>/` — a topic listing.
   - `/free-resources/pages/<page-slug>/` — an editorial content page.
 - Resource type archive slugs are controlled values, not arbitrary user input. Route names are namespaced under `content`; internal links use Django URL reversal.
-- `/mock-tests/` and `/mock-tests/<test-slug>/` remain reserved for the exam engine and are not implemented in this phase.
+- `/mock-tests/` and `/mock-tests/<test-slug>/` are implemented by the exam engine; descriptions are public and private attempt URLs require authentication and ownership.
 - Category, stage, year, resource type, subject, and topic pages list only published content. An empty or unknown filter returns a normal not-found response rather than revealing draft records.
 - Content can be authored in Bengali or English. Language selection, search behavior, and whether individual resources can have parallel translations remain open decisions.
 - Only published items intended for public access are visible to anonymous visitors. Preview and draft routes require staff authorization.
@@ -74,11 +75,18 @@ Proposed states: `in_progress`, `submitted`, and `expired`. A separate pre-start
 
 ## Authentication and authorization
 
-- Use the established Django built-in user model, authentication, and permissions. Student registration, profile needs, and account recovery policy belong to the accounts phase; do not replace the user model without a reviewed, data-preserving migration and explicit approval.
+- Use the established Django built-in user model, authentication, and permissions. Student registration and account behavior follow Decision 0005; do not replace the user model without a reviewed, data-preserving migration and explicit approval.
 - Anonymous access is limited to public content and test descriptions.
 - Every attempt read/write and protected download checks the authenticated user's ownership or an explicit staff permission on the server.
 - Staff-only content and question management use explicit staff permissions.
-- Future paid access is based on server-verified entitlements, not browser state or client-supplied price/access values. Paid access is not part of Phase 3.
+- Future paid access is based on server-verified entitlements, not browser state or client-supplied price/access values. Payment processing and paid access remain out of scope until their separately approved phase.
+
+### Accounts and shared access policy (Decision 0005)
+
+- Preserve Django's built-in user model. Do not add a profile table unless a concrete account requirement needs persistent fields beyond the existing user record.
+- `access_control.user_can_access()` is the shared server-side decision point for published public resources and future restricted resources. Unpublished content is always denied; restricted access requires a verified server-side entitlement.
+- `access_control.user_has_entitlement()` returns false until a future approved entitlement store exists. Current mock tests and published public educational files remain public according to their existing publication/visibility rules; restricted files remain inaccessible.
+- Payment processing and entitlement grants are out of scope. Future provider webhooks must be verified and idempotent, and only confirmed transaction records may grant entitlements.
 
 ## Public and protected files
 
