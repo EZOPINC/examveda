@@ -26,3 +26,9 @@ Django 5.2 is an LTS release with a longer support horizon than the current feat
 ## Revisit criteria
 
 Review the pins when a security fix, Django support deadline, Python lifecycle change, OCI operating-system constraint, or dependency compatibility issue warrants it. Update the dependency file, this record, setup documentation, and verification results together.
+
+## Phase 6 deployment addition — 2026-10-21
+
+- Pin Gunicorn to `26.2.0` as the Linux WSGI server required by the approved deployment architecture. Gunicorn is Unix-oriented and is not expected to run on the Windows development host; verify its launch and worker behavior on the target Linux image before deployment.
+- The version was selected from the current PyPI release listing and meets the existing Python 3.13 baseline. Review it through the same controlled dependency-update process as Django and Psycopg.
+- Evidence: [Gunicorn 26.2.0 on PyPI](https://pypi.org/project/gunicorn/26.2.0/) and [Gunicorn deployment documentation](https://docs.gunicorn.org/en/stable/deploy.html).

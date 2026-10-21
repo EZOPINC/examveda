@@ -1,3 +1,4 @@
 # Python 3.13; keep Django on its supported 5.2 LTS line for this baseline.
 Django==5.2.18
 psycopg[binary]==3.3.6
+gunicorn==26.2.0

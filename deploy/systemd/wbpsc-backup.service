@@ -1,0 +1,18 @@
+[Unit]
+Description=Back up WBPSC PostgreSQL and uploaded media to OCI Object Storage
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=wbpsc-platform
+Group=wbpsc-platform
+EnvironmentFile=/etc/wbpsc-platform/environment
+ExecStart=/usr/local/sbin/wbpsc-backup-to-oci.sh
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/tmp

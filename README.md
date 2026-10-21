@@ -4,7 +4,7 @@ A Django modular monolith for free WBPSC exam preparation materials and future m
 
 ## Runtime baseline
 
-The baseline is Python 3.13, Django 5.2.18 LTS, Psycopg 3.3.6, and PostgreSQL 18.6 for local verification. Package versions are pinned in `requirements.txt`; do not silently upgrade them.
+The baseline is Python 3.13, Django 5.2.18 LTS, Psycopg 3.3.6, Gunicorn 26.2.0 for Linux deployment, and PostgreSQL 18.6 for local verification. Package versions are pinned in `requirements.txt`; do not silently upgrade them.
 
 ## Local setup
 
@@ -79,3 +79,7 @@ python manage.py makemigrations --check --dry-run
 ```
 
 The account, access, content and exam journeys, permissions, publication rules, lifecycle, scoring and answer visibility are tested against PostgreSQL when PostgreSQL variables are configured in the process environment.
+
+## OCI deployment
+
+The approved single-host OCI pilot layout, Nginx/Gunicorn/systemd configuration, PostgreSQL migration and backup procedures, smoke checks, and rollback guide are in [deploy/README.md](deploy/README.md). The deployment guide is configuration and planning only until it is exercised on an authorized OCI tenancy. Do not claim the backup/restore process is verified until a separate-environment restoration succeeds.

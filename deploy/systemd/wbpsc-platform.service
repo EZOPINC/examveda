@@ -1,0 +1,28 @@
+# Run from /srv/wbpsc-platform/current; environment values are root-managed.
+[Unit]
+Description=WBPSC Mock Exam Platform Django application
+After=network.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wbpsc-platform
+Group=www-data
+WorkingDirectory=/srv/wbpsc-platform/current
+EnvironmentFile=/etc/wbpsc-platform/environment
+ExecStart=/srv/wbpsc-platform/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --timeout 60 --access-logfile - --access-logformat="%%(h)s %%(t)s %%(m)s %%(U)s %%(H)s %%(s)s %%(B)s" --error-logfile - config.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+UMask=0027
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

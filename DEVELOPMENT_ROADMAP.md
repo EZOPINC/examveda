@@ -1,8 +1,8 @@
 # Development Roadmap
 
-**Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 security and reliability validation is authorized and in progress. Phase 6 deployment remains pending.
+**Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 code review is complete with operational gates open. Phase 6 is authorized; deployment configuration and runbook preparation are underway. No OCI resources have been provisioned.
 
-**Current local validation task:** Phase 5A adds repeatable free-study demo records and validates navigation using existing content models. It does not close Phase 5's separate staging, backup/restore, load, proxy, monitoring, or rate-limit gates.
+**Current task:** Phase 6 deployment configuration and operations documentation. The Phase 5 report's restore, load, proxy, monitoring, and rate-limit gates remain open and are not resolved by local deployment preparation.
 
 ## Working rules for every phase
 

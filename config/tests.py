@@ -1,6 +1,6 @@
 """Test the foundation's public home and low-information health endpoints."""
 
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
 
@@ -30,3 +30,14 @@ class FoundationPageTests(SimpleTestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, "Page not found", status_code=404)
+
+
+class StaticAssetURLTests(TestCase):
+    """Verify nested public pages use the root-mounted static URL path."""
+
+    def test_static_assets_use_absolute_root_paths(self):
+        """Nginx must be able to serve static files on deeply nested URLs."""
+        response = self.client.get(reverse("content:resource_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'href="/static/content/content.css"')

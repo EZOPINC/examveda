@@ -75,7 +75,7 @@ See [security requirements](docs/requirements/security-requirements.md) for the 
 
 ## Deployment and operations
 
-Deploy on Linux OCI infrastructure with Nginx in front of Gunicorn and Django. Keep PostgreSQL private. Evaluate a single application/database host first against availability, backup, restore, and budget needs; a managed or separate database may be preferable if its verified cost fits the target and its reliability benefits justify it. This is a decision to validate, not a fixed promise of capacity or cost.
+Deploy on Linux OCI infrastructure with Nginx in front of Gunicorn and Django. Keep PostgreSQL private. The Phase 6 pilot deployment plan uses one Ubuntu LTS compute instance with PostgreSQL bound to loopback, Nginx on ports 80/443, and Gunicorn on loopback; private OCI Object Storage holds off-server database and media backups. This single-host shape is not highly available, and it remains subject to cost, capacity, restore, monitoring, and security validation. See [the deployment guide](deploy/README.md). A managed or separate database may be preferable if its verified cost fits the target and its reliability benefits justify it.
 
 Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Object Storage where appropriate, defined retention, and restore rehearsals. Monitor host and application health, errors, disk, database capacity, and backup completion. Measure traffic and slow queries before adding caching, Redis, Celery, a CDN, multiple application hosts, or a separate database host. Detailed phase gates are in [the development roadmap](DEVELOPMENT_ROADMAP.md).
 

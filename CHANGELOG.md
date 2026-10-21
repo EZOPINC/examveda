@@ -2,6 +2,13 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-21 — Phase 6 OCI deployment preparation
+
+- Added a pinned Gunicorn dependency and initial systemd/Nginx configuration for a single-host pilot, with Gunicorn and PostgreSQL limited to loopback and no public media alias.
+- Corrected `STATIC_URL` to `/static/` so assets on nested public pages resolve through the planned Nginx static alias; added a regression check.
+- Added a private-bucket Object Storage backup job for PostgreSQL and uploaded media using instance-principal authentication, plus deployment, migration, restore, monitoring, smoke-test, and rollback procedures.
+- No OCI resources were provisioned. A successful backup restore, live TLS/proxy checks, monitoring alerts, and authorized load validation remain launch gates.
+
 ## 2026-10-21 — Local demo navigation diagnosis
 
 - Added the existing public Free Study Materials link to the standalone home-page navigation; the root template did not render a shared navigation component.
