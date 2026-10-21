@@ -2,6 +2,12 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-21 — Local demo navigation diagnosis
+
+- Added the existing public Free Study Materials link to the standalone home-page navigation; the root template did not render a shared navigation component.
+- Confirmed this local Django invocation uses fallback SQLite because PostgreSQL environment variables are absent from its process; `.env` is not loaded automatically. Django tests use a separate temporary database. Loaded demo records explicitly into the confirmed local SQLite database with the existing safe seed command.
+- Added a regression assertion that the home page renders the public navigation link. No model, migration, dependency, or database configuration changes.
+
 ## 2026-10-21 — Phase 5A free study-material demo navigation
 
 - Reused the existing content taxonomy and publication models to add exam → subject → previous-year paper browsing while retaining the `/free-resources/` root and existing stage/year routes.

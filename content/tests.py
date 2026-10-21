@@ -212,6 +212,8 @@ class DemoStudyMaterialNavigationTests(TestCase):
         """The public landing links to both exams and previews subject/paper counts."""
         home = self.client.get(reverse("home"))
         self.assertContains(home, reverse("content:resource_list"))
+        self.assertContains(home, '<nav aria-label="Main navigation">')
+        self.assertContains(home, '<a href="/free-resources/">Free Study Materials</a>')
 
         response = self.client.get(reverse("content:resource_list"))
 
