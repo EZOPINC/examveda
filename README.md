@@ -55,6 +55,19 @@ Exam logic stays in the existing `exam_engine` modules: `models.py`, `services.p
 
 Public PDF display is a browser convenience; viewers can still save, print, screenshot, or copy documents. Uploaded files are stored beneath `MEDIA_ROOT`; production web-server configuration must not expose that directory directly.
 
+## Local free study-material demo
+
+The Free Study Materials navigation uses the existing `ExamCategory`, `Subject`, `ContentPage`, and `ResourceMetadata` records. For local navigation/rendering checks, seed clearly labelled illustrative pages with the development settings:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = "config.settings.development"
+python manage.py seed_demo_study_materials
+```
+
+The command only runs when `DEBUG=True`, creates missing rows by stable slugs, refuses conflicting records, and never deletes or silently edits existing content. It is an explicit local command and is not part of startup or deployment. It creates WBPSC Clerkship and WBCS demos with History, General Studies, Mathematics, and Geography mappings, two sample years per exam/subject pairing, and three original illustrative multiple-choice questions per paper. Demo pages are published to test public navigation and every page warns that its content is not authentic or verified official WBPSC material. No PDF is required.
+
+Try `/free-resources/`, `/free-resources/wbpsc-clerkship/`, `/free-resources/wbpsc-clerkship/history/`, and `/free-resources/wbpsc-clerkship/history/demo-wbpsc-clerkship-history-2023-previous-question-paper/`. Existing stage/year/resource archives under `/free-resources/` remain available.
+
 ## Verification commands
 
 ```powershell

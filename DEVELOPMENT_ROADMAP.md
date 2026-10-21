@@ -2,6 +2,8 @@
 
 **Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 security and reliability validation is authorized and in progress. Phase 6 deployment remains pending.
 
+**Current local validation task:** Phase 5A adds repeatable free-study demo records and validates navigation using existing content models. It does not close Phase 5's separate staging, backup/restore, load, proxy, monitoring, or rate-limit gates.
+
 ## Working rules for every phase
 
 1. Read `AGENTS.md`, `PROJECT_AI_RULES.md`, this roadmap, and the relevant requirements and decision records.

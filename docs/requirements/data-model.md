@@ -1,6 +1,6 @@
 # Preliminary Data Model
 
-**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model and adds no database entities; account and access policies are recorded in Decision 0005.
+**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model and adds no database entities; Phase 5A demo materials also reuse existing entities without a migration.
 
 ## Relationship outline
 
@@ -52,8 +52,12 @@ Create database indexes for common public listings and filters (publication stat
 - `/free-resources/subjects/<subject>/`
 - `/free-resources/subjects/<subject>/topics/<topic>/`
 - `/free-resources/pages/<page-slug>/`
+- `/free-resources/<exam>/<subject>/` — exam-scoped subject archive for the study-material navigation. This shares the existing two-slug route shape with the stage archive; the view preserves a matching stage first and falls back to a subject within that exam.
+- `/free-resources/<exam>/<subject>/<paper-slug>/` — published previous-year paper detail page using existing `ContentPage` and `ResourceMetadata` records.
 
 For example, `/free-resources/wbcs/prelims/2024/solutions/` is a public solution archive; adding a resource slug addresses one solution. This preserves the suggested archive URL while giving each resource a stable canonical URL. The route definitions, names, and reversal behavior must be covered by tests before release.
+
+The local demo study-material set adds no model or migration. Exam-to-subject membership is represented by the existing `ResourceMetadata.category` and `.subject` relationship; page body, publication state, title, slug, and year remain on `ContentPage` and `ResourceMetadata`. Demo identity uses a reserved `demo-` slug prefix plus clear editorial text in the title, summary, and body rather than an additional schema flag; the public detail banner recognizes that prefix.
 
 ## Approved Phase 3 exam entities
 

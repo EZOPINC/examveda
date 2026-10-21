@@ -2,6 +2,13 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-21 — Phase 5A free study-material demo navigation
+
+- Reused the existing content taxonomy and publication models to add exam → subject → previous-year paper browsing while retaining the `/free-resources/` root and existing stage/year routes.
+- Added a `DEBUG=True`-only, conflict-safe `seed_demo_study_materials` command for two exams, six exam/subject mappings, and twelve published demo papers with original illustrative questions; repeated runs are idempotent.
+- Added responsive breadcrumb/detail pages and explicit demo notices. No PDF, application, dependency, model, or migration was added.
+- Added command, relationship, publication, routing, ordering, and rendering tests. Phase 5 operational security/reliability gates remain open.
+
 ## 2026-10-20 — Phase 5 security and reliability review
 
 - Owner confirmed approval of Phases 3 and 4 and authorized Phase 5.

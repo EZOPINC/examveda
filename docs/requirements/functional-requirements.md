@@ -1,6 +1,6 @@
 # Functional Requirements
 
-**Status:** Phase 2 content and Phase 3 exam policies are approved. Phase 4 account and access policies are recorded in Decision 0005 and are being implemented; future product policies remain open until their phases.
+**Status:** Phases 2–4 are owner-approved. Phase 5 review is in progress; Phase 5A adds local demo navigation validation without changing the product data model. Future product policies remain open until their phases.
 
 ## Roles and journeys
 
@@ -36,6 +36,7 @@
 - Resource type archive slugs are controlled values, not arbitrary user input. Route names are namespaced under `content`; internal links use Django URL reversal.
 - `/mock-tests/` and `/mock-tests/<test-slug>/` are implemented by the exam engine; descriptions are public and private attempt URLs require authentication and ownership.
 - Category, stage, year, resource type, subject, and topic pages list only published content. An empty or unknown filter returns a normal not-found response rather than revealing draft records.
+- The local free-study-material navigation may browse exam categories to exam-scoped subjects and published previous-year question-paper pages. Illustrative demo pages must be visibly identified as non-authentic and unverified, and remain ordinary published `ContentPage`/`ResourceMetadata` records; they do not use the mock-exam engine.
 - Content can be authored in Bengali or English. Language selection, search behavior, and whether individual resources can have parallel translations remain open decisions.
 - Only published items intended for public access are visible to anonymous visitors. Preview and draft routes require staff authorization.
 - Staff preview requires an authenticated staff account and is served through a protected application view; an unpublished page or its files are never exposed by a public detail or PDF route.

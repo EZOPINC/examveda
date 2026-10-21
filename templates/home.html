@@ -9,7 +9,7 @@
     <main>
         <h1>WBPSC Mock Exam Platform</h1>
         <p>Learning resources and mock examinations are being prepared.</p>
-        <p><a href="{% url 'content:resource_list' %}">Browse free learning resources</a></p>
+        <p><a href="{% url 'content:resource_list' %}">Browse Free Study Materials</a></p>
         <p><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
         {% if user.is_authenticated %}<p><a href="{% url 'accounts:profile' %}">My account</a> · <a href="{% url 'exam_engine:attempt_history' %}">My attempts</a></p>{% else %}<p><a href="{% url 'login' %}">Sign in</a> · <a href="{% url 'accounts:register' %}">Create a student account</a></p>{% endif %}
         <p><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
