@@ -1,6 +1,6 @@
 # Security Requirements
 
-**Status:** Baseline for all phases. Phase 4 account and access controls are recorded in Decision 0005 and are being implemented; deployment and payment controls remain future gates.
+**Status:** Baseline for all phases. Phases 3 and 4 are owner-approved. Phase 5 review findings and operational blockers are recorded in the [security and reliability report](../security/phase-5-security-reliability-report.md); deployment and payment controls remain future gates.
 
 ## Identity and sessions
 

@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import DatabaseError
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -240,6 +241,30 @@ class ExamEngineWorkflowTests(TestCase):
         result = save_answer(self.student, attempt.pk, self.test_questions[0].pk, self.questions[0].options.get(is_correct=True).pk)
         self.assertFalse(result.was_saved)
         self.assertFalse(AttemptResponse.objects.filter(attempt=attempt).exists())
+
+    def test_answer_database_error_does_not_leave_a_partial_response(self):
+        """A failed answer write rolls back its transaction and keeps the attempt active."""
+        attempt = self.start_for()
+        correct_option = self.questions[0].options.get(is_correct=True)
+        with patch.object(AttemptResponse.objects, "update_or_create", side_effect=DatabaseError("simulated write failure")):
+            with self.assertRaises(DatabaseError):
+                save_answer(self.student, attempt.pk, self.test_questions[0].pk, correct_option.pk)
+
+        attempt.refresh_from_db()
+        self.assertEqual(attempt.state, TestAttempt.State.IN_PROGRESS)
+        self.assertFalse(AttemptResponse.objects.filter(attempt=attempt).exists())
+
+    def test_submission_database_error_does_not_leave_a_partial_result(self):
+        """A failed score/finalization transaction keeps terminal fields unchanged."""
+        attempt = self.start_for()
+        with patch("exam_engine.services.calculate_attempt_result", side_effect=DatabaseError("simulated score failure")):
+            with self.assertRaises(DatabaseError):
+                submit_attempt(self.student, attempt.pk)
+
+        attempt.refresh_from_db()
+        self.assertEqual(attempt.state, TestAttempt.State.IN_PROGRESS)
+        self.assertIsNone(attempt.finalized_at)
+        self.assertIsNone(attempt.submitted_at)
 
     def test_started_test_and_question_graph_cannot_be_edited(self):
         """The immutable graph keeps saved result interpretation stable."""

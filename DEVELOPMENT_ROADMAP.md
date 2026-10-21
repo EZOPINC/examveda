@@ -1,6 +1,6 @@
 # Development Roadmap
 
-**Status:** Phase 2 is approved. Phase 3 implementation and verification are complete; its approval gate had not been separately recorded when the owner explicitly authorized Phase 4 on 2026-10-20. Phase 4 is in progress under that explicit request. Later phases remain unauthorized.
+**Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 security and reliability validation is authorized and in progress. Phase 6 deployment remains pending.
 
 ## Working rules for every phase
 
@@ -18,9 +18,9 @@
 | 0. Analysis and planning | Repository inventory, requirements, architecture and decision record | Owner reviews and approves these documents; no application code is part of this phase |
 | 1. Foundation | Supported version selection, Django `config` foundation, environment configuration, database connection, initial account-model decision, baseline checks | Configuration and security settings reviewed; migrations reviewed before application; local setup documented; smoke checks recorded |
 | 2. Free content | `content` models and public pages, publication workflow, language-aware content, stable public URLs | Approved complete on 2026-10-15; PostgreSQL checks and tests pass, and published/draft workflow is covered through automated HTTP/admin-path tests |
-| 3. Exam engine | `exam_engine` question/test authoring, attempt lifecycle, server-side timing, autosave, submission, score, permitted review | Implementation and PostgreSQL-backed verification complete; completion approval remains unrecorded |
-| 4. Accounts and access | Registration/login, profile needs, history, shared policies where needed | Explicitly authorized 2026-10-20; verify student/admin separation, account ownership, and fail-closed future entitlement behavior before approval gate |
-| 5. Security and quality | Cross-feature security review, accessibility, mobile/slow-network checks, performance baseline, backup/restore rehearsal, monitoring design | Findings and accepted risks documented; tests and measured performance evidence reviewed |
+| 3. Exam engine | `exam_engine` question/test authoring, attempt lifecycle, server-side timing, autosave, submission, score, permitted review | Owner-approved 2026-10-20 after implementation and PostgreSQL-backed verification |
+| 4. Accounts and access | Registration/login, profile needs, history, shared policies where needed | Owner-approved 2026-10-20 after student/admin separation, ownership, and fail-closed entitlement verification |
+| 5. Security and quality | Cross-feature security review, accessibility, mobile/slow-network checks, performance baseline, backup/restore rehearsal, monitoring design | Findings and accepted risks documented; tests and measured performance evidence reviewed; operational validation requires an authorized isolated environment |
 | 6. Deployment | OCI Linux deployment, Nginx, Gunicorn, PostgreSQL, HTTPS, secrets, backup/restore, monitoring, rollback | Deployment and restore runbooks exercised; production settings and readiness evidence approved |
 | Future paid access | Membership and paid tests, `payments`, provider integration and relevant access rules | Provider callbacks, idempotency, reconciliation, refund/access policy, and security reviewed before launch |
 

@@ -2,9 +2,17 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-20 — Phase 5 security and reliability review
+
+- Owner confirmed approval of Phases 3 and 4 and authorized Phase 5.
+- Added production HSTS, same-origin referrer policy, and the Nginx TLS-termination proxy setting. The deployment boundary must prevent direct/untrusted clients from supplying `X-Forwarded-Proto`.
+- Added transaction failure-injection regression coverage for answer persistence and submission finalization rollback.
+- Detailed review evidence, severity-ranked findings, verification results, and blocked operational exercises are recorded in [the Phase 5 report](docs/security/phase-5-security-reliability-report.md).
+- No migrations, dependencies, backup/restore execution, or load tests were added/performed. No authorized staging environment or PostgreSQL backup utilities were available; production readiness is not claimed.
+
 ## 2026-10-20 — Phase 4 accounts and access implementation
 
-- Owner explicitly authorized Phase 4. Phase 3 implementation and verification are complete; its approval gate had not been separately recorded, so no separate Phase 3 approval is claimed.
+- Owner explicitly authorized Phase 4. Phase 3 approval was later explicitly confirmed on 2026-10-20.
 - Added student registration, owner-only account details, Django password change, and regression tests without a custom user/profile model or additional dependency.
 - Added the shared fail-closed `access_control` policy for public files and test availability. No entitlement or payment model, payment gateway, or restricted-file delivery was added.
 - Recorded administrator-assisted lost-password recovery until verified email recovery and production mail delivery are approved.

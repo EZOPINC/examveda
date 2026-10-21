@@ -50,7 +50,16 @@ DATABASES = {  # noqa: F405
 }
 
 SECURE_SSL_REDIRECT = True
+# Gunicorn must be reachable only through the trusted Nginx proxy, which must
+# overwrite X-Forwarded-Proto. Never trust this header from direct clients.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+# Do not extend HSTS to unknown subdomains or opt into browser preload before
+# every production hostname and its long-term HTTPS operation are confirmed.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
