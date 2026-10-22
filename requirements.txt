@@ -1,4 +1,9 @@
-# Python 3.13; keep Django on its supported 5.2 LTS line for this baseline.
+# Python 3.13 application runtime and supported Django 5.2 LTS baseline.
 Django==5.2.18
+
+# PostgreSQL driver. The binary extra avoids requiring a local libpq compiler
+# toolchain for development installs; production can use the same pinned build.
 psycopg[binary]==3.3.6
-gunicorn==26.2.0
+
+# Linux production application server. Local Windows development uses runserver.
+gunicorn==26.2.0; sys_platform != "win32"

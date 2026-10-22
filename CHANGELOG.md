@@ -2,6 +2,16 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-22 — Runtime dependency markers
+
+- Reviewed Python imports and deployment configuration; the pinned Django, Psycopg, and Gunicorn packages cover the runtime with no extra Python dependency required.
+- Marked Gunicorn as Linux-only because local Windows development uses Django's `runserver`; retained the exact production pin. GNU gettext remains an optional system tool for compiling translation catalogs, not a runtime Python package.
+
+## 2026-10-22 — Local mock-test demo data
+
+- Added `seed_demo_mock_test`, an explicit `DEBUG=True`-only, idempotent and conflict-safe command that creates one five-question sample test with shared answer keys and complete English, Hindi, and Bengali text.
+- Added regression tests for repeat loading, language completeness, conflicting editorial data, and production-style settings refusal. No schema changes, dependencies, or automatic startup/deployment seeding.
+
 ## 2026-10-22 — English, Hindi, and Bengali mock exams
 
 - Added `QuestionTranslation`, `QuestionOptionTranslation`, and `MockTestTranslation` in `exam_engine`; stable option rows and one shared correctness key continue to drive scoring. Migration `exam_engine.0002` is additive and leaves legacy test/attempt language fields nullable for staff review.

@@ -6,8 +6,9 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.management import call_command, CommandError
 from django.db import DatabaseError
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -577,3 +578,62 @@ class ExamAuthoringValidationTests(TestCase):
         client = Client()
         client.force_login(student)
         self.assertEqual(client.post(reverse("exam_engine:start_test", args=[mock_test.slug]), {"language_code": "en"}).status_code, 404)
+
+
+@override_settings(DEBUG=True)
+class DemoMockTestCommandTests(TestCase):
+    """Ensure local sample questions load safely and satisfy all language gates."""
+
+    def test_demo_mock_test_command_is_repeatable_and_creates_complete_variants(self):
+        """Repeated loads reuse the same test, questions, options, and translations."""
+        call_command("seed_demo_mock_test", verbosity=0)
+        call_command("seed_demo_mock_test", verbosity=0)
+        mock_test = MockTest.objects.get(slug="demo-wbpsc-multilingual-practice")
+        self.assertEqual(mock_test.test_questions.count(), 5)
+        self.assertEqual(Question.objects.filter(subject__slug="demo-mock-test-history").count(), 5)
+        self.assertEqual(QuestionOption.objects.filter(question__subject__slug="demo-mock-test-history").count(), 20)
+        self.assertEqual(
+            {code for code, _label in available_test_languages(mock_test)},
+            {"en", "hi", "bn"},
+        )
+        self.assertEqual(
+            MockTestQuestion.objects.filter(mock_test=mock_test).values_list("position", flat=True).distinct().count(),
+            5,
+        )
+
+    def test_seeded_demo_test_is_listed_and_students_can_start_a_language_variant(self):
+        """The seeded test detail offers all locales and starts through the real route."""
+        call_command("seed_demo_mock_test", verbosity=0)
+        detail_url = reverse("exam_engine:mock_test_detail", args=["demo-wbpsc-multilingual-practice"])
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "English")
+        self.assertContains(response, "हिन्दी")
+        self.assertContains(response, "বাংলা")
+
+        student = get_user_model().objects.create_user(username="demo-mock-student", password="test-password")
+        self.client.force_login(student)
+        start = self.client.post(
+            reverse("exam_engine:start_test", args=["demo-wbpsc-multilingual-practice"]),
+            {"language_code": "bn"},
+        )
+        attempt = TestAttempt.objects.get(user=student)
+        self.assertRedirects(start, reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertEqual(attempt.language_code, "bn")
+        self.assertEqual(self.client.get(start.url).status_code, 200)
+
+    def test_demo_mock_test_command_stops_on_conflicting_content_without_overwriting(self):
+        """A record edited since seeding is left untouched and the transaction aborts."""
+        call_command("seed_demo_mock_test", verbosity=0)
+        question = Question.objects.filter(subject__slug="demo-mock-test-history").order_by("pk").first()
+        question.explanation = "Editorial content that must not be overwritten."
+        question.save()
+        with self.assertRaises(CommandError):
+            call_command("seed_demo_mock_test", verbosity=0)
+        question.refresh_from_db()
+        self.assertEqual(question.explanation, "Editorial content that must not be overwritten.")
+
+    def test_demo_mock_test_command_is_disabled_without_debug(self):
+        """Production-style settings cannot seed demo exam data."""
+        with override_settings(DEBUG=False), self.assertRaises(CommandError):
+            call_command("seed_demo_mock_test", verbosity=0)

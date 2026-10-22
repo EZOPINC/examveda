@@ -52,6 +52,16 @@ In Django admin, set the source language on each question and mock test. Add que
 
 The source catalogs are `locale/hi/LC_MESSAGES/django.po` and `locale/bn/LC_MESSAGES/django.po`; the compiled `.mo` files are committed for runtime use. When editing catalogs, run `python manage.py makemessages -l hi -l bn`, update translations, then run `python manage.py compilemessages -l hi -l bn` with GNU gettext available. Commit both catalog sources and compiled files. No new Python dependency is needed.
 
+To try the mock-test workflow locally, use development settings and run the explicit demo loader:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = "config.settings.development"
+python manage.py migrate
+python manage.py seed_demo_mock_test
+```
+
+Open `/mock-tests/demo-wbpsc-multilingual-practice/`, select English, Hindi, or Bengali, then sign in or register to start. The command creates one 10-minute test with five original illustrative history questions, four options each, explanations, and complete translations in all three languages. It is `DEBUG=True` only, repeatable, conflict-safe, and never runs during startup or deployment. Correct options use the shared answer key and appear to students only after submission or expiry. The examples are local workflow placeholders, not an official or verified WBPSC paper. Demo data is not loaded automatically, and development and production databases remain separate.
+
 The additive migration is `exam_engine.0002_mocktest_instructions_mocktest_language_and_more`. Review its plan and back up the target database before applying it in a deployment. It preserves old records but does not infer source-language metadata or seed translations. See [Decision 0007](docs/decisions/0007-multilingual-mock-exams.md) for the data model, admin workflow, and rollout notes.
 
 ## Content editorial workflow
