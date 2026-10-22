@@ -1,29 +1,26 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ attempt.mock_test.title }} · Examination</title>
-    {% load static exam_engine_tags %}<link rel="stylesheet" href="{% static 'content/content.css' %}"><link rel="stylesheet" href="{% static 'exam_engine/exam.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><span id="exam-countdown" role="timer" data-deadline="{{ attempt.expires_at|date:'c' }}" data-server-now="{{ now|date:'c' }}">Time remaining is provided by the server.</span></header>
-    <main class="page-shell article" id="exam-page" data-attempt-url="{% url 'exam_engine:attempt_detail' attempt.pk %}">
-        <h1>{{ attempt.mock_test.title }}</h1>
-        <p>Your responses save when changed. The server determines the deadline and final score.</p>
-        <nav class="question-navigation" aria-label="Question navigation">{% for test_question in test_questions %}<button type="button" data-question-target="question-{{ test_question.pk }}" aria-label="Go to question {{ forloop.counter }}">{{ forloop.counter }}</button>{% endfor %}</nav>
-        {% for test_question in test_questions %}<section class="question-panel" id="question-{{ test_question.pk }}" lang="{{ test_question.question.language }}" aria-labelledby="question-title-{{ test_question.pk }}">
-            <h2 id="question-title-{{ test_question.pk }}">Question {{ forloop.counter }} of {{ test_questions|length }}</h2>
-            <div>{{ test_question.question.prompt|linebreaks }}</div>
-            <form class="answer-form" method="post" action="{% url 'exam_engine:save_answer' attempt.pk %}">
-                {% csrf_token %}<input type="hidden" name="mock_test_question_id" value="{{ test_question.pk }}">
-                <fieldset><legend>Choose one answer</legend>{% for option in test_question.question.options.all %}<label class="answer-option"><input type="radio" name="selected_option_id" value="{{ option.pk }}"{% if responses|get_item:test_question.pk == option.pk %} checked{% endif %}> {{ option.text }}</label>{% endfor %}</fieldset>
-                <button type="submit">Save answer</button><button type="button" class="clear-answer">Clear answer</button>
-            </form>
-        </section>{% endfor %}
-        <p id="answer-save-status" role="status" aria-live="polite"></p>
-        <form method="post" action="{% url 'exam_engine:submit_attempt' attempt.pk %}" id="submit-attempt-form">{% csrf_token %}<button type="submit">Submit examination</button></form>
-    </main>
-    <script src="{% static 'exam_engine/exam.js' %}" defer></script>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static exam_engine_tags i18n %}
+{% block title %}{{ test_metadata.title }} | {% trans "Examination" %}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'exam_engine/exam.css' %}">{% endblock %}
+{% block header_extra %}<span id="exam-countdown" class="exam-countdown" role="timer" aria-live="off" data-deadline="{{ attempt.expires_at|date:'c' }}" data-server-now="{{ now|date:'c' }}" data-remaining-label="{% trans 'remaining' %}" data-checking-label="{% trans 'Checking server deadline…' %}">{% trans "Time remaining is provided by the server." %}</span>{% endblock %}
+{% block content %}
+<section id="exam-page" class="article" data-attempt-url="{% url 'exam_engine:attempt_detail' attempt.pk %}">
+    <p class="eyebrow">{% trans "Examination in progress" %}</p><h1>{{ test_metadata.title }}</h1>
+    {% if test_metadata.instructions %}<div class="lead">{{ test_metadata.instructions|linebreaks }}</div>{% else %}<p class="lead">{% trans "Your responses save when changed. The server determines the deadline and final score." %}</p>{% endif %}
+    <p class="resource-meta">{% blocktrans with language=language_label %}Exam language: {{ language }}{% endblocktrans %}</p>
+    {% if available_languages|length > 1 %}<form method="post" action="{% url 'exam_engine:change_test_language' attempt.pk %}" id="attempt-language-form" class="language-choice" data-waiting-message="{% trans 'Saving answers before changing language…' %}" data-failed-message="{% trans 'An answer could not be saved. Retry before changing language.' %}">{% csrf_token %}<label for="attempt-language">{% trans "Change exam language" %}</label><select id="attempt-language" name="language_code">{% for code, label in available_languages %}<option value="{{ code }}"{% if code == attempt.language_code %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button type="submit" class="button-secondary">{% trans "Change language" %}</button></form>{% endif %}
+    <nav class="question-navigation" aria-label="{% trans 'Question navigation' %}">{% for question in localized_questions %}<button type="button" data-question-target="question-{{ question.test_question.pk }}" aria-label="{% blocktrans with number=forloop.counter %}Go to question {{ number }}{% endblocktrans %}">{{ forloop.counter }}</button>{% endfor %}</nav>
+    {% for question in localized_questions %}<section class="question-panel" id="question-{{ question.test_question.pk }}" lang="{{ question.language_code }}" aria-labelledby="question-title-{{ question.test_question.pk }}">
+        <h2 id="question-title-{{ question.test_question.pk }}">{% blocktrans with number=forloop.counter total=localized_questions|length %}Question {{ number }} of {{ total }}{% endblocktrans %}</h2>
+        <div>{{ question.prompt|linebreaks }}</div>
+        <form class="answer-form" method="post" action="{% url 'exam_engine:save_answer' attempt.pk %}">
+            {% csrf_token %}<input type="hidden" name="mock_test_question_id" value="{{ question.test_question.pk }}">
+            <fieldset><legend>{% trans "Choose one answer" %}</legend>{% for option in question.options %}<label class="answer-option"><input type="radio" name="selected_option_id" value="{{ option.id }}"{% if responses|get_item:question.test_question.pk == option.id %} checked{% endif %}> <span>{{ option.text }}</span></label>{% endfor %}</fieldset>
+            <div class="answer-actions"><button type="submit">{% trans "Save answer" %}</button><button type="button" class="button-secondary clear-answer">{% trans "Clear answer" %}</button></div>
+        </form>
+    </section>{% endfor %}
+    <p id="answer-save-status" role="status" aria-live="polite" data-saving="{% trans 'Saving answer…' %}" data-saved="{% trans 'Answer saved.' %}" data-save-error="{% trans 'Answer could not be saved.' %}" data-connection-error="{% trans 'Connection interrupted. Change or save the answer again to retry.' %}" data-locked="{% trans 'This attempt is locked.' %}" data-submit-confirm="{% trans 'Submit this examination now? You cannot change answers after submission.' %}" data-retry-submit="{% trans 'An answer was not saved. Retry the save before submitting.' %}"></p>
+    <form method="post" action="{% url 'exam_engine:submit_attempt' attempt.pk %}" id="submit-attempt-form">{% csrf_token %}<button type="submit">{% trans "Submit examination" %}</button></form>
+</section>
+<script src="{% static 'exam_engine/exam.js' %}" defer></script>
+{% endblock %}

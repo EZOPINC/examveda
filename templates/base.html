@@ -1,0 +1,71 @@
+{% load static i18n %}
+<!doctype html>
+<html lang="{% block html_lang %}{{ LANGUAGE_CODE|default:'en' }}{% endblock %}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block meta_description %}Free WBPSC study materials, previous-year question papers and mock examinations.{% endblock %}">
+    <meta name="robots" content="{% block robots %}noindex, nofollow{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name" content="WBPSC Mock Exam Platform">
+    <meta property="og:title" content="{% block og_title %}WBPSC Mock Exam Platform{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Free WBPSC study materials, previous-year question papers and mock examinations.{% endblock %}">
+    {% block og_image %}{% endblock %}
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    {% block canonical %}{% endblock %}
+    <title>{% block title %}WBPSC Mock Exam Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'content/content.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <a class="skip-link" href="#main-content">{% trans "Skip to main content" %}</a>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="site-brand" href="{% url 'home' %}" aria-label="{% trans 'WBPSC Mock Exam Platform home' %}">
+                <span class="brand-mark" aria-hidden="true">W</span>
+                <span class="brand-name">WBPSC <span>Exam Prep</span></span>
+            </a>
+            <nav aria-label="{% trans 'Main navigation' %}" class="primary-nav">
+                <a href="{% url 'content:resource_list' %}"{% if request.resolver_match.namespace == 'content' and request.resolver_match.url_name != 'blog_index' and request.resolver_match.url_name != 'blog_category' and request.resolver_match.url_name != 'blog_detail' %} aria-current="page"{% endif %}>{% trans "Free Study Materials" %}</a>
+                <a href="{% url 'content:blog_index' %}"{% if request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_index' or request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_category' or request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_detail' %} aria-current="page"{% endif %}>{% trans "Blog" %}</a>
+                <a href="{% url 'exam_engine:mock_test_list' %}"{% if request.resolver_match.namespace == 'exam_engine' %} aria-current="page"{% endif %}>{% trans "Mock tests" %}</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' %} aria-current="page"{% endif %}>{% trans "My account" %}</a>
+                    <form method="post" action="{% url 'logout' %}" class="nav-logout-form">{% csrf_token %}<button class="nav-logout" type="submit">{% trans "Sign out" %}</button></form>
+                {% else %}
+                    <a href="{% url 'login' %}"{% if request.resolver_match.url_name == 'login' %} aria-current="page"{% endif %}>{% trans "Sign in" %}</a>
+                    <a class="nav-register" href="{% url 'accounts:register' %}">{% trans "Create account" %}</a>
+                {% endif %}
+            </nav>
+            {% if request.resolver_match.url_name != 'attempt_detail' %}<form action="{% url 'set_language' %}" method="post" class="language-switcher">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label class="visually-hidden" for="site-language">{% trans "Site language" %}</label>
+                <select id="site-language" name="language" aria-label="{% trans 'Site language' %}">
+                    {% get_current_language as current_language %}
+                    {% get_available_languages as available_languages %}
+                    {% for language_code, language_name in available_languages %}<option value="{{ language_code }}"{% if language_code == current_language %} selected{% endif %}>{{ language_name }}</option>{% endfor %}
+                </select>
+                <button type="submit">{% trans "Change language" %}</button>
+            </form>{% endif %}
+            {% block header_extra %}{% endblock %}
+        </div>
+    </header>
+    {% if messages %}<div class="page-shell message-list" role="status">{% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}</div>{% endif %}
+    <main class="page-shell" id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <a class="footer-brand" href="{% url 'home' %}">WBPSC Exam Prep</a>
+            <p>{% trans "Free resources and practice to support your WBPSC preparation." %}</p>
+            <nav aria-label="{% trans 'Footer navigation' %}"><a href="{% url 'content:resource_list' %}">{% trans "Free Study Materials" %}</a><a href="{% url 'content:blog_index' %}">{% trans "Blog" %}</a><a href="{% url 'exam_engine:mock_test_list' %}">{% trans "Mock tests" %}</a></nav>
+            <section class="footer-social" aria-labelledby="follow-us-heading">
+                <h2 id="follow-us-heading">{% trans "Follow Us" %}</h2>
+                {% if social_links %}<ul>{% for label, url in social_links.items %}<li><a href="{{ url }}" target="_blank" rel="noopener noreferrer" aria-label="{% blocktrans with platform=label %}Follow us on {{ platform }} (opens in a new tab){% endblocktrans %}">{{ label }}</a></li>{% endfor %}</ul>{% else %}<p>{% trans "Our social profiles will be listed here." %}</p>{% endif %}
+            </section>
+        </div>
+    </footer>
+    <script src="{% static 'content/share.js' %}" defer></script>
+</body>
+</html>

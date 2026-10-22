@@ -20,7 +20,7 @@ Permit only required outbound traffic, including DNS, NTP, OS/package updates, O
 
 The instance's dynamic group should be scoped to the backup bucket and only the object permissions needed to create/overwrite and verify uploads (`OBJECT_CREATE`, `OBJECT_OVERWRITE`, `OBJECT_INSPECT`, and `OBJECT_READ`); do not grant it `OBJECT_DELETE`. The backup job uses OCI instance-principal authentication so no OCI API key is stored on the host. Keep the bucket private, enable Object Storage's server-side encryption, configure and verify a retention/lifecycle policy, and alert on missing backups. Configure a separate operator identity for restore reads. Do not grant public bucket access. OCI policies can scope by `target.bucket.name` and condition on `request.permission`; validate the final policy in the target tenancy before enabling the timer.
 
-The app currently stores `ResourceFile` uploads under `MEDIA_ROOT` and has no OCI Object Storage storage backend. Keep that directory outside all Nginx aliases and back it up off-host with the database. Do not move application uploads to Object Storage until a separately reviewed storage/delivery integration preserves publication and access checks. No restricted-file endpoint is added here.
+The app stores `ResourceFile` and optional blog featured-image uploads under `MEDIA_ROOT` and has no OCI Object Storage storage backend. Keep that directory outside all Nginx aliases and back it up off-host with the database. Resource PDFs and blog images are delivered through application views that enforce publication and access checks. Do not move application uploads to Object Storage until a separately reviewed storage/delivery integration preserves those checks. No restricted-file endpoint is added here.
 
 ## Files in this directory
 
@@ -47,7 +47,7 @@ The initial two Gunicorn workers are a conservative starting point only. Tune wo
 
    Then connect as `wbpsc_release` and grant `CONNECT` on the database, `USAGE` on schema `public`, `SELECT, INSERT, UPDATE, DELETE` on all tables, and `USAGE, SELECT, UPDATE` on all sequences to `wbpsc_app`. Set matching default privileges for future tables and sequences before applying migrations. The app role needs no DDL rights; use the release role in the temporary migration environment.
 5. Create system user/group `wbpsc-platform`, release directories `/srv/wbpsc-platform/releases/` and `/srv/wbpsc-platform/shared/media/`, and virtual environment `/srv/wbpsc-platform/venv/`. Deploy a reviewed Git revision into a new release directory; install pinned `requirements.txt` there. Link its `media` directory to the shared media directory.
-6. Create `/etc/wbpsc-platform/environment` as root-owned mode `0600`. Set `DJANGO_SETTINGS_MODULE=config.settings.production`, a newly generated `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` to exact public hostnames, and `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST=127.0.0.1`, `DB_PORT=5432`. Do not copy `.env` from a workstation or put real values in Git, shell history, or deployment logs. Add `OCI_BUCKET_NAME` and `OCI_REGION` for the backup timer only if instance-principal access is configured.
+6. Create `/etc/wbpsc-platform/environment` as root-owned mode `0600`. Set `DJANGO_SETTINGS_MODULE=config.settings.production`, a newly generated `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` to exact public hostnames, and `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST=127.0.0.1`, `DB_PORT=5432`. Optional `SOCIAL_FACEBOOK_URL`, `SOCIAL_INSTAGRAM_URL`, `SOCIAL_TELEGRAM_URL`, and `SOCIAL_YOUTUBE_URL` values must be verified HTTPS profile URLs; leave unset if the account is not confirmed. Do not copy `.env` from a workstation or put real values in Git, shell history, or deployment logs. Add `OCI_BUCKET_NAME` and `OCI_REGION` for the backup timer only if instance-principal access is configured.
 7. Before changing the active release, take a database and media backup using the reviewed backup procedure. Set `current` to the new release only after its code and Python dependencies are present.
 8. In the new release, run `python manage.py check --deploy`, `python manage.py check --database default`, and `python manage.py migrate --plan` with the production environment. Review migrations; then apply with the release role. Run `python manage.py collectstatic --noinput`. Do not run demo-data seeding in production.
 9. Obtain the TLS certificate with Certbot after DNS and port 80 are verified. For first issuance, stop Nginx and run `sudo certbot certonly --standalone -d example.com -d www.example.com`; install `nginx/wbpsc-platform.conf` with the actual names and certificate paths; then test `nginx -t` and enable/reload Nginx. Enable the Certbot renewal timer and configure a deploy hook to reload Nginx after renewal. Install and enable the Gunicorn service. Confirm Gunicorn listens only on `127.0.0.1:8000` and that ports 5432 and 8000 are not allowed at OCI or host firewalls.
@@ -60,6 +60,49 @@ The existing `config.settings.production` requires a non-empty secret, exact all
 For each release, first run tests and deploy checks in CI or a disposable PostgreSQL environment. On the host: back up DB and media; upload code to a new release directory; install pinned dependencies; run `migrate --plan`; review and apply migrations; run `collectstatic`; change the `current` symlink; restart Gunicorn; inspect logs and smoke tests. Do not run migrations automatically in service startup. Prefer additive, backward-compatible schema changes. If a migration is destructive or incompatible with the prior code, split it across releases and require a tested restore plan.
 
 Run management commands as short-lived systemd jobs so systemd reads the root-protected environment file without printing it. Use `/etc/wbpsc-platform/release-environment` instead for `migrate` commands; it contains the same Django settings values but uses the release DB role.
+
+### Admin account and database consistency
+
+Django admin, Django authentication, and the platform's application models all use the same Django database alias, `default`. This project has no database router or separate admin database. The `config.settings.production` settings define `default` as PostgreSQL and have no SQLite fallback. A superuser created with a different settings module or different `DB_NAME`/`DB_HOST`/`DB_USER` environment can therefore exist in a different database from the one Gunicorn serves. A `.env` file is not loaded automatically.
+
+First confirm which environment file Gunicorn uses without printing its contents:
+
+```sh
+sudo systemctl show wbpsc-platform --property=EnvironmentFiles --no-pager
+```
+
+The expected runtime file is `/etc/wbpsc-platform/environment`. Use that exact file and the same release path/virtualenv for a read-only check of the effective Django settings and connected database identity. This prints database identifiers only, never a password:
+
+```sh
+sudo systemd-run --wait --pipe --collect --unit=wbpsc-db-identity \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py shell -c \
+  'import os; from django.db import connection; connection.ensure_connection(); print({"settings_module": os.environ.get("DJANGO_SETTINGS_MODULE"), "alias": "default", "engine": connection.settings_dict["ENGINE"], "name": connection.settings_dict["NAME"], "host": connection.settings_dict["HOST"], "port": connection.settings_dict["PORT"]})'
+```
+
+Compare the reported database name, host, and port with the intended production database. The command uses Gunicorn's environment file, so it is the relevant identity for the deployed app. Do not use the release environment for user creation: it may use a different PostgreSQL role and exists only for schema migrations.
+
+If the account may already exist in this same database, inspect only its access flags (replace the username; do not print the whole user object or password fields):
+
+```sh
+sudo systemd-run --wait --pipe --collect --unit=wbpsc-admin-user-check \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py shell -c \
+  'from django.contrib.auth import get_user_model; print(get_user_model().objects.filter(username="ADMIN_USERNAME").values("is_active", "is_staff", "is_superuser").first())'
+```
+
+If no record is returned, create the admin user in the same runtime database, not from an SSH shell with an assumed settings module. This prompts interactively and does not put the password in shell history:
+
+```sh
+sudo systemd-run --wait --pty --collect --unit=wbpsc-create-superuser \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py createsuperuser
+```
+
+If the account exists but its password is uncertain, run `manage.py changepassword ADMIN_USERNAME` in the same `systemd-run` form with the same `EnvironmentFile`; it prompts for the new password. Never create or reset an administrator account by editing database rows directly. A login form reporting invalid credentials points to a rejected password/account or a database mismatch; a CSRF 403 or repeated login redirect should be investigated as a proxy, HTTPS, cookie, or session issue instead. See [the troubleshooting guide](../TROUBLESHOOTING.md).
 
 ```sh
 sudo systemd-run --wait --pipe --collect --unit=wbpsc-deploy-check \

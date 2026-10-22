@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sitemaps",
     "django.contrib.staticfiles",
     "accounts.apps.AccountsConfig",
     "access_control.apps.AccessControlConfig",
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -47,8 +49,10 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.views.social_links_context",
             ],
         },
     },
@@ -57,13 +61,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-DATABASES = {
+# Optional profile links stay out of templates unless an operator configures
+# verified HTTPS destinations in the process environment.
+SOCIAL_LINKS = {
+    "Facebook": os.environ.get("SOCIAL_FACEBOOK_URL", "").strip(),
+    "Instagram": os.environ.get("SOCIAL_INSTAGRAM_URL", "").strip(),
+    "Telegram": os.environ.get("SOCIAL_TELEGRAM_URL", "").strip(),
+    "YouTube": os.environ.get("SOCIAL_YOUTUBE_URL", "").strip(),
+}
+
+""" DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
+ """
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -71,7 +84,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+LANGUAGES = [
+    ("en", "English"),
+    ("hi", "हिन्दी"),
+    ("bn", "বাংলা"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True

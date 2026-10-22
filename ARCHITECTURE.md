@@ -5,7 +5,7 @@
 
 ## Goals and constraints
 
-The platform will provide free learning resources, timed mock examinations, student accounts and attempt history, administration, and a path to future memberships and paid tests. It must work on mobile devices and slower connections and support Bengali and English learning materials.
+The platform will provide free learning resources, timed mock examinations, student accounts and attempt history, administration, and a path to future memberships and paid tests. It must work on mobile devices and slower connections. The application interface and mock exams support English, Hindi, and Bengali; free study-material and previous-year-question content remains limited to its existing English/Bengali editorial workflow.
 
 The initial technology baseline is Python 3.13, Django 5.2.18 LTS, Psycopg 3.3.6, PostgreSQL, Django templates, HTML, CSS, vanilla JavaScript, Nginx, Gunicorn, OCI, and Git. Exact Python package pins are recorded in `requirements.txt`; rationale and official version references are in [Decision 0002](docs/decisions/0002-runtime-versions.md). The INR 5,000–15,000 monthly infrastructure figure is a planning target, not a guaranteed cost or capacity. Review supported versions and security updates deliberately; do not silently change major versions.
 
@@ -28,7 +28,11 @@ Canonical application boundaries are reserved as follows. Create an application 
 
 ### Exam engine modules (Phase 3)
 
-Implemented modules are `exam_engine.models` (six exam entities), `exam_engine.services` (atomic lifecycle and score operations), `exam_engine.views` and `exam_engine.urls` (public descriptions and authenticated attempt requests), `exam_engine.forms` (Django admin inline validation), `exam_engine.admin` (staff authoring and read-only attempt inspection), `exam_engine.apps` (Django registration), `exam_engine.tests` (PostgreSQL-backed lifecycle and permission coverage), and `exam_engine.migrations.0001_initial` (initial schema). Templates live under `templates/exam_engine/`; browser behavior and styling are `static/exam_engine/exam.js` and `exam.css`. Keep these names and responsibilities stable. Do not add parallel modules or duplicate models; a new module requires an approved requirement that the existing responsibilities cannot reasonably own. Do not introduce `accounts`, `access_control`, or `payments` in this phase.
+Implemented modules are `exam_engine.models` (six core exam entities plus `QuestionTranslation`, `QuestionOptionTranslation`, and `MockTestTranslation`), `exam_engine.services` (atomic lifecycle, locale-completeness checks, and score operations), `exam_engine.views` and `exam_engine.urls` (public descriptions, language selection, and authenticated attempt requests), `exam_engine.forms` (Django admin inline validation), `exam_engine.admin` (staff authoring, locale preview/completeness, and read-only attempt inspection), `exam_engine.apps` (Django registration), `exam_engine.tests` (lifecycle, locale, and permission coverage), and additive `exam_engine.migrations.0002_mocktest_instructions_mocktest_language_and_more` (language-aware schema). Templates live under `templates/exam_engine/`; browser behavior and styling are `static/exam_engine/exam.js` and `exam.css`. Django UI catalogs live under `locale/hi/` and `locale/bn/`. Keep these names and responsibilities stable. Do not add parallel modules or duplicate models; a new module requires an approved requirement that the existing responsibilities cannot reasonably own. Do not introduce `accounts`, `access_control`, or `payments` in this phase.
+
+### Mock-exam language handling
+
+Question prompts, option labels, and explanations use translation rows owned by `exam_engine`; stable `QuestionOption` rows remain the shared option identities and correctness key. A test stores one source language and may have localized metadata. The service advertises and starts only a language with published, complete test metadata and all required question, option, and (when present in the source) explanation text. The attempt stores its selected language; switching changes only presentation and preserves its timer, response identities, and score key. Translation wording and test wording freeze with the existing exam graph after the first attempt. Existing test language is nullable and must be reviewed and assigned by staff rather than inferred; attempted question/test graphs stay frozen, while unused tests can be reviewed before assignment. Free-content models and previous-year question papers are not expanded with Hindi content by this decision.
 
 ### Implemented content modules
 
@@ -40,6 +44,8 @@ Implemented modules are `exam_engine.models` (six exam entities), `exam_engine.s
 | `content.urls` | Namespaced approved public archive and detail routes plus preview/file routes. |
 | `content.admin` | Staff editing, classification inline, preview link, publication controls and file visibility administration. |
 | `content.tests` | PostgreSQL-backed route, rendering, publication and preview boundary tests. |
+
+The blog extends `content.models.ContentPage` with optional blog category, byline, and featured-image fields; `BlogCategory` is the editorial taxonomy because exam `Topic` is scoped to subject content. `content.views`/`content.urls` own public blog pages and publication-checked image delivery, while `content.sitemaps` lists only public articles and non-empty categories. `config.views.social_links_context` exposes validated optional HTTPS profile URLs from deployment configuration. Keep blog content in this existing content boundary; do not create a parallel blog app or content table.
 
 ### Accounts and access modules (Phase 4)
 
@@ -94,6 +100,7 @@ Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Obj
 | Background jobs/cache | None initially, to avoid operating unused services | Measured need for asynchronous work or caching with a safe invalidation design |
 | Account model | Use Django's built-in user model for the foundation; no custom account behavior is confirmed | Confirmed product requirements that require custom authentication identity fields, with a reviewed migration and maintenance plan before account features are built |
 | Test history | Freeze the question/test graph at first attempt; use new Question and MockTest records for revisions, avoiding version/snapshot/result tables | Demonstrated editorial errors or a required historical audit/reporting workflow that cannot be met by the frozen graph |
+| Exam languages | Store localized prompt/option/explanation and test metadata beside one logical exam graph; keep stable option rows and correctness shared | Evidence that translation completeness, language-specific editing, or reporting needs cannot be met safely by the approved translation relationships |
 
 ## Related documents
 
@@ -102,3 +109,4 @@ Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Obj
 - [Data model requirements](docs/requirements/data-model.md)
 - [Security requirements](docs/requirements/security-requirements.md)
 - [Decision record 0001](docs/decisions/0001-initial-architecture.md)
+- [Decision record 0007: multilingual mock exams](docs/decisions/0007-multilingual-mock-exams.md)

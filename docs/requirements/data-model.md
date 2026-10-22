@@ -1,6 +1,6 @@
 # Preliminary Data Model
 
-**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model and adds no database entities; Phase 5A demo materials also reuse existing entities without a migration.
+**Status:** Phase 2 content and Phase 3 exam models are implemented. The approved multilingual exam extension adds three translation entities and additive schema in `exam_engine.0002`. Phase 4 preserves Django's built-in user model. Phase 5A demo materials reuse existing entities; the blog extension adds `BlogCategory` and optional editorial fields on `ContentPage` in migration `content.0002`.
 
 ## Relationship outline
 
@@ -10,18 +10,21 @@ ExamCategory/ExamStage 1 ─── * ResourceMetadata
 Subject 1 ─── * Topic
 ContentPage 1 ─── 0..1 ResourceMetadata 1 ─── * ResourceFile
 Topic 1 ─── * ResourceMetadata
+BlogCategory 1 ─── * ContentPage (optional article classification)
 
 Subject/Topic 1 ─── * Question 1 ─── * QuestionOption
 MockTest 1 ─── * MockTestQuestion * ─── 1 Question
 User 1 ─── * TestAttempt 1 ─── * AttemptResponse * ─── 1 MockTestQuestion
 AttemptResponse 0..1 ─── 1 QuestionOption
+Question 1 ─── * QuestionTranslation 1 ─── * QuestionOptionTranslation * ─── 1 QuestionOption
+MockTest 1 ─── * MockTestTranslation
 
 User 1 ─── * Entitlement (future)
 User 1 ─── * PaymentTransaction (future)
 LearningResource/Question/MockTest ─── * File reference (as required)
 ```
 
-This is a logical relationship sketch. The exam entities are scoped below. The foundation uses Django's built-in user model; account registration/profile work remains in the accounts phase. `MockTestQuestion` is the ordered through model and owns per-test marks. The approved immutability rule after a first attempt preserves historical meaning without version/snapshot tables.
+This is a logical relationship sketch. The exam entities are scoped below. The foundation uses Django's built-in user model; account registration/profile work remains in the accounts phase. `MockTestQuestion` is the ordered through model and owns per-test marks. `QuestionOptionTranslation` links localized labels to stable shared option rows; it does not copy correctness. `TestAttempt.language_code` records the presentation language. The approved immutability rule after a first attempt preserves historical meaning without version/snapshot tables.
 
 ## Approved Phase 2 content entities
 
@@ -33,11 +36,12 @@ This is a logical relationship sketch. The exam entities are scoped below. The f
 | ExamStage | ExamCategory relation, name, slug, display order | Slug is unique within its category; a resource's stage must belong to its category. |
 | Subject | Name, unique slug, description, active state | Stable subject taxonomy shared by content now and questions later. |
 | Topic | Subject relation, optional parent topic, name, slug, display order | Slug uniqueness is scoped to its subject; validate parent topic belongs to the same subject and reject cycles. |
-| ContentPage | Title, globally unique slug, summary/body, language, publication state, `published_at`, SEO title/description, audit timestamps and staff authors | Drafts are invisible publicly. Publication requires valid content and a publication timestamp. Staff preview checks staff permission server-side. |
+| ContentPage | Title, globally unique slug, summary/body, language, publication state, `published_at`, SEO title/description, audit timestamps and staff authors; optional `BlogCategory`, byline, featured image and image alt text | One canonical editorial body serves study materials and blog articles. Drafts are invisible publicly. Blog images are signature/size checked, use alt text when published, and are streamed only through publication-checked routes. |
+| BlogCategory | Name, unique slug, optional description | Separate editorial taxonomy; public categories appear only while they contain a currently published article. Referenced categories cannot be deleted while articles use them. |
 | ResourceMetadata | One-to-one ContentPage relation, ExamCategory, optional ExamStage, optional year, resource type, optional Subject/Topic | Stores exam and learning-resource classification without duplicating page body or publication state. Validate stage/category and topic/subject consistency. |
 | ResourceFile | ResourceMetadata relation, uploaded file/storage key, original filename, content type, size, visibility (`public` or `restricted`), display order | Files are not served by a direct `MEDIA_URL`. Public delivery requires a published page and public visibility. Restricted files stay outside public web roots and have no public endpoint in this phase. |
 
-Use UTF-8 text fields for Bengali and English; language is explicit metadata. `ContentPage` is the canonical body and publication record, while `ResourceMetadata` is optional classification for resource pages. File metadata is separate so pages can have zero or multiple documents. Avoid a rich-text or translation dependency until an editorial requirement justifies one.
+Use UTF-8 text fields for Bengali and English free-content records; language is explicit metadata. Hindi is not added to the free previous-year-paper workflow. The shared application UI and mock-exam content support English, Hindi, and Bengali. `ContentPage` is the canonical body and publication record, while `ResourceMetadata` is optional classification for resource pages. File metadata is separate so pages can have zero or multiple documents. Avoid a rich-text or translation dependency until an editorial requirement justifies one.
 
 Create database indexes for common public listings and filters (publication state/time, category/stage/year/type, and subject/topic) only after defining the corresponding query shape. Slug fields and scoped uniqueness constraints provide the lookup indexes where appropriate. Validate year bounds, language values, metadata relationships, file type/size, and publication requirements on the server; use database constraints for single-table invariants and model/form validation for cross-table relationships.
 
@@ -59,6 +63,10 @@ For example, `/free-resources/wbcs/prelims/2024/solutions/` is a public solution
 
 The local demo study-material set adds no model or migration. Exam-to-subject membership is represented by the existing `ResourceMetadata.category` and `.subject` relationship; page body, publication state, title, slug, and year remain on `ContentPage` and `ResourceMetadata`. Demo identity uses a reserved `demo-` slug prefix plus clear editorial text in the title, summary, and body rather than an additional schema flag; the public detail banner recognizes that prefix.
 
+### Blog extension (`content.0002`)
+
+The blog reuses `ContentPage` for body, slug, language, publication state/time, summary, SEO metadata, and audit fields. Its optional `blog_category`, `author_name`, `featured_image`, and `featured_image_alt` fields add the article presentation details. `BlogCategory` is separate because exam `Topic` belongs to a `Subject` and is not a general editorial category. The migration is additive and preserves existing rows; no article records are seeded automatically. Category/archive/article paths are `/blog/`, `/blog/category/<category-slug>/`, and `/blog/<article-slug>/`. Only published articles and categories with published articles enter `/sitemap.xml`.
+
 ## Approved Phase 3 exam entities
 
 | Entity | Responsibilities and invariants |
@@ -70,11 +78,26 @@ The local demo study-material set adds no model or migration. Exam-to-subject me
 | TestAttempt | Student, test, state (`in_progress`, `submitted`, `expired`), server timestamps, score and correct/incorrect/unanswered totals. One active attempt per student/test. |
 | AttemptResponse | One row per attempt/test-question with nullable selected option and server update time. Selected option must belong to the joined question. |
 
+### Approved multilingual mock-exam extension
+
+The exam UI and mock-test content support `en`, `hi`, and `bn` from the initial release. Django's `LocaleMiddleware`, standard language-selection endpoint, message catalogs, and template translation tags localize interface text. Free previous-year-paper content remains in its existing English/Bengali workflow; no Hindi content field or PDF transformation is added.
+
+| Entity/field | Shared or translated data | Integrity and migration notes |
+| --- | --- | --- |
+| `Question.language` | Source language of the logical question; source prompt, explanation, publication flag, subject/topic, and options remain on `Question`/`QuestionOption` | Widen `max_length` from 2 to 10 and add Hindi to choices. Existing values are preserved. |
+| `QuestionTranslation` | One row per question/locale with translated prompt, explanation, and publication state | Unique by question and locale. Source-language duplication is rejected. Published locale must have all option labels and required explanation text. |
+| `QuestionOptionTranslation` | Localized label for one existing `QuestionOption` identity | Unique by translation/option; option must belong to the same logical question. `QuestionOption.is_correct` remains the only answer key. |
+| `MockTest.language` and `instructions` | Source language and source instructions stay on `MockTest`; duration, availability, slug, scoring composition and source description stay shared | New language is nullable for legacy tests. Existing rows are not guessed or bulk assigned; staff can assign a verified language before any attempt. Attempted graphs remain immutable and must be reauthored as new questions/tests if needed. |
+| `MockTestTranslation` | Localized title, description, instructions, and locale publication state | Unique by test/locale. A language is available only when metadata and every contained question variant are published and complete. |
+| `TestAttempt.language_code` | Selected locale for this attempt; answers, question identities, timing and score are shared | Nullable only to preserve old attempt history. All new starts require an explicit available locale. Language switching updates this field only. |
+
+For a translated question, the prompt, every option label, and an explanation are required when the source question has an explanation. A language is never silently filled from another locale. Unpublished or incomplete variants are omitted from public availability and rejected by the start and switch services. Content wording remains immutable after an attempt starts; closing a locale can stop new selections while an existing attempt continues to render its recorded language. The additive migration does not seed translations, change existing attempt rows, or rewrite content.
+
 There is no separate result table: final score/counts live atomically on `TestAttempt`. There are no version tables: the test/question graph becomes immutable after its first attempt; editors create new records for revisions. `finalized_at` records the terminal transition for both submission and expiry; `submitted_at` is set only for student submission.
 
 ## Future entities and responsibilities
 
-The Phase 3 entities above are implemented and must not be recreated under alternate names. `Subject` and `Topic` are owned by `content`; `Question`, `QuestionOption`, `MockTest`, `MockTestQuestion`, `TestAttempt`, and `AttemptResponse` are owned by `exam_engine`. Future phases may add only genuinely new entities after requirements and decisions are approved.
+The Phase 3 entities above are implemented and must not be recreated under alternate names. `Subject` and `Topic` are owned by `content`; `Question`, `QuestionOption`, `MockTest`, `MockTestQuestion`, `TestAttempt`, `AttemptResponse`, `QuestionTranslation`, `QuestionOptionTranslation`, and `MockTestTranslation` are owned by `exam_engine`. Future phases may add only genuinely new entities after requirements and decisions are approved.
 
 | Entity | Candidate fields / relationships | Integrity and lifecycle notes |
 | --- | --- | --- |

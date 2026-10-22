@@ -1,18 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create student account | WBPSC Mock Exam Platform</title>
-    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a></header>
-    <main class="page-shell article">
-        <h1>Create student account</h1>
-        <p>New accounts are students. Administrative access is granted separately by an administrator.</p>
-        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Create account</button></form>
-        <p>Already registered? <a href="{% url 'login' %}">Sign in</a>.</p>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Create student account | WBPSC Exam Prep" %}{% endblock %}
+{% block content %}
+<section class="article" aria-labelledby="page-title">
+    <p class="eyebrow">{% trans "Get started" %}</p><h1 id="page-title">{% trans "Create a student account" %}</h1>
+    <p class="lead">{% trans "Save your mock-test activity and return to your preparation when it suits you." %}</p>
+    <div class="form-card"><p>{% trans "New accounts are students. Administrative access is granted separately by an administrator." %}</p>
+        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{% trans "Create account" %}</button></form>
+    </div>
+    <p>{% trans "Already registered?" %} <a href="{% url 'login' %}">{% trans "Sign in" %}</a>.</p>
+</section>
+{% endblock %}

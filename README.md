@@ -44,6 +44,26 @@ Registration uses Django's built-in user model and creates ordinary student acco
 
 Exam logic stays in the existing `exam_engine` modules: `models.py`, `services.py`, `views.py`, `urls.py`, `forms.py`, `admin.py`, and `tests.py`. Templates and browser assets are under `templates/exam_engine/` and `static/exam_engine/`. Do not create duplicate model or service modules; future work should extend these named boundaries unless an approved requirement demonstrates a responsibility they cannot own.
 
+### Mock-exam languages
+
+The site interface and mock exams support English, Hindi, and Bengali. Use the language selector in the shared header for the interface and choose a test language on its public detail page before starting. During an attempt, use **Change exam language**; pending answer saves are completed first, and the server retains the original deadline and response IDs. Free study-material and previous-year-paper records remain in their current English/Bengali workflow; this does not translate their authored text or PDFs.
+
+In Django admin, set the source language on each question and mock test. Add question translations from the Question admin's **Manage question translations** link; provide a prompt, every option label, and an explanation whenever the source has one. The preview and completeness status are staff-only. Add test metadata translations in the MockTest translation inline. The **Ready languages** column and public page list only complete, published test variants. Existing tests receive no guessed language during migration and remain unavailable until reviewed by staff. A test/question graph with prior attempts is immutable; keep it for history and author new question/test records if its language cannot safely be assigned without changing historical meaning.
+
+The source catalogs are `locale/hi/LC_MESSAGES/django.po` and `locale/bn/LC_MESSAGES/django.po`; the compiled `.mo` files are committed for runtime use. When editing catalogs, run `python manage.py makemessages -l hi -l bn`, update translations, then run `python manage.py compilemessages -l hi -l bn` with GNU gettext available. Commit both catalog sources and compiled files. No new Python dependency is needed.
+
+To try the mock-test workflow locally, use development settings and run the explicit demo loader:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = "config.settings.development"
+python manage.py migrate
+python manage.py seed_demo_mock_test
+```
+
+Open `/mock-tests/demo-wbpsc-multilingual-practice/`, select English, Hindi, or Bengali, then sign in or register to start. The command creates one 10-minute test with five original illustrative history questions, four options each, explanations, and complete translations in all three languages. It is `DEBUG=True` only, repeatable, conflict-safe, and never runs during startup or deployment. Correct options use the shared answer key and appear to students only after submission or expiry. The examples are local workflow placeholders, not an official or verified WBPSC paper. Demo data is not loaded automatically, and development and production databases remain separate.
+
+The additive migration is `exam_engine.0002_mocktest_instructions_mocktest_language_and_more`. Review its plan and back up the target database before applying it in a deployment. It preserves old records but does not infer source-language metadata or seed translations. See [Decision 0007](docs/decisions/0007-multilingual-mock-exams.md) for the data model, admin workflow, and rollout notes.
+
 ## Content editorial workflow
 
 1. Sign in to `/admin/` with an authorized staff account.
@@ -67,6 +87,16 @@ python manage.py seed_demo_study_materials
 The command only runs when `DEBUG=True`, creates missing rows by stable slugs, refuses conflicting records, and never deletes or silently edits existing content. It is an explicit local command and is not part of startup or deployment. It creates WBPSC Clerkship and WBCS demos with History, General Studies, Mathematics, and Geography mappings, two sample years per exam/subject pairing, and three original illustrative multiple-choice questions per paper. Demo pages are published to test public navigation and every page warns that its content is not authentic or verified official WBPSC material. No PDF is required.
 
 Try `/free-resources/`, `/free-resources/wbpsc-clerkship/`, `/free-resources/wbpsc-clerkship/history/`, and `/free-resources/wbpsc-clerkship/history/demo-wbpsc-clerkship-history-2023-previous-question-paper/`. Existing stage/year/resource archives under `/free-resources/` remain available.
+
+## Blog publishing and social profiles
+
+The blog reuses `ContentPage` for article text, slug, excerpt (`summary`), publication status/date and SEO fields. Create categories under **Blog categories** in Django admin, then create a **Content page** and select a blog category. Set the author display name, optional featured image and descriptive image alt text. Save as a draft to preview through the existing staff-only preview link. Publish by checking **Is published**; public URLs use `/blog/<article-slug>/`, category archives use `/blog/category/<category-slug>/`, and `/blog/` lists published articles. A featured image is optional; accepted uploads are JPG, PNG or WebP up to 5 MB, and published images require alt text. Images are stored under `MEDIA_ROOT` and served through publication-checked Django routes, not a public media alias.
+
+Published blog articles appear in `/sitemap.xml` with only categories that have published articles. Public articles and free study-material pages include share and copy-link controls; native sharing is used when the browser supports it, and copy status is announced accessibly. These controls use browser APIs only and do not load a social feed or third-party script.
+
+The footer's **Follow Us** links are optional and blank by default. Configure verified profile URLs with `SOCIAL_FACEBOOK_URL`, `SOCIAL_INSTAGRAM_URL`, `SOCIAL_TELEGRAM_URL`, and `SOCIAL_YOUTUBE_URL` in the local process environment or the protected production environment file. Only HTTPS destinations are rendered, and links open with `noopener noreferrer`. YouTube stays in the footer so the main navigation remains focused.
+
+For new deployments, review the additive `content.0002` migration with `python manage.py migrate --plan`, back up the database and uploaded media, then apply it using the documented release procedure in [deploy/README.md](deploy/README.md). Existing records remain valid and no blog data is seeded automatically.
 
 ## Verification commands
 

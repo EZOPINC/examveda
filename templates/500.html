@@ -1,15 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Service error</title>
-</head>
-<body>
-    <main>
-        <h1>Something went wrong</h1>
-        <p>Please try again later.</p>
-        <a href="/">Return to the home page</a>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Service error | WBPSC Exam Prep{% endblock %}
+{% block content %}<section class="article"><p class="eyebrow">Service message</p><h1>Something went wrong</h1><p class="lead">Please try again in a little while.</p><a class="button" href="{% url 'home' %}">Return to the home page</a></section>{% endblock %}

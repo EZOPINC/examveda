@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_preview %}Staff article preview | WBPSC Exam Prep{% else %}{{ article.seo_title|default:article.title }} | WBPSC Exam Prep Blog{% endif %}{% endblock %}
+{% block meta_description %}{% if is_preview %}Staff-only blog article preview.{% else %}{{ article.seo_description|default:article.summary|default:article.title }}{% endif %}{% endblock %}
+{% block og_title %}{% if is_preview %}WBPSC staff article preview{% else %}{{ article.seo_title|default:article.title }}{% endif %}{% endblock %}
+{% block og_description %}{% if is_preview %}Staff-only blog article preview.{% else %}{{ article.seo_description|default:article.summary|default:article.title }}{% endif %}{% endblock %}
+{% block og_type %}{% if is_preview %}website{% else %}article{% endif %}{% endblock %}
+{% block og_image %}{% if article.featured_image and not is_preview %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% url 'content:blog_featured_image' article.pk %}">{% endif %}{% endblock %}
+{% block robots %}{% if is_preview %}noindex, nofollow{% else %}index, follow{% endif %}{% endblock %}
+{% block canonical %}{% if not is_preview %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endif %}{% endblock %}
+{% block content %}
+<div class="blog-article-shell">
+    {% if is_preview %}<p class="preview-notice">Staff preview · This draft is not published publicly.</p>{% endif %}
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:blog_index' %}">Blog</a></li><li><a href="{% url 'content:blog_category' article.blog_category.slug %}">{{ article.blog_category.name }}</a></li><li aria-current="page">{{ article.title }}</li></ol></nav>
+    <article class="blog-article">
+        <p class="eyebrow"><a href="{% url 'content:blog_category' article.blog_category.slug %}">{{ article.blog_category.name }}</a></p>
+        <h1>{{ article.title }}</h1>
+        {% if article.summary %}<p class="lead">{{ article.summary }}</p>{% endif %}
+        <p class="article-byline">By <strong>{{ author_display }}</strong> · {% if article.published_at %}<time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"F j, Y" }}</time>{% else %}<span>Draft preview</span>{% endif %}</p>
+        {% if article.featured_image %}<figure class="featured-image"><img src="{% if is_preview %}{% url 'content:preview_featured_image' article.pk %}{% else %}{% url 'content:blog_featured_image' article.pk %}{% endif %}" alt="{{ article.featured_image_alt }}" fetchpriority="high"><figcaption>{{ article.featured_image_alt }}</figcaption></figure>{% endif %}
+        <div class="article-body" lang="{{ article.language }}">{{ article.body|linebreaks }}</div>
+        {% if not is_preview %}{% include 'content/share_controls.html' with share_title=article.title %}{% endif %}
+    </article>
+    <aside class="learning-links" aria-labelledby="learning-links-heading">
+        <h2 id="learning-links-heading">Continue learning</h2>
+        <ul>
+            <li><a href="{% url 'content:resource_list' %}">Browse free study materials</a></li>
+            {% if contextual_links.exam_url %}<li><a href="{{ contextual_links.exam_url }}">{{ article.resource.category.name }} subjects and resources</a></li>{% endif %}
+            {% if contextual_links.subject_url %}<li><a href="{{ contextual_links.subject_url }}">{{ article.resource.subject.name }} study materials</a></li>{% endif %}
+            {% if contextual_links.papers_url %}<li><a href="{{ contextual_links.papers_url }}">Previous-year papers for {{ article.resource.subject.name }}</a></li>{% endif %}
+            <li><a href="{% url 'exam_engine:mock_test_list' %}">Practise with mock tests</a></li>
+        </ul>
+    </aside>
+    {% if related_articles %}<section aria-labelledby="related-articles-heading"><h2 id="related-articles-heading">Related articles</h2><div class="blog-grid">{% for related in related_articles %}<article class="blog-card">
+        {% if related.featured_image %}<a class="blog-card-image" href="{% url 'content:blog_detail' related.slug %}"><img src="{% url 'content:blog_featured_image' related.pk %}" alt="{{ related.featured_image_alt }}" loading="lazy" decoding="async"></a>{% endif %}
+        <div class="blog-card-body"><p class="eyebrow">{{ related.blog_category.name }}</p><h3><a href="{% url 'content:blog_detail' related.slug %}">{{ related.title }}</a></h3>{% if related.summary %}<p>{{ related.summary }}</p>{% endif %}<time class="resource-meta" datetime="{{ related.published_at|date:'c' }}">{{ related.published_at|date:"F j, Y" }}</time></div>
+    </article>{% endfor %}</div></section>{% endif %}
+</div>
+{% if not is_preview %}<script type="application/ld+json">{{ json_ld|safe }}</script>{% endif %}
+{% endblock %}

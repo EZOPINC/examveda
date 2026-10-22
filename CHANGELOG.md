@@ -2,6 +2,44 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-22 — Runtime dependency markers
+
+- Reviewed Python imports and deployment configuration; the pinned Django, Psycopg, and Gunicorn packages cover the runtime with no extra Python dependency required.
+- Marked Gunicorn as Linux-only because local Windows development uses Django's `runserver`; retained the exact production pin. GNU gettext remains an optional system tool for compiling translation catalogs, not a runtime Python package.
+
+## 2026-10-22 — Local mock-test demo data
+
+- Added `seed_demo_mock_test`, an explicit `DEBUG=True`-only, idempotent and conflict-safe command that creates one five-question sample test with shared answer keys and complete English, Hindi, and Bengali text.
+- Added regression tests for repeat loading, language completeness, conflicting editorial data, and production-style settings refusal. No schema changes, dependencies, or automatic startup/deployment seeding.
+
+## 2026-10-22 — English, Hindi, and Bengali mock exams
+
+- Added `QuestionTranslation`, `QuestionOptionTranslation`, and `MockTestTranslation` in `exam_engine`; stable option rows and one shared correctness key continue to drive scoring. Migration `exam_engine.0002` is additive and leaves legacy test/attempt language fields nullable for staff review.
+- Added complete-language availability checks, explicit language selection before start, attempt-level language persistence/switching, localized active/review views, and staff translation preview/completeness controls. Incomplete or unpublished language variants are not listed, started, or newly selected.
+- Added Django interface catalogs for Hindi and Bengali with compiled runtime catalogs, shared language controls, account/home and mock-exam UI translations, and local script-font fallbacks. Free previous-year-paper text/PDF workflow remains unchanged and does not receive Hindi translations.
+- Added regression coverage for language completeness, publication, shared correctness, answer/timer preservation during switching, localized rendering, legacy-safe locale handling, and source-question publication. No app, dependency, payment, PDF, or production-data change.
+
+## 2026-10-22 — Blog and social integration
+
+- Added public blog index, category and article routes using the existing `ContentPage` editorial lifecycle, plus a dedicated editorial `BlogCategory` and optional author/featured-image fields in additive migration `content.0002`.
+- Added staff-only draft image preview and publication-checked public image delivery with size/type/signature validation, canonical/SEO/Open Graph metadata, published-only Article JSON-LD and sitemap entries.
+- Added configurable HTTPS-only Facebook, Instagram, Telegram and YouTube footer links, plus accessible browser share/copy controls on blog and free study-material pages.
+- Added regression coverage for publishing boundaries, structured-data escaping, image access and social link safety. No new dependency or frontend framework.
+
+## 2026-10-22 — Application-wide UI and SEO refresh
+
+- Added a shared responsive Django base template with consistent navigation, skip link, footer, typography, controls, cards, breadcrumbs, forms, and page metadata.
+- Reworked home, study-material, mock-test, account, result, error, and examination templates while retaining named URLs, form actions, access checks, content fields, and exam JavaScript hooks.
+- Added unique public page titles/descriptions, canonical URLs, Open Graph tags, and public/private `robots` policies; staff previews use generic SEO metadata and are marked `noindex`.
+- Added regression assertions for public metadata and private-page indexing. No model, migration, dependency, URL, or runtime setting changes.
+
+## 2026-10-22 — OCI admin database diagnosis
+
+- Documented that Django admin and application data share the single PostgreSQL `default` alias; there is no admin-only SQLite connection or database router.
+- Added safe OCI runbook steps to inspect Gunicorn's effective database identity and account flags, and to create/reset an administrator using the exact runtime EnvironmentFile.
+- Added troubleshooting guidance. The live OCI cause remains unconfirmed until the instance's runtime database identity and user flags are checked by an authorized operator.
+- No application settings, database data, credentials, or production infrastructure were changed.
+
 ## 2026-10-21 — Phase 6 OCI deployment preparation
 
 - Added a pinned Gunicorn dependency and initial systemd/Nginx configuration for a single-host pilot, with Gunicorn and PostgreSQL limited to loopback and no public media alias.

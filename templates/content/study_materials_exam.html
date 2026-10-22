@@ -1,23 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ category.name }} Study Materials | WBPSC Mock Exam Platform</title>
-    <meta name="description" content="Browse free subjects and study materials for {{ category.name }}.">
-    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'content:resource_list' %}">Free Study Materials</a> <a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a>{% if user.is_authenticated %}<a href="{% url 'accounts:profile' %}">My account</a>{% else %}<a href="{% url 'login' %}">Sign in</a> <a href="{% url 'accounts:register' %}">Register</a>{% endif %}</nav></header>
-    <main class="page-shell">
-        <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:resource_list' %}">Free Study Materials</a></li><li aria-current="page">{{ category.name }}</li></ol></nav>
-        <h1>{{ category.name }}</h1>
-        {% if category.description %}<p class="lead">{{ category.description }}</p>{% endif %}
-        <section aria-labelledby="subjects-heading"><h2 id="subjects-heading">Subjects</h2>
-            {% if subjects %}<ul class="resource-list">{% for subject in subjects %}<li class="resource-card"><h3><a href="{% url 'content:exam_subject_list' category.slug subject.slug %}">{{ subject.name }}</a></h3><p class="resource-meta">{{ subject.paper_count }} previous-year paper{{ subject.paper_count|pluralize }}{% if subject.latest_year %} · Latest year {{ subject.latest_year }}{% endif %}</p></li>{% endfor %}</ul>
-            {% else %}<p class="empty-state">No published subjects are available for this examination yet.</p>{% endif %}
-        </section>
-        {% if resources %}<section aria-labelledby="other-resources-heading"><h2 id="other-resources-heading">Other study materials</h2><ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3>{% if resource.resource and resource.resource.stage and resource.resource.year %}<a href="{% url 'content:resource_detail' category.slug resource.resource.stage.slug resource.resource.year resource.resource.resource_type resource.slug %}">{{ resource.title }}</a>{% else %}<a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a>{% endif %}</h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} Study Materials | WBPSC Exam Prep{% endblock %}
+{% block meta_description %}Browse free subjects and published study materials for {{ category.name }} WBPSC preparation.{% endblock %}
+{% block og_title %}{{ category.name }} Study Materials{% endblock %}
+{% block og_description %}Explore free {{ category.name }} study materials and subjects.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:resource_list' %}">Free Study Materials</a></li><li aria-current="page">{{ category.name }}</li></ol></nav>
+<p class="eyebrow">Examination</p><h1>{{ category.name }}</h1>
+{% if category.description %}<p class="lead">{{ category.description }}</p>{% endif %}
+<section aria-labelledby="subjects-heading"><h2 id="subjects-heading">Subjects</h2>
+    {% if subjects %}<ul class="resource-list">{% for subject in subjects %}<li class="resource-card"><span class="resource-badge">Subject</span><h3><a href="{% url 'content:exam_subject_list' category.slug subject.slug %}">{{ subject.name }}</a></h3><p class="resource-meta">{{ subject.paper_count }} previous-year paper{{ subject.paper_count|pluralize }}{% if subject.latest_year %} · Latest year {{ subject.latest_year }}{% endif %}</p></li>{% endfor %}</ul>
+    {% else %}<p class="empty-state">No published subjects are available for this examination yet.</p>{% endif %}
+</section>
+{% if resources %}<section aria-labelledby="other-resources-heading"><h2 id="other-resources-heading">Other study materials</h2><ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3>{% if resource.resource and resource.resource.stage and resource.resource.year %}<a href="{% url 'content:resource_detail' category.slug resource.resource.stage.slug resource.resource.year resource.resource.resource_type resource.slug %}">{{ resource.title }}</a>{% else %}<a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a>{% endif %}</h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+{% include 'content/share_controls.html' with share_title=category.name %}
+{% endblock %}

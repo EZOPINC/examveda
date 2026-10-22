@@ -1,8 +1,15 @@
-/* Provide touch-friendly controls while retaining the shared site styling. */
+/* Exam-only controls extend the shared site styling while keeping target sizes touch-friendly. */
+.exam-countdown { display: inline-flex; align-items: center; padding: .45rem .75rem; border: 1px solid #d5b74b; border-radius: .55rem; background: #fff8d9; color: #493b12; font-weight: 750; font-variant-numeric: tabular-nums; }
 .question-navigation { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
 .question-navigation button, .answer-form button, #submit-attempt-form button { min-width: 2.75rem; min-height: 2.75rem; padding: .5rem .75rem; }
-.question-panel { padding: 1rem; margin: 1rem 0; background: #fff; border: 1px solid #dce3e9; border-radius: .4rem; }
-.answer-option { display: flex; gap: .65rem; align-items: flex-start; padding: .7rem .5rem; }
-.answer-option input { width: 1.2rem; height: 1.2rem; flex: 0 0 auto; }
-.score-summary { display: grid; grid-template-columns: auto 1fr; gap: .25rem 1rem; max-width: 22rem; }
+.question-panel { padding: clamp(1rem, 3vw, 1.5rem); margin: 1rem 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.answer-form fieldset { min-width: 0; margin: 1rem 0; padding: .75rem; border: 1px solid var(--line); border-radius: .65rem; }
+.answer-form legend { padding: 0 .4rem; color: var(--muted); font-weight: 650; }
+.answer-option { display: flex; gap: .65rem; align-items: flex-start; padding: .7rem .5rem; border-radius: .4rem; cursor: pointer; }
+.answer-option:hover { background: #f4f8f6; }
+.answer-option input { width: 1.2rem; height: 1.2rem; flex: 0 0 auto; margin-top: .2rem; }
+.answer-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.answer-actions .button-secondary { border-color: var(--line); }
+.score-summary { display: grid; grid-template-columns: auto 1fr; gap: .25rem 1rem; max-width: 25rem; }
 .score-summary dd { margin: 0; font-weight: 700; }
+@media (max-width: 36rem) { .exam-countdown { max-width: 100%; } }

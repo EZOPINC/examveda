@@ -1,5 +1,6 @@
 """Verify publication boundaries, canonical URLs and rendered content."""
 
+from datetime import timedelta
 from io import StringIO
 
 from django.contrib.auth import get_user_model
@@ -12,7 +13,7 @@ from django.utils import timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .models import ContentPage, ExamCategory, ExamStage, ResourceMetadata, Subject, Topic
+from .models import BlogCategory, ContentPage, ExamCategory, ExamStage, ResourceMetadata, Subject, Topic, validate_blog_featured_image
 
 
 class ContentPublicationTests(TestCase):
@@ -41,6 +42,8 @@ class ContentPublicationTests(TestCase):
         detail = self.client.get(reverse("content:resource_detail", args=["wbcs", "prelims", 2024, "solutions", self.published.slug]))
         self.assertContains(listing, "WBCS 2024 Solutions")
         self.assertContains(detail, "Solution body")
+        self.assertContains(detail, 'name="robots" content="index, follow"')
+        self.assertContains(detail, '<link rel="canonical" href="http://testserver/free-resources/wbcs/prelims/2024/solutions/wbcs-2024-solutions/">')
 
     def test_draft_is_visible_only_in_staff_preview(self):
         """Staff can preview a draft while anonymous users cannot."""
@@ -48,6 +51,9 @@ class ContentPublicationTests(TestCase):
         response = self.client.get(reverse("content:preview_page", args=[self.draft.pk]))
         self.assertContains(response, "Private draft")
         self.assertContains(response, "not published publicly")
+        self.assertContains(response, 'name="robots" content="noindex, nofollow"')
+        self.assertContains(response, '<meta property="og:title" content="WBPSC staff preview">')
+        self.assertNotContains(response, '<meta property="og:title" content="Draft notes">')
 
     def test_staff_without_content_permission_cannot_preview(self):
         """Staff status alone does not grant the content view permission."""
@@ -212,7 +218,7 @@ class DemoStudyMaterialNavigationTests(TestCase):
         """The public landing links to both exams and previews subject/paper counts."""
         home = self.client.get(reverse("home"))
         self.assertContains(home, reverse("content:resource_list"))
-        self.assertContains(home, '<nav aria-label="Main navigation">')
+        self.assertContains(home, '<nav aria-label="Main navigation"')
         self.assertContains(home, '<a href="/free-resources/">Free Study Materials</a>')
 
         response = self.client.get(reverse("content:resource_list"))
@@ -320,3 +326,168 @@ class DemoStudyMaterialNavigationTests(TestCase):
 
         response = self.client.get(reverse("content:stage_list", args=[category.slug, stage.slug]))
         self.assertContains(response, "Legacy stage archive resource")
+
+
+class BlogPublishingTests(TestCase):
+    """Verify public blog rendering, publication boundaries and sitemap entries."""
+
+    @classmethod
+    def setUpTestData(cls):
+        """Prepare a category with published, related and draft editorial pages."""
+        cls.category = BlogCategory.objects.create(name="Exam Strategy", slug="exam-strategy", description="Practical WBPSC preparation guidance.")
+        cls.published = ContentPage.objects.create(
+            title="Plan a focused study week",
+            slug="plan-a-focused-study-week",
+            summary="A short plan for steady revision.",
+            body="Choose a goal for each session.",
+            blog_category=cls.category,
+            author_name="Editorial Team",
+            is_published=True,
+            published_at=timezone.now(),
+        )
+        cls.related = ContentPage.objects.create(
+            title="Build a revision habit",
+            slug="build-a-revision-habit",
+            summary="Small steps make revision easier.",
+            body="Keep a repeatable schedule.",
+            blog_category=cls.category,
+            is_published=True,
+            published_at=timezone.now() - timedelta(days=1),
+        )
+        cls.draft = ContentPage.objects.create(
+            title="Unpublished exam advice",
+            slug="unpublished-exam-advice",
+            body="This draft must stay private.",
+            blog_category=cls.category,
+        )
+
+    def test_blog_index_and_category_only_list_published_articles(self):
+        """Anonymous archives include published articles and crawlable metadata only."""
+        index = self.client.get(reverse("content:blog_index"))
+        category = self.client.get(reverse("content:blog_category", args=[self.category.slug]))
+
+        self.assertContains(index, self.published.title)
+        self.assertContains(index, self.related.title)
+        self.assertNotContains(index, self.draft.title)
+        self.assertContains(index, 'name="robots" content="index, follow"')
+        self.assertContains(index, reverse("content:blog_category", args=[self.category.slug]))
+        self.assertContains(category, self.published.title)
+        self.assertNotContains(category, self.draft.title)
+
+    def test_article_detail_has_canonical_article_schema_and_learning_links(self):
+        """Published detail includes structured metadata, related content and CTAs."""
+        exam = ExamCategory.objects.create(name="WBCS", slug="wbcs-blog")
+        subject = Subject.objects.create(name="History", slug="history-blog")
+        ResourceMetadata.objects.create(page=self.published, category=exam, subject=subject)
+
+        response = self.client.get(reverse("content:blog_detail", args=[self.published.slug]))
+
+        self.assertContains(response, '<link rel="canonical" href="http://testserver/blog/plan-a-focused-study-week/">')
+        self.assertContains(response, 'name="robots" content="index, follow"')
+        self.assertContains(response, 'type="application/ld+json"')
+        self.assertContains(response, '"@type": "Article"')
+        self.assertContains(response, "Editorial Team")
+        self.assertContains(response, self.related.title)
+        self.assertContains(response, reverse("content:exam_subject_list", args=[exam.slug, subject.slug]))
+        self.assertContains(response, reverse("exam_engine:mock_test_list"))
+        self.assertContains(response, 'data-share-controls')
+
+    def test_draft_articles_are_not_public_or_in_the_sitemap(self):
+        """Draft routes return 404 and sitemap output contains only public content."""
+        self.assertEqual(self.client.get(reverse("content:blog_detail", args=[self.draft.slug])).status_code, 404)
+        sitemap = self.client.get(reverse("sitemap"))
+        self.assertContains(sitemap, self.published.slug)
+        self.assertNotContains(sitemap, self.draft.slug)
+
+    def test_blog_preview_is_noindex_and_does_not_publish_draft_metadata(self):
+        """Authorized editorial previews use generic crawler and social metadata."""
+        editor = get_user_model().objects.create_superuser(
+            username="blog-preview-admin", email="blog-admin@example.test", password="secure-test-password"
+        )
+        self.client.force_login(editor)
+
+        response = self.client.get(reverse("content:preview_page", args=[self.draft.pk]))
+
+        self.assertContains(response, self.draft.title)
+        self.assertContains(response, 'name="robots" content="noindex, nofollow"')
+        self.assertContains(response, '<meta property="og:title" content="WBPSC staff article preview">')
+        self.assertNotContains(response, 'type="application/ld+json"')
+
+    def test_article_json_ld_escapes_script_breakout_characters(self):
+        """Database-authored titles cannot close the JSON-LD script element."""
+        unsafe_title = "</script><script>alert(1)</script>"
+        article = ContentPage.objects.create(
+            title=unsafe_title,
+            slug="script-safe-article",
+            body="Safe body.",
+            blog_category=self.category,
+            is_published=True,
+            published_at=timezone.now(),
+        )
+
+        response = self.client.get(reverse("content:blog_detail", args=[article.slug]))
+
+        self.assertContains(response, r"\u003C/script\u003E")
+        self.assertNotContains(response, unsafe_title)
+
+
+class BlogFeaturedImageAccessTests(TestCase):
+    """Verify image type checks and publication-aware featured-image delivery."""
+
+    VALID_PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 16
+
+    def test_featured_image_delivery_requires_a_published_article(self):
+        """Public image URLs stream only validated images of published blog pages."""
+        category = BlogCategory.objects.create(name="Study Skills", slug="study-skills")
+        with TemporaryDirectory() as media_dir:
+            with self.settings(MEDIA_ROOT=Path(media_dir)):
+                article = ContentPage.objects.create(
+                    title="A visual guide", slug="a-visual-guide", body="Image test.",
+                    blog_category=category, featured_image_alt="A notebook and pencil",
+                    featured_image=SimpleUploadedFile("guide.png", self.VALID_PNG, content_type="image/png"),
+                    is_published=True, published_at=timezone.now(),
+                )
+                image_url = reverse("content:blog_featured_image", args=[article.pk])
+                response = self.client.get(image_url)
+                try:
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response["Content-Type"], "image/png")
+                    self.assertEqual(b"".join(response.streaming_content), self.VALID_PNG)
+                    self.assertIn("no-store", response["Cache-Control"])
+                finally:
+                    response.close()
+
+                article.is_published = False
+                article.save()
+                self.assertEqual(self.client.get(image_url).status_code, 404)
+
+    def test_draft_image_is_available_only_through_staff_preview(self):
+        """Anonymous image requests cannot bypass the staff-only draft preview."""
+        category = BlogCategory.objects.create(name="Draft Category", slug="draft-category")
+        with TemporaryDirectory() as media_dir:
+            with self.settings(MEDIA_ROOT=Path(media_dir)):
+                draft = ContentPage.objects.create(
+                    title="Draft image", slug="draft-image", body="Private.", blog_category=category,
+                    featured_image_alt="Draft image description",
+                    featured_image=SimpleUploadedFile("draft.png", self.VALID_PNG, content_type="image/png"),
+                )
+                self.assertEqual(self.client.get(reverse("content:blog_featured_image", args=[draft.pk])).status_code, 404)
+                self.assertEqual(self.client.get(reverse("content:preview_featured_image", args=[draft.pk])).status_code, 302)
+
+                editor = get_user_model().objects.create_superuser(
+                    username="featured-image-editor", email="image-editor@example.test", password="secure-test-password"
+                )
+                self.client.force_login(editor)
+                response = self.client.get(reverse("content:preview_featured_image", args=[draft.pk]))
+                try:
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response["X-Robots-Tag"], "noindex, nofollow")
+                    self.assertIn("no-store", response["Cache-Control"])
+                finally:
+                    response.close()
+
+    def test_featured_image_validation_rejects_mismatched_content(self):
+        """An allowed extension alone does not make an upload an acceptable image."""
+        invalid = SimpleUploadedFile("not-an-image.png", b"not a real image")
+        with self.assertRaises(ValidationError):
+            validate_blog_featured_image(invalid)

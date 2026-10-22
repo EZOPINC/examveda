@@ -1,21 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ subject.name }} Previous-year Papers — {{ category.name }} | WBPSC Mock Exam Platform</title>
-    <meta name="description" content="Browse {{ subject.name }} previous-year papers for {{ category.name }}.">
-    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'content:resource_list' %}">Free Study Materials</a> <a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a>{% if user.is_authenticated %}<a href="{% url 'accounts:profile' %}">My account</a>{% else %}<a href="{% url 'login' %}">Sign in</a> <a href="{% url 'accounts:register' %}">Register</a>{% endif %}</nav></header>
-    <main class="page-shell">
-        <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:resource_list' %}">Free Study Materials</a></li><li><a href="{% url 'content:category_list' category.slug %}">{{ category.name }}</a></li><li aria-current="page">{{ subject.name }}</li></ol></nav>
-        <h1>{{ subject.name }} — Previous-year Question Papers</h1>
-        <p class="lead">{{ category.name }}</p>
-        {% if papers %}<ul class="resource-list">{% for paper in papers %}<li class="resource-card"><h2><a href="{% url 'content:previous_paper_detail' category.slug subject.slug paper.slug %}">{{ paper.title }}</a></h2>{% if paper.summary %}<p>{{ paper.summary }}</p>{% endif %}<p class="resource-meta">{{ paper.resource.year }} · {{ paper.get_language_display }}</p></li>{% endfor %}</ul>
-        {% else %}<p class="empty-state">No published previous-year papers are available for this subject yet.</p>{% endif %}
-        <nav class="back-links" aria-label="More study-material navigation"><a href="{% url 'content:category_list' category.slug %}">Back to {{ category.name }}</a><a href="{% url 'content:resource_list' %}">All Free Study Materials</a></nav>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}{{ subject.name }} Previous-year Papers | {{ category.name }}{% endblock %}
+{% block meta_description %}Browse published {{ subject.name }} previous-year question papers for {{ category.name }} WBPSC preparation.{% endblock %}
+{% block og_title %}{{ subject.name }} Previous-year Papers | {{ category.name }}{% endblock %}
+{% block og_description %}Find {{ subject.name }} previous-year question paper resources for {{ category.name }}.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:resource_list' %}">Free Study Materials</a></li><li><a href="{% url 'content:category_list' category.slug %}">{{ category.name }}</a></li><li aria-current="page">{{ subject.name }}</li></ol></nav>
+<p class="eyebrow">{{ category.name }}</p><h1>{{ subject.name }} — Previous-year Question Papers</h1>
+<p class="lead">Browse published papers and clearly labelled illustrative demonstrations.</p>
+{% if papers %}<ul class="resource-list">{% for paper in papers %}<li class="resource-card"><span class="resource-badge">{{ paper.resource.year }} · {{ paper.get_language_display }}</span><h2><a href="{% url 'content:previous_paper_detail' category.slug subject.slug paper.slug %}">{{ paper.title }}</a></h2>{% if paper.summary %}<p>{{ paper.summary }}</p>{% endif %}<a href="{% url 'content:previous_paper_detail' category.slug subject.slug paper.slug %}" aria-label="Open {{ paper.title }}">View paper <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>
+{% else %}<p class="empty-state">No published previous-year papers are available for this subject yet.</p>{% endif %}
+<nav class="back-links" aria-label="More study-material navigation"><a href="{% url 'content:category_list' category.slug %}">Back to {{ category.name }}</a><a href="{% url 'content:resource_list' %}">All Free Study Materials</a></nav>
+{% include 'content/share_controls.html' with share_title=subject.name %}
+{% endblock %}

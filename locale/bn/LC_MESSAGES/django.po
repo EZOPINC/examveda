@@ -1,0 +1,595 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WBPSC Exam Prep 1.0\n"
+"Language: bn\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Site language"
+msgstr "ওয়েবসাইটের ভাষা"
+
+msgid "Change language"
+msgstr "ভাষা পরিবর্তন করুন"
+
+msgid "WBPSC Mock Exam Platform home"
+msgstr "WBPSC পরীক্ষার প্রস্তুতির মূল পাতায় যান"
+
+msgid "Free Study Materials"
+msgstr "বিনামূল্যে পড়ার উপকরণ"
+
+msgid "Blog"
+msgstr "ব্লগ"
+
+msgid "Mock tests"
+msgstr "মক টেস্ট"
+
+msgid "My account"
+msgstr "আমার অ্যাকাউন্ট"
+
+msgid "Sign out"
+msgstr "সাইন আউট"
+
+msgid "Sign in"
+msgstr "সাইন ইন"
+
+msgid "Create account"
+msgstr "অ্যাকাউন্ট তৈরি করুন"
+
+msgid "Footer navigation"
+msgstr "ফুটার নেভিগেশন"
+
+msgid "Free resources and practice to support your WBPSC preparation."
+msgstr "আপনার WBPSC প্রস্তুতির জন্য বিনামূল্যে উপকরণ ও অনুশীলন।"
+
+msgid "Your preparation, one step at a time"
+msgstr "আপনার প্রস্তুতি, এক ধাপ করে এগিয়ে চলুন"
+
+msgid "Build confidence for your next WBPSC exam"
+msgstr "পরবর্তী WBPSC পরীক্ষার জন্য আত্মবিশ্বাস গড়ে তুলুন"
+
+msgid "Browse free study materials and practise with timed mock tests, all in one place."
+msgstr "এক জায়গায় বিনামূল্যে পড়ার উপকরণ দেখুন এবং সময়-নির্ধারিত মক টেস্টে অনুশীলন করুন।"
+
+msgid "Explore study materials"
+msgstr "পড়ার উপকরণ দেখুন"
+
+msgid "View mock tests"
+msgstr "মক টেস্ট দেখুন"
+
+msgid "Ways to prepare"
+msgstr "প্রস্তুতির উপায়"
+
+msgid "Study at your pace"
+msgstr "নিজের গতিতে পড়ুন"
+
+msgid "Browse by examination and subject"
+msgstr "পরীক্ষা ও বিষয় অনুযায়ী দেখুন"
+
+msgid "Review previous-year paper demonstrations"
+msgstr "আগের বছরের প্রশ্নপত্রের নমুনা দেখুন"
+
+msgid "Track your own mock-test attempts"
+msgstr "নিজের মক টেস্টের প্রচেষ্টার অগ্রগতি দেখুন"
+
+msgid "Choose where to begin"
+msgstr "কোথা থেকে শুরু করবেন বেছে নিন"
+
+msgid "Free learning"
+msgstr "বিনামূল্যে শেখা"
+
+msgid "Study materials"
+msgstr "পড়ার উপকরণ"
+
+msgid "Find published resources and browse papers by exam and subject."
+msgstr "প্রকাশিত উপকরণ খুঁজুন এবং পরীক্ষা ও বিষয় অনুযায়ী প্রশ্নপত্র দেখুন।"
+
+msgid "Practice"
+msgstr "অনুশীলন"
+
+msgid "Try timed examinations and review your results after submission."
+msgstr "সময়-নির্ধারিত পরীক্ষা দিন এবং জমা দেওয়ার পরে ফলাফল দেখুন।"
+
+msgid "Your progress"
+msgstr "আপনার অগ্রগতি"
+
+msgid "My attempts"
+msgstr "আমার প্রচেষ্টা"
+
+msgid "Return to your account and see your examination history."
+msgstr "অ্যাকাউন্টে ফিরে গিয়ে পরীক্ষার ইতিহাস দেখুন।"
+
+msgid "Create a student account"
+msgstr "শিক্ষার্থীর অ্যাকাউন্ট তৈরি করুন"
+
+msgid "Register to save answers and keep your mock-test history."
+msgstr "উত্তর সংরক্ষণ ও মক টেস্টের ইতিহাস রাখতে নিবন্ধন করুন।"
+
+msgid "Timed practice"
+msgstr "সময়-নির্ধারিত অনুশীলন"
+
+msgid "WBPSC Mock Tests | Online Exam Practice"
+msgstr "WBPSC মক টেস্ট | অনলাইন পরীক্ষার অনুশীলন"
+
+msgid "Browse available WBPSC mock tests. Practise with timed examinations and review results after submission."
+msgstr "উপলভ্য WBPSC মক টেস্ট দেখুন। সময়-নির্ধারিত পরীক্ষায় অনুশীলন করুন এবং জমা দেওয়ার পরে ফলাফল দেখুন।"
+
+msgid "Browse available WBPSC mock tests and practise online."
+msgstr "উপলভ্য WBPSC মক টেস্ট দেখুন এবং অনলাইনে অনুশীলন করুন।"
+
+msgid "minutes"
+msgstr "মিনিট"
+
+msgid "Available languages:"
+msgstr "উপলভ্য ভাষা:"
+
+msgid "View test"
+msgstr "টেস্ট দেখুন"
+
+msgid "View %(title)s"
+msgstr "%(title)s দেখুন"
+
+msgid "No mock tests are currently available."
+msgstr "এই মুহূর্তে কোনো মক টেস্ট উপলভ্য নেই।"
+
+msgid "Mock test pages"
+msgstr "মক টেস্টের পৃষ্ঠা"
+
+msgid "Previous"
+msgstr "আগের"
+
+msgid "Page %(number)s of %(pages)s"
+msgstr "পৃষ্ঠা %(number)s / %(pages)s"
+
+msgid "Next"
+msgstr "পরের"
+
+msgid "WBPSC Mock Tests"
+msgstr "WBPSC মক টেস্ট"
+
+msgid "Timed WBPSC mock test: %(count)s questions in %(duration)s minutes."
+msgstr "সময়-নির্ধারিত WBPSC মক টেস্ট: %(duration)s মিনিটে %(count)sটি প্রশ্ন।"
+
+msgid "Breadcrumb"
+msgstr "নেভিগেশন পথ"
+
+msgid "Questions"
+msgstr "প্রশ্ন"
+
+msgid "Time allowed"
+msgstr "নির্ধারিত সময়"
+
+msgid "Format"
+msgstr "ধরন"
+
+msgid "Single choice"
+msgstr "একটি উত্তর বেছে নিন"
+
+msgid "Test language"
+msgstr "টেস্টের ভাষা"
+
+msgid "Preview language"
+msgstr "ভাষার পূর্বরূপ দেখুন"
+
+msgid "Start or resume test"
+msgstr "টেস্ট শুরু করুন বা চালিয়ে যান"
+
+msgid "Sign in to start"
+msgstr "শুরু করতে সাইন ইন করুন"
+
+msgid "This test is not currently open."
+msgstr "এই টেস্টটি এখন খোলা নেই।"
+
+msgid "Examination"
+msgstr "পরীক্ষা"
+
+msgid "Checking server deadline…"
+msgstr "সার্ভারের সময়সীমা যাচাই করা হচ্ছে…"
+
+msgid "remaining"
+msgstr "বাকি"
+
+msgid "Time remaining is provided by the server."
+msgstr "অবশিষ্ট সময় সার্ভার নির্ধারণ করে।"
+
+msgid "Examination in progress"
+msgstr "পরীক্ষা চলছে"
+
+msgid "Your responses save when changed. The server determines the deadline and final score."
+msgstr "উত্তর পরিবর্তন করলে সংরক্ষিত হয়। সময়সীমা ও চূড়ান্ত নম্বর সার্ভার নির্ধারণ করে।"
+
+msgid "Exam language: %(language)s"
+msgstr "পরীক্ষার ভাষা: %(language)s"
+
+msgid "Change exam language"
+msgstr "পরীক্ষার ভাষা পরিবর্তন করুন"
+
+msgid "Saving answers before changing language…"
+msgstr "ভাষা পরিবর্তনের আগে উত্তর সংরক্ষণ করা হচ্ছে…"
+
+msgid "An answer could not be saved. Retry before changing language."
+msgstr "একটি উত্তর সংরক্ষণ করা যায়নি। ভাষা পরিবর্তনের আগে আবার চেষ্টা করুন।"
+
+msgid "Question navigation"
+msgstr "প্রশ্নে যাওয়ার নেভিগেশন"
+
+msgid "Go to question %(number)s"
+msgstr "%(number)s নম্বর প্রশ্নে যান"
+
+msgid "Question %(number)s of %(total)s"
+msgstr "%(total)sটির মধ্যে %(number)s নম্বর প্রশ্ন"
+
+msgid "Choose one answer"
+msgstr "একটি উত্তর বেছে নিন"
+
+msgid "Save answer"
+msgstr "উত্তর সংরক্ষণ করুন"
+
+msgid "Clear answer"
+msgstr "উত্তর মুছুন"
+
+msgid "Saving answer…"
+msgstr "উত্তর সংরক্ষণ করা হচ্ছে…"
+
+msgid "Answer saved."
+msgstr "উত্তর সংরক্ষিত হয়েছে।"
+
+msgid "Answer could not be saved."
+msgstr "উত্তর সংরক্ষণ করা যায়নি।"
+
+msgid "Connection interrupted. Change or save the answer again to retry."
+msgstr "সংযোগ বিচ্ছিন্ন হয়েছে। আবার চেষ্টা করতে উত্তর পরিবর্তন করুন বা পুনরায় সংরক্ষণ করুন।"
+
+msgid "This attempt is locked."
+msgstr "এই প্রচেষ্টা লক করা হয়েছে।"
+
+msgid "Submit this examination now? You cannot change answers after submission."
+msgstr "এখনই পরীক্ষা জমা দেবেন? জমা দেওয়ার পরে উত্তর পরিবর্তন করা যাবে না।"
+
+msgid "An answer was not saved. Retry the save before submitting."
+msgstr "একটি উত্তর সংরক্ষিত হয়নি। জমা দেওয়ার আগে আবার সংরক্ষণ করুন।"
+
+msgid "Submit examination"
+msgstr "পরীক্ষা জমা দিন"
+
+msgid "Result"
+msgstr "ফলাফল"
+
+msgid "Your result"
+msgstr "আপনার ফলাফল"
+
+msgid "result"
+msgstr "এর ফলাফল"
+
+msgid "Language: %(language)s · Attempt status: %(state)s"
+msgstr "ভাষা: %(language)s · প্রচেষ্টার অবস্থা: %(state)s"
+
+msgid "Score"
+msgstr "নম্বর"
+
+msgid "Correct"
+msgstr "সঠিক"
+
+msgid "Incorrect"
+msgstr "ভুল"
+
+msgid "Unanswered"
+msgstr "উত্তরহীন"
+
+msgid "Answer review"
+msgstr "উত্তর পর্যালোচনা"
+
+msgid "Question %(number)s"
+msgstr "প্রশ্ন %(number)s"
+
+msgid "Correct answer:"
+msgstr "সঠিক উত্তর:"
+
+msgid "Your answer:"
+msgstr "আপনার উত্তর:"
+
+msgid "Explanation:"
+msgstr "ব্যাখ্যা:"
+
+msgid "Result navigation"
+msgstr "ফলাফলের নেভিগেশন"
+
+msgid "Browse mock tests"
+msgstr "মক টেস্ট দেখুন"
+
+msgid "My Mock Test Attempts | WBPSC Exam Prep"
+msgstr "আমার মক টেস্টের প্রচেষ্টা | WBPSC পরীক্ষার প্রস্তুতি"
+
+msgid "Started %(started)s"
+msgstr "শুরু: %(started)s"
+
+msgid "Score:"
+msgstr "নম্বর:"
+
+msgid "Attempt history pages"
+msgstr "প্রচেষ্টার ইতিহাসের পৃষ্ঠা"
+
+msgid "You have not started a mock test yet."
+msgstr "আপনি এখনও কোনো মক টেস্ট শুরু করেননি।"
+
+msgid "Student account"
+msgstr "শিক্ষার্থীর অ্যাকাউন্ট"
+
+msgid "Continue your preparation and return to your saved mock-test activity."
+msgstr "প্রস্তুতি চালিয়ে যান এবং সংরক্ষিত মক টেস্টের কাজে ফিরে আসুন।"
+
+msgid "The username or password was not accepted."
+msgstr "ব্যবহারকারীর নাম বা পাসওয়ার্ড গ্রহণ করা হয়নি।"
+
+msgid "New here?"
+msgstr "এখানে নতুন?"
+
+msgid "If you have lost access to your account, contact an administrator for identity-verified recovery."
+msgstr "অ্যাকাউন্টে প্রবেশাধিকার হারালে পরিচয় যাচাই-সহায়তার জন্য প্রশাসকের সঙ্গে যোগাযোগ করুন।"
+
+msgid "Get started"
+msgstr "শুরু করুন"
+
+msgid "Save your mock-test activity and return to your preparation when it suits you."
+msgstr "মক টেস্টের কাজ সংরক্ষণ করুন এবং সুবিধামতো প্রস্তুতিতে ফিরে আসুন।"
+
+msgid "New accounts are students. Administrative access is granted separately by an administrator."
+msgstr "নতুন অ্যাকাউন্ট শিক্ষার্থীদের জন্য। প্রশাসনিক প্রবেশাধিকার প্রশাসক আলাদাভাবে দেন।"
+
+msgid "Already registered?"
+msgstr "আগেই নিবন্ধন করেছেন?"
+
+msgid "Username:"
+msgstr "ব্যবহারকারীর নাম:"
+
+msgid "Save account details"
+msgstr "অ্যাকাউন্টের বিবরণ সংরক্ষণ করুন"
+
+msgid "Account links"
+msgstr "অ্যাকাউন্টের লিংক"
+
+msgid "My mock-test attempts"
+msgstr "আমার মক টেস্টের প্রচেষ্টা"
+
+msgid "Password recovery is currently handled by an administrator after identity verification."
+msgstr "পরিচয় যাচাইয়ের পরে বর্তমানে প্রশাসক পাসওয়ার্ড পুনরুদ্ধারে সাহায্য করেন।"
+
+msgid "Security"
+msgstr "নিরাপত্তা"
+
+msgid "Change password"
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
+
+msgid "Update password"
+msgstr "পাসওয়ার্ড আপডেট করুন"
+
+msgid "Password updated"
+msgstr "পাসওয়ার্ড আপডেট হয়েছে"
+
+msgid "Your password was changed."
+msgstr "আপনার পাসওয়ার্ড পরিবর্তন করা হয়েছে।"
+
+msgid "Return to your account"
+msgstr "আপনার অ্যাকাউন্টে ফিরুন"
+
+msgid "This test is not available in the selected language."
+msgstr "নির্বাচিত ভাষায় এই টেস্টটি উপলভ্য নয়।"
+
+msgid "A valid test question is required."
+msgstr "একটি বৈধ টেস্ট প্রশ্ন প্রয়োজন।"
+
+msgid "This test is not ready in the selected language."
+msgstr "নির্বাচিত ভাষায় এই টেস্টটি এখনও প্রস্তুত নয়।"
+
+msgid "Choose an available test language."
+msgstr "উপলভ্য টেস্টের ভাষা বেছে নিন।"
+
+msgid "This test is not available at this time."
+msgstr "এই সময়ে টেস্টটি উপলভ্য নয়।"
+
+msgid "This test is not available to this account."
+msgstr "এই অ্যাকাউন্টের জন্য টেস্টটি উপলভ্য নয়।"
+
+msgid "Selected answer is not an option for this question."
+msgstr "নির্বাচিত উত্তরটি এই প্রশ্নের বিকল্প নয়।"
+
+msgid "Skip to main content"
+msgstr "মূল বিষয়বস্তুতে যান"
+
+msgid "Main navigation"
+msgstr "প্রধান নেভিগেশন"
+
+msgid "Follow Us"
+msgstr "আমাদের অনুসরণ করুন"
+
+msgid "Follow us on %(platform)s (opens in a new tab)"
+msgstr "%(platform)s-এ আমাদের অনুসরণ করুন (নতুন ট্যাবে খুলবে)"
+
+msgid "Our social profiles will be listed here."
+msgstr "আমাদের সামাজিক মাধ্যমের প্রোফাইল এখানে দেখানো হবে।"
+
+msgid "Share"
+msgstr "শেয়ার করুন"
+
+msgid "Copy link"
+msgstr "লিংক কপি করুন"
+
+msgid "Sharing is unavailable in this browser. You can copy the page link instead."
+msgstr "এই ব্রাউজারে শেয়ার করা যাচ্ছে না। পরিবর্তে পৃষ্ঠার লিংক কপি করতে পারেন।"
+
+msgid "Could not copy the link. Select and copy the page address from your browser."
+msgstr "লিংক কপি করা যায়নি। ব্রাউজার থেকে পৃষ্ঠার ঠিকানা বেছে কপি করুন।"
+
+msgid "Link copied to clipboard."
+msgstr "লিংক ক্লিপবোর্ডে কপি হয়েছে।"
+
+msgid "Questions used by a started test cannot be changed; create a new question."
+msgstr "শুরু হয়ে যাওয়া টেস্টে ব্যবহৃত প্রশ্ন পরিবর্তন করা যায় না; নতুন প্রশ্ন তৈরি করুন।"
+
+msgid "Options used by a started test cannot be changed; create a new question."
+msgstr "শুরু হয়ে যাওয়া টেস্টের বিকল্প পরিবর্তন করা যায় না; নতুন প্রশ্ন তৈরি করুন।"
+
+msgid "Options used by a started test cannot be deleted."
+msgstr "শুরু হয়ে যাওয়া টেস্টের বিকল্প মুছে ফেলা যায় না।"
+
+msgid "Questions in a test with attempts cannot be changed."
+msgstr "যে টেস্টে প্রচেষ্টা হয়েছে তার প্রশ্ন পরিবর্তন করা যায় না।"
+
+msgid "Questions in a test with attempts cannot be deleted."
+msgstr "যে টেস্টে প্রচেষ্টা হয়েছে তার প্রশ্ন মুছে ফেলা যায় না।"
+
+msgid "Selected option does not belong to this question."
+msgstr "নির্বাচিত বিকল্পটি এই প্রশ্নের নয়।"
+
+msgid "A published question must have at least two answer options."
+msgstr "প্রকাশিত প্রশ্নে অন্তত দুটি উত্তর বিকল্প থাকতে হবে।"
+
+msgid "A published question must have exactly one correct answer option."
+msgstr "প্রকাশিত প্রশ্নে ঠিক একটি সঠিক উত্তর বিকল্প থাকতে হবে।"
+
+msgid "Every answer option needs translated text before this question language is published."
+msgstr "এই প্রশ্নের ভাষা প্রকাশের আগে প্রতিটি উত্তরের বিকল্প অনুবাদ করতে হবে।"
+
+msgid "A published test must contain at least one question."
+msgstr "প্রকাশিত টেস্টে অন্তত একটি প্রশ্ন থাকতে হবে।"
+
+msgid "Question does not belong to this attempt's test."
+msgstr "প্রশ্নটি এই প্রচেষ্টার টেস্টের অংশ নয়।"
+
+msgid "A response contains an option from another question."
+msgstr "উত্তরে অন্য প্রশ্নের একটি বিকল্প রয়েছে।"
+
+msgid "WBPSC Exam Preparation | Free Study Materials and Mock Tests"
+msgstr "WBPSC পরীক্ষার প্রস্তুতি | বিনামূল্যে পড়ার উপকরণ ও মক টেস্ট"
+
+msgid "Prepare for WBPSC examinations with free study materials, previous-year question paper demonstrations and online mock tests."
+msgstr "বিনামূল্যে পড়ার উপকরণ, আগের বছরের প্রশ্নপত্রের নমুনা ও অনলাইন মক টেস্ট দিয়ে WBPSC পরীক্ষার প্রস্তুতি নিন।"
+
+msgid "Explore free WBPSC study materials, previous-year paper demonstrations and mock tests."
+msgstr "বিনামূল্যে WBPSC পড়ার উপকরণ, আগের বছরের প্রশ্নপত্রের নমুনা ও মক টেস্ট দেখুন।"
+
+msgid "Create student account | WBPSC Exam Prep"
+msgstr "শিক্ষার্থীর অ্যাকাউন্ট তৈরি করুন | WBPSC পরীক্ষার প্রস্তুতি"
+
+msgid "Use the question's source fields for its source language."
+msgstr "প্রশ্নের মূল ভাষার জন্য মূল প্রশ্নের ক্ষেত্রগুলি ব্যবহার করুন।"
+
+msgid "A translated question prompt is required."
+msgstr "অনূদিত প্রশ্নের পাঠ আবশ্যক।"
+
+msgid "Translations cannot be added after a question enters an attempt."
+msgstr "প্রশ্ন কোনো প্রচেষ্টায় অন্তর্ভুক্ত হওয়ার পরে অনুবাদ যোগ করা যাবে না।"
+
+msgid "Question translations used by an attempt cannot be edited."
+msgstr "প্রচেষ্টায় ব্যবহৃত প্রশ্নের অনুবাদ সম্পাদনা করা যাবে না।"
+
+msgid "Question translations used by an attempt cannot be deleted."
+msgstr "প্রচেষ্টায় ব্যবহৃত প্রশ্নের অনুবাদ মুছে ফেলা যাবে না।"
+
+msgid "The option must belong to the translated question."
+msgstr "বিকল্পটি অনূদিত প্রশ্নটির অন্তর্ভুক্ত হতে হবে।"
+
+msgid "Translated option text is required."
+msgstr "অনূদিত বিকল্পের পাঠ আবশ্যক।"
+
+msgid "Option translations cannot be added after a question enters an attempt."
+msgstr "প্রশ্ন কোনো প্রচেষ্টায় অন্তর্ভুক্ত হওয়ার পরে বিকল্পের অনুবাদ যোগ করা যাবে না।"
+
+msgid "Option translations used by an attempt cannot be edited."
+msgstr "প্রচেষ্টায় ব্যবহৃত বিকল্পের অনুবাদ সম্পাদনা করা যাবে না।"
+
+msgid "Option translations used by an attempt cannot be deleted."
+msgstr "প্রচেষ্টায় ব্যবহৃত বিকল্পের অনুবাদ মুছে ফেলা যাবে না।"
+
+msgid "Availability end must be after its start."
+msgstr "উপলভ্যতার শেষ সময় শুরুর সময়ের পরে হতে হবে।"
+
+msgid "Test details and duration cannot change after an attempt starts; create a new test."
+msgstr "প্রচেষ্টা শুরু হওয়ার পরে টেস্টের বিবরণ ও সময়সীমা বদলানো যাবে না; নতুন টেস্ট তৈরি করুন।"
+
+msgid "Use the test's source fields for its source language."
+msgstr "টেস্টের মূল ভাষার জন্য টেস্টের মূল ক্ষেত্রগুলি ব্যবহার করুন।"
+
+msgid "A translated test title is required."
+msgstr "টেস্টের অনূদিত শিরোনাম আবশ্যক।"
+
+msgid "Test translations cannot be added after the test has attempts."
+msgstr "টেস্টে প্রচেষ্টা হওয়ার পরে অনুবাদ যোগ করা যাবে না।"
+
+msgid "Test translations used by an attempt cannot be edited."
+msgstr "প্রচেষ্টায় ব্যবহৃত টেস্টের অনুবাদ সম্পাদনা করা যাবে না।"
+
+msgid "Test translations used by an attempt cannot be deleted."
+msgstr "প্রচেষ্টায় ব্যবহৃত টেস্টের অনুবাদ মুছে ফেলা যাবে না।"
+
+msgid "Only published questions can be added to a test."
+msgstr "শুধু প্রকাশিত প্রশ্ন টেস্টে যোগ করা যাবে।"
+
+msgid "Question must have at least two options and exactly one correct option."
+msgstr "প্রশ্নে অন্তত দুটি বিকল্প ও ঠিক একটি সঠিক বিকল্প থাকতে হবে।"
+
+msgid "Topic must belong to the selected subject."
+msgstr "বিষয়টি নির্বাচিত বিষয়শ্রেণির অন্তর্ভুক্ত হতে হবে।"
+
+msgid "Editorial preview"
+msgstr "সম্পাদনার পূর্বরূপ"
+
+msgid "Save the translation to preview its text."
+msgstr "অনূদিত পাঠের পূর্বরূপ দেখতে অনুবাদটি সংরক্ষণ করুন।"
+
+msgid "Other language translations"
+msgstr "অন্যান্য ভাষার অনুবাদ"
+
+msgid "Save the source question before adding translations."
+msgstr "অনুবাদ যোগ করার আগে মূল প্রশ্নটি সংরক্ষণ করুন।"
+
+msgid "Manage question translations"
+msgstr "প্রশ্নের অনুবাদ পরিচালনা করুন"
+
+msgid "Translation completeness"
+msgstr "অনুবাদের সম্পূর্ণতা"
+
+msgid "published"
+msgstr "প্রকাশিত"
+
+msgid "draft"
+msgstr "খসড়া"
+
+msgid "incomplete"
+msgstr "অসম্পূর্ণ"
+
+msgid "No translations"
+msgstr "কোনো অনুবাদ নেই"
+
+msgid "Ready languages"
+msgstr "প্রস্তুত ভাষা"
+
+msgid "None; review missing translations"
+msgstr "কোনোটিই নয়; অসম্পূর্ণ অনুবাদ যাচাই করুন"
+
+msgid "Source question language"
+msgstr "মূল প্রশ্নের ভাষা"
+
+msgid "Save the translation and add every option before publishing."
+msgstr "প্রকাশের আগে অনুবাদটি সংরক্ষণ করে প্রতিটি বিকল্প যোগ করুন।"
+
+msgid "Complete"
+msgstr "সম্পূর্ণ"
+
+msgid "Incomplete: add translated prompt, required explanation, and every option label."
+msgstr "অসম্পূর্ণ: অনূদিত প্রশ্ন, প্রয়োজনীয় ব্যাখ্যা ও প্রতিটি বিকল্পের লেবেল যোগ করুন।"
+
+msgid "Question preview"
+msgstr "প্রশ্নের পূর্বরূপ"
+
+msgid "Save the translation to preview it."
+msgstr "পূর্বরূপ দেখতে অনুবাদটি সংরক্ষণ করুন।"
+
+msgid "In progress"
+msgstr "চলমান"
+
+msgid "Submitted"
+msgstr "জমা দেওয়া হয়েছে"
+
+msgid "Expired"
+msgstr "সময় শেষ"

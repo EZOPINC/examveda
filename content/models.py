@@ -13,6 +13,51 @@ from django.db import models
 from django.utils import timezone
 
 
+BLOG_IMAGE_SIGNATURES = {
+    ".jpg": lambda header: header.startswith(b"\xff\xd8\xff"),
+    ".jpeg": lambda header: header.startswith(b"\xff\xd8\xff"),
+    ".png": lambda header: header.startswith(b"\x89PNG\r\n\x1a\n"),
+    ".webp": lambda header: header.startswith(b"RIFF") and header[8:12] == b"WEBP",
+}
+
+
+def validate_blog_featured_image(image):
+    """Reject oversized, unsupported, or signature-mismatched blog images."""
+    suffix = Path(image.name).suffix.lower()
+    signature_check = BLOG_IMAGE_SIGNATURES.get(suffix)
+    if signature_check is None:
+        raise ValidationError("Featured images must be JPG, PNG, or WebP files.")
+    if image.size > 5 * 1024 * 1024:
+        raise ValidationError("Featured images must be 5 MB or smaller.")
+
+    # File extensions and browser MIME labels can be forged; verify only the
+    # small format signature before allowing an image into public delivery.
+    position = image.tell()
+    try:
+        image.seek(0)
+        header = image.read(12)
+    finally:
+        image.seek(position)
+    if not signature_check(header):
+        raise ValidationError("The uploaded file does not match its image format.")
+
+
+class BlogCategory(models.Model):
+    """Group published blog articles without coupling categories to exam topics."""
+
+    name = models.CharField(max_length=120)
+    slug = models.SlugField(max_length=120, unique=True)
+    description = models.CharField(max_length=320, blank=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = "blog categories"
+
+    def __str__(self):
+        """Return the public category label."""
+        return self.name
+
+
 class ExamCategory(models.Model):
     """Represent an exam family such as WBCS."""
 
@@ -109,6 +154,14 @@ class ContentPage(models.Model):
     published_at = models.DateTimeField(null=True, blank=True)
     seo_title = models.CharField(max_length=title.max_length, blank=True)
     seo_description = models.CharField(max_length=320, blank=True)
+    blog_category = models.ForeignKey(BlogCategory, null=True, blank=True, on_delete=models.PROTECT, related_name="articles")
+    author_name = models.CharField(max_length=150, blank=True)
+    featured_image = models.FileField(
+        upload_to="blog-featured/%Y/%m/",
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp"]), validate_blog_featured_image],
+        blank=True,
+    )
+    featured_image_alt = models.CharField(max_length=255, blank=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="created_content_pages")
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="updated_content_pages")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -116,7 +169,10 @@ class ContentPage(models.Model):
 
     class Meta:
         ordering = ["-published_at", "title"]
-        indexes = [models.Index(fields=["is_published", "-published_at"], name="content_page_published_idx")]
+        indexes = [
+            models.Index(fields=["is_published", "-published_at"], name="content_page_published_idx"),
+            models.Index(fields=["blog_category", "is_published", "-published_at"], name="content_blog_publish_idx"),
+        ]
 
     def clean(self):
         """Require publish time and non-empty body before publication."""
@@ -125,6 +181,8 @@ class ContentPage(models.Model):
             self.published_at = timezone.now()
         if self.is_published and not self.body.strip():
             raise ValidationError({"body": "Published pages must have content."})
+        if self.is_published and self.blog_category_id and self.featured_image and not self.featured_image_alt.strip():
+            raise ValidationError({"featured_image_alt": "Published featured images need descriptive alternative text."})
 
     def save(self, *args, **kwargs):
         """Set a publication timestamp when a valid page is published."""

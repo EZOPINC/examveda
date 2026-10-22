@@ -57,6 +57,7 @@ class AccountWorkflowTests(TestCase):
         response = self.client.get(profile_url)
         self.assertContains(response, "profile-one")
         self.assertNotContains(response, "profile-two")
+        self.assertContains(response, 'name="robots" content="noindex, nofollow"')
         self.assertIn("no-store", response["Cache-Control"])
 
     def test_student_can_change_email_and_password(self):
