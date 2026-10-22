@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sitemaps",
     "django.contrib.staticfiles",
     "accounts.apps.AccountsConfig",
     "access_control.apps.AccessControlConfig",
@@ -49,6 +50,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.views.social_links_context",
             ],
         },
     },
@@ -56,6 +58,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
+
+# Optional profile links stay out of templates unless an operator configures
+# verified HTTPS destinations in the process environment.
+SOCIAL_LINKS = {
+    "Facebook": os.environ.get("SOCIAL_FACEBOOK_URL", "").strip(),
+    "Instagram": os.environ.get("SOCIAL_INSTAGRAM_URL", "").strip(),
+    "Telegram": os.environ.get("SOCIAL_TELEGRAM_URL", "").strip(),
+    "YouTube": os.environ.get("SOCIAL_YOUTUBE_URL", "").strip(),
+}
 
 """ DATABASES = {
     "default": {

@@ -12,4 +12,5 @@
 {% if papers %}<ul class="resource-list">{% for paper in papers %}<li class="resource-card"><span class="resource-badge">{{ paper.resource.year }} · {{ paper.get_language_display }}</span><h2><a href="{% url 'content:previous_paper_detail' category.slug subject.slug paper.slug %}">{{ paper.title }}</a></h2>{% if paper.summary %}<p>{{ paper.summary }}</p>{% endif %}<a href="{% url 'content:previous_paper_detail' category.slug subject.slug paper.slug %}" aria-label="Open {{ paper.title }}">View paper <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>
 {% else %}<p class="empty-state">No published previous-year papers are available for this subject yet.</p>{% endif %}
 <nav class="back-links" aria-label="More study-material navigation"><a href="{% url 'content:category_list' category.slug %}">Back to {{ category.name }}</a><a href="{% url 'content:resource_list' %}">All Free Study Materials</a></nav>
+{% include 'content/share_controls.html' with share_title=subject.name %}
 {% endblock %}

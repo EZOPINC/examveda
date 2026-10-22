@@ -2,6 +2,8 @@
 
 **Status:** Phases 2–4 are owner-approved. Phase 5 review is in progress; Phase 5A adds local demo navigation validation without changing the product data model. Future product policies remain open until their phases.
 
+The blog and social extension adds public editorial browsing using the existing `ContentPage` lifecycle. Blog categories, article detail pages, social-profile configuration, share controls, and public sitemap behavior are described below; no social feed or payment functionality is introduced.
+
 ## Roles and journeys
 
 ### Visitor and student
@@ -41,6 +43,10 @@
 - Only published items intended for public access are visible to anonymous visitors. Preview and draft routes require staff authorization.
 - Staff preview requires an authenticated staff account and is served through a protected application view; an unpublished page or its files are never exposed by a public detail or PDF route.
 - Public content pages should include descriptive titles and metadata suitable for search indexing; private student data and attempts must not be indexed.
+- Blog articles reuse `ContentPage` for body, slug, excerpt, language, publication and SEO fields; `BlogCategory` supplies editorial taxonomy, while optional byline and featured-image fields support article presentation. Draft and future-dated articles must 404 publicly, stay out of sitemap/schema output, and use protected staff preview for text and images.
+- Public blog routes are `/blog/`, `/blog/category/<category-slug>/`, and `/blog/<article-slug>/`. Blog index/category/article pages provide breadcrumbs, canonical/title/description/Open Graph metadata and Article JSON-LD only on public article pages. The sitemap includes published articles and non-empty published categories.
+- Footer social links are optional `SOCIAL_FACEBOOK_URL`, `SOCIAL_INSTAGRAM_URL`, `SOCIAL_TELEGRAM_URL`, and `SOCIAL_YOUTUBE_URL` environment values. Only HTTPS links with a host and no embedded credentials are rendered. External links use `noopener noreferrer`; no embedded social feed or third-party script is used. YouTube remains in the footer.
+- Public blog articles and free study-material pages offer native share when supported and an accessible copy-link fallback. Controls rely on lightweight browser APIs and do not expose drafts or private student data.
 - Public PDF resources may be displayed inline in a browser where supported. Browser display cannot prevent saving, printing, screenshots, or copying; do not promise copy protection.
 
 ## Questions, tests, attempts, and responses

@@ -20,5 +20,6 @@
     </article>
     {% if paper_category and paper_subject %}<nav class="back-links" aria-label="More study-material navigation"><a href="{% url 'content:exam_subject_list' paper_category.slug paper_subject.slug %}">Back to {{ paper_subject.name }} papers</a><a href="{% url 'content:category_list' paper_category.slug %}">Back to {{ paper_category.name }} subjects</a><a href="{% url 'content:resource_list' %}">All Free Study Materials</a></nav>{% endif %}
     {% if content_page.resource.files.all %}<section aria-labelledby="documents-heading"><h2 id="documents-heading">Documents</h2><ul>{% for resource_file in content_page.resource.files.all %}{% if resource_file.visibility == 'public' and content_page.is_published %}<li><a href="{% url 'content:public_file' resource_file.pk %}">{{ resource_file.original_filename|default:'View PDF' }}</a> (PDF)</li>{% elif is_preview and resource_file.visibility == 'restricted' %}<li>{{ resource_file.original_filename|default:'Restricted PDF' }} (restricted file, not available for public delivery)</li>{% endif %}{% endfor %}</ul></section>{% endif %}
+    {% if not is_preview %}{% include 'content/share_controls.html' with share_title=content_page.title %}{% endif %}
 </div>
 {% endblock %}

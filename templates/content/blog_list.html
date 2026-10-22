@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ page_title }} | WBPSC Exam Prep Blog{% endblock %}
+{% block meta_description %}{% if category %}{{ category.description|default:"Articles and preparation guidance in "|add:category.name }}{% else %}Articles, study guidance and preparation advice for WBPSC examinations.{% endif %}{% endblock %}
+{% block og_title %}{{ page_title }} | WBPSC Exam Prep Blog{% endblock %}
+{% block og_description %}{% if category %}{{ category.description|default:"Articles and preparation guidance in "|add:category.name }}{% else %}Read WBPSC study guidance and exam preparation articles.{% endif %}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% if page_obj.number > 1 %}?page={{ page_obj.number }}{% endif %}">{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'content:blog_index' %}">Blog</a></li>{% if category %}<li aria-current="page">{{ category.name }}</li>{% else %}<li aria-current="page">All articles</li>{% endif %}</ol></nav>
+<p class="eyebrow">Ideas and guidance</p><h1>{{ page_title }}</h1>
+<p class="lead">Study guidance, exam explainers and practical preparation advice for WBPSC candidates.</p>
+{% if categories %}<nav class="blog-categories" aria-label="Blog categories"><span>Browse categories:</span>{% for blog_category in categories %}<a href="{% url 'content:blog_category' blog_category.slug %}">{{ blog_category.name }} <span class="resource-meta">({{ blog_category.article_count }})</span></a>{% endfor %}</nav>{% endif %}
+{% if articles %}<div class="blog-grid">{% for article in articles %}<article class="blog-card">
+    {% if article.featured_image %}<a class="blog-card-image" href="{% url 'content:blog_detail' article.slug %}"><img src="{% url 'content:blog_featured_image' article.pk %}" alt="{{ article.featured_image_alt }}" loading="lazy" decoding="async"></a>{% endif %}
+    <div class="blog-card-body"><p class="eyebrow">{{ article.blog_category.name }}</p><h2><a href="{% url 'content:blog_detail' article.slug %}">{{ article.title }}</a></h2>
+        {% if article.summary %}<p>{{ article.summary }}</p>{% endif %}
+        <p class="resource-meta">{{ article.author_name|default:"WBPSC Exam Prep" }} · <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"F j, Y" }}</time></p>
+        <a href="{% url 'content:blog_detail' article.slug %}" aria-label="Read {{ article.title }}">Read article <span aria-hidden="true">→</span></a>
+    </div>
+</article>{% endfor %}</div>
+{% else %}<p class="empty-state">There are no published articles in this section yet.</p>{% endif %}
+{% if page_obj.paginator.num_pages > 1 %}<nav class="pagination" aria-label="Blog pages">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">Next</a>{% endif %}</nav>{% endif %}
+<section class="blog-cta" aria-labelledby="blog-cta-heading"><h2 id="blog-cta-heading">Keep preparing</h2><p>Explore free study resources and put your knowledge into practice.</p><div class="hero-actions"><a class="button" href="{% url 'content:resource_list' %}">Free Study Materials</a><a class="button button-secondary" href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></div></section>
+{% endblock %}

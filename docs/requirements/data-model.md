@@ -1,6 +1,6 @@
 # Preliminary Data Model
 
-**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model and adds no database entities; Phase 5A demo materials also reuse existing entities without a migration.
+**Status:** Phase 2 content and Phase 3 exam models are implemented. Phase 4 preserves Django's built-in user model. Phase 5A demo materials reuse existing entities; the blog extension adds `BlogCategory` and optional editorial fields on `ContentPage` in migration `content.0002`.
 
 ## Relationship outline
 
@@ -10,6 +10,7 @@ ExamCategory/ExamStage 1 ─── * ResourceMetadata
 Subject 1 ─── * Topic
 ContentPage 1 ─── 0..1 ResourceMetadata 1 ─── * ResourceFile
 Topic 1 ─── * ResourceMetadata
+BlogCategory 1 ─── * ContentPage (optional article classification)
 
 Subject/Topic 1 ─── * Question 1 ─── * QuestionOption
 MockTest 1 ─── * MockTestQuestion * ─── 1 Question
@@ -33,7 +34,8 @@ This is a logical relationship sketch. The exam entities are scoped below. The f
 | ExamStage | ExamCategory relation, name, slug, display order | Slug is unique within its category; a resource's stage must belong to its category. |
 | Subject | Name, unique slug, description, active state | Stable subject taxonomy shared by content now and questions later. |
 | Topic | Subject relation, optional parent topic, name, slug, display order | Slug uniqueness is scoped to its subject; validate parent topic belongs to the same subject and reject cycles. |
-| ContentPage | Title, globally unique slug, summary/body, language, publication state, `published_at`, SEO title/description, audit timestamps and staff authors | Drafts are invisible publicly. Publication requires valid content and a publication timestamp. Staff preview checks staff permission server-side. |
+| ContentPage | Title, globally unique slug, summary/body, language, publication state, `published_at`, SEO title/description, audit timestamps and staff authors; optional `BlogCategory`, byline, featured image and image alt text | One canonical editorial body serves study materials and blog articles. Drafts are invisible publicly. Blog images are signature/size checked, use alt text when published, and are streamed only through publication-checked routes. |
+| BlogCategory | Name, unique slug, optional description | Separate editorial taxonomy; public categories appear only while they contain a currently published article. Referenced categories cannot be deleted while articles use them. |
 | ResourceMetadata | One-to-one ContentPage relation, ExamCategory, optional ExamStage, optional year, resource type, optional Subject/Topic | Stores exam and learning-resource classification without duplicating page body or publication state. Validate stage/category and topic/subject consistency. |
 | ResourceFile | ResourceMetadata relation, uploaded file/storage key, original filename, content type, size, visibility (`public` or `restricted`), display order | Files are not served by a direct `MEDIA_URL`. Public delivery requires a published page and public visibility. Restricted files stay outside public web roots and have no public endpoint in this phase. |
 
@@ -58,6 +60,10 @@ Create database indexes for common public listings and filters (publication stat
 For example, `/free-resources/wbcs/prelims/2024/solutions/` is a public solution archive; adding a resource slug addresses one solution. This preserves the suggested archive URL while giving each resource a stable canonical URL. The route definitions, names, and reversal behavior must be covered by tests before release.
 
 The local demo study-material set adds no model or migration. Exam-to-subject membership is represented by the existing `ResourceMetadata.category` and `.subject` relationship; page body, publication state, title, slug, and year remain on `ContentPage` and `ResourceMetadata`. Demo identity uses a reserved `demo-` slug prefix plus clear editorial text in the title, summary, and body rather than an additional schema flag; the public detail banner recognizes that prefix.
+
+### Blog extension (`content.0002`)
+
+The blog reuses `ContentPage` for body, slug, language, publication state/time, summary, SEO metadata, and audit fields. Its optional `blog_category`, `author_name`, `featured_image`, and `featured_image_alt` fields add the article presentation details. `BlogCategory` is separate because exam `Topic` belongs to a `Subject` and is not a general editorial category. The migration is additive and preserves existing rows; no article records are seeded automatically. Category/archive/article paths are `/blog/`, `/blog/category/<category-slug>/`, and `/blog/<article-slug>/`. Only published articles and categories with published articles enter `/sitemap.xml`.
 
 ## Approved Phase 3 exam entities
 

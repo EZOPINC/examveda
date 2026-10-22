@@ -2,6 +2,13 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-22 — Blog and social integration
+
+- Added public blog index, category and article routes using the existing `ContentPage` editorial lifecycle, plus a dedicated editorial `BlogCategory` and optional author/featured-image fields in additive migration `content.0002`.
+- Added staff-only draft image preview and publication-checked public image delivery with size/type/signature validation, canonical/SEO/Open Graph metadata, published-only Article JSON-LD and sitemap entries.
+- Added configurable HTTPS-only Facebook, Instagram, Telegram and YouTube footer links, plus accessible browser share/copy controls on blog and free study-material pages.
+- Added regression coverage for publishing boundaries, structured-data escaping, image access and social link safety. No new dependency or frontend framework.
+
 ## 2026-10-22 — Application-wide UI and SEO refresh
 
 - Added a shared responsive Django base template with consistent navigation, skip link, footer, typography, controls, cards, breadcrumbs, forms, and page metadata.

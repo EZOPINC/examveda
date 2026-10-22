@@ -38,6 +38,9 @@
 - Keep CSRF protection enabled for state-changing browser requests. Use secure headers and content security policy after reviewing required inline scripts and third-party resources.
 - Keep dependencies to the approved baseline, pin compatible versions, and update through reviewed changes and tests. Do not add a framework or service without a documented need.
 - Treat uploaded files as untrusted if uploads are introduced; define type/size validation, storage isolation, scanning need, and delivery policy before enabling them.
+- Blog featured images are limited to JPG/PNG/WebP and 5 MB, checked against file signatures, and served by an application route rather than a public media alias. The route rechecks article publication; staff preview images require staff permission and use private/no-store and `X-Robots-Tag: noindex` headers. This does not constitute malware scanning; keep host/storage isolation and review scanning if volume or threat evidence warrants it.
+- Blog Article JSON-LD is emitted only for currently published articles and escapes HTML-sensitive JSON characters. Draft preview metadata is generic and noindex. Sitemap queries use the same publication/time boundary as public pages.
+- Configured social URLs are rendered only for HTTPS destinations with a hostname and without embedded user credentials; external links use `noopener noreferrer`. No external social scripts or feed embeds are loaded.
 
 ## File and object storage security
 

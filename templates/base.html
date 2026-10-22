@@ -10,6 +10,7 @@
     <meta property="og:site_name" content="WBPSC Mock Exam Platform">
     <meta property="og:title" content="{% block og_title %}WBPSC Mock Exam Platform{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Free WBPSC study materials, previous-year question papers and mock examinations.{% endblock %}">
+    {% block og_image %}{% endblock %}
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     {% block canonical %}{% endblock %}
     <title>{% block title %}WBPSC Mock Exam Platform{% endblock %}</title>
@@ -25,7 +26,8 @@
                 <span class="brand-name">WBPSC <span>Exam Prep</span></span>
             </a>
             <nav aria-label="Main navigation" class="primary-nav">
-                <a href="{% url 'content:resource_list' %}"{% if request.resolver_match.namespace == 'content' %} aria-current="page"{% endif %}>Free Study Materials</a>
+                <a href="{% url 'content:resource_list' %}"{% if request.resolver_match.namespace == 'content' and request.resolver_match.url_name != 'blog_index' and request.resolver_match.url_name != 'blog_category' and request.resolver_match.url_name != 'blog_detail' %} aria-current="page"{% endif %}>Free Study Materials</a>
+                <a href="{% url 'content:blog_index' %}"{% if request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_index' or request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_category' or request.resolver_match.namespace == 'content' and request.resolver_match.url_name == 'blog_detail' %} aria-current="page"{% endif %}>Blog</a>
                 <a href="{% url 'exam_engine:mock_test_list' %}"{% if request.resolver_match.namespace == 'exam_engine' %} aria-current="page"{% endif %}>Mock tests</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' %} aria-current="page"{% endif %}>My account</a>
@@ -46,8 +48,13 @@
         <div class="footer-inner">
             <a class="footer-brand" href="{% url 'home' %}">WBPSC Exam Prep</a>
             <p>Free resources and practice to support your WBPSC preparation.</p>
-            <nav aria-label="Footer navigation"><a href="{% url 'content:resource_list' %}">Free Study Materials</a><a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a></nav>
+            <nav aria-label="Footer navigation"><a href="{% url 'content:resource_list' %}">Free Study Materials</a><a href="{% url 'content:blog_index' %}">Blog</a><a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a></nav>
+            <section class="footer-social" aria-labelledby="follow-us-heading">
+                <h2 id="follow-us-heading">Follow Us</h2>
+                {% if social_links %}<ul>{% for label, url in social_links.items %}<li><a href="{{ url }}" target="_blank" rel="noopener noreferrer" aria-label="Follow us on {{ label }} (opens in a new tab)">{{ label }}</a></li>{% endfor %}</ul>{% else %}<p>Our social profiles will be listed here.</p>{% endif %}
+            </section>
         </div>
     </footer>
+    <script src="{% static 'content/share.js' %}" defer></script>
 </body>
 </html>

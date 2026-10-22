@@ -1,23 +1,163 @@
-"""Render published resources, protected staff previews and public PDFs.
+"""Render published resources, blog articles, protected previews and public files.
 
 All public queries begin from published pages; file access repeats that check
-and never serves restricted files or maps MEDIA_ROOT into a public URL.
+and never maps MEDIA_ROOT into a public URL. Blog article schema is serialized
+with HTML-sensitive characters escaped before it reaches a template.
 """
+
+import json
+from pathlib import Path
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 from django.db.models import Count, Max, Q
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 
 from access_control.services import user_can_access
 
-from .models import ContentPage, ExamCategory, ExamStage, ResourceFile, ResourceMetadata, Subject, Topic
+from .models import BlogCategory, ContentPage, ExamCategory, ExamStage, ResourceFile, ResourceMetadata, Subject, Topic, validate_blog_featured_image
 
 
 PAGE_SIZE = 12
+IMAGE_CONTENT_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
+
+
+def _public_blog_articles():
+    """Return only published blog pages and eagerly load shared display relations."""
+    return ContentPage.objects.filter(
+        blog_category__isnull=False,
+        is_published=True,
+        published_at__lte=timezone.now(),
+    ).select_related("blog_category", "resource", "resource__category", "resource__subject")
+
+
+def _article_schema(request, article, author_name):
+    """Build safe Article JSON-LD for one already-published article."""
+    canonical_url = request.build_absolute_uri(reverse("content:blog_detail", args=[article.slug]))
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": article.seo_title or article.title,
+        "description": article.seo_description or article.summary or article.title,
+        "datePublished": article.published_at.isoformat(),
+        "dateModified": article.updated_at.isoformat(),
+        "author": {
+            "@type": "Person" if article.author_name.strip() else "Organization",
+            "name": author_name,
+        },
+        "publisher": {"@type": "Organization", "name": "WBPSC Mock Exam Platform"},
+        "articleSection": article.blog_category.name,
+        "inLanguage": article.language,
+        "mainEntityOfPage": {"@type": "WebPage", "@id": canonical_url},
+    }
+    if article.featured_image:
+        schema["image"] = request.build_absolute_uri(
+            reverse("content:blog_featured_image", args=[article.pk])
+        )
+    # Escaping '<' prevents a title such as '</script>' from ending the JSON-LD element.
+    encoded_schema = json.dumps(schema, ensure_ascii=True).replace("&", "\\u0026").replace("<", "\\u003C").replace(">", "\\u003E")
+    return mark_safe(encoded_schema)
+
+
+def _featured_image_response(article):
+    """Stream one signature-checked image with a MIME type from its extension."""
+    if not article.featured_image:
+        raise Http404
+    suffix = Path(article.featured_image.name).suffix.lower()
+    try:
+        validate_blog_featured_image(article.featured_image)
+        image_file = article.featured_image.open("rb")
+    except (ValidationError, OSError, ValueError):
+        raise Http404
+    response = FileResponse(
+        image_file,
+        content_type=IMAGE_CONTENT_TYPES[suffix],
+        filename=Path(article.featured_image.name).name,
+        as_attachment=False,
+    )
+    response["X-Content-Type-Options"] = "nosniff"
+    response["Cache-Control"] = "private, no-store"
+    return response
+
+
+def _blog_listing(request, articles, page_title, category=None):
+    """Paginate published articles using the shared editorial page size."""
+    page_obj = Paginator(articles.order_by("-published_at", "title"), PAGE_SIZE).get_page(request.GET.get("page"))
+    visible_articles = Q(articles__is_published=True, articles__published_at__lte=timezone.now())
+    categories = BlogCategory.objects.annotate(
+        article_count=Count("articles", filter=visible_articles, distinct=True),
+    ).filter(article_count__gt=0).order_by("name")
+    return render(request, "content/blog_list.html", {
+        "articles": page_obj.object_list,
+        "page_obj": page_obj,
+        "page_title": page_title,
+        "category": category,
+        "categories": categories,
+    })
+
+
+def blog_index(request):
+    """Show published blog articles and categories to anonymous visitors."""
+    return _blog_listing(request, _public_blog_articles(), "WBPSC Preparation Blog")
+
+
+def blog_category(request, category_slug):
+    """List published articles within a category, returning 404 for empty categories."""
+    category = get_object_or_404(BlogCategory, slug=category_slug)
+    articles = _public_blog_articles().filter(blog_category=category)
+    if not articles.exists():
+        raise Http404
+    return _blog_listing(request, articles, category.name, category)
+
+
+def blog_detail(request, article_slug):
+    """Render one published blog article, related entries and safe Article JSON-LD."""
+    article = get_object_or_404(_public_blog_articles(), slug=article_slug)
+    author_name = article.author_name.strip() or "WBPSC Exam Prep"
+    related_articles = _public_blog_articles().filter(blog_category=article.blog_category).exclude(pk=article.pk)[:3]
+    contextual_links = {"exam_url": None, "subject_url": None, "papers_url": None}
+    try:
+        metadata = article.resource
+    except ResourceMetadata.DoesNotExist:
+        metadata = None
+    if metadata and metadata.category_id and metadata.subject_id:
+        contextual_links["exam_url"] = reverse("content:category_list", args=[metadata.category.slug])
+        contextual_links["subject_url"] = reverse(
+            "content:exam_subject_list", args=[metadata.category.slug, metadata.subject.slug]
+        )
+        contextual_links["papers_url"] = contextual_links["subject_url"]
+    return render(request, "content/blog_detail.html", {
+        "article": article,
+        "author_display": author_name,
+        "related_articles": related_articles,
+        "json_ld": _article_schema(request, article, author_name),
+        "contextual_links": contextual_links,
+    })
+
+
+@cache_control(private=True, no_store=True)
+def blog_featured_image(request, page_id):
+    """Deliver a featured image only while its associated blog page is public."""
+    article = get_object_or_404(_public_blog_articles(), pk=page_id)
+    return _featured_image_response(article)
+
+
+@staff_member_required
+@cache_control(private=True, no_store=True)
+def preview_featured_image(request, page_id):
+    """Deliver an unpublished featured image only to staff with content-view permission."""
+    if not request.user.has_perm("content.view_contentpage"):
+        raise PermissionDenied
+    article = get_object_or_404(ContentPage, pk=page_id, blog_category__isnull=False)
+    response = _featured_image_response(article)
+    response["X-Robots-Tag"] = "noindex, nofollow"
+    return response
 
 
 def _published_pages():
@@ -181,6 +321,14 @@ def preview_page(request, page_id):
     if not request.user.has_perm("content.view_contentpage"):
         from django.core.exceptions import PermissionDenied
         raise PermissionDenied
+    if page.blog_category_id:
+        return render(request, "content/blog_detail.html", {
+            "article": page,
+            "author_display": page.author_name.strip() or "WBPSC Exam Prep",
+            "related_articles": [],
+            "contextual_links": {},
+            "is_preview": True,
+        })
     return render(request, "content/resource_detail.html", {"content_page": page, "is_preview": True})
 
 

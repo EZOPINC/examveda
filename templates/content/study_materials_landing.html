@@ -23,4 +23,5 @@
     <h2 id="other-materials-heading">Other free materials</h2>
     <ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3><a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a></h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul>
 </section>{% endif %}
+{% include 'content/share_controls.html' with share_title="Free WBPSC Study Materials" %}
 {% endblock %}

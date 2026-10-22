@@ -16,6 +16,22 @@ class FoundationPageTests(SimpleTestCase):
         self.assertContains(response, 'name="robots" content="index, follow"')
         self.assertContains(response, '<link rel="canonical" href="http://testserver/">')
         self.assertContains(response, '<meta property="og:title" content="WBPSC Exam Preparation | Free Study Materials and Mock Tests">')
+        self.assertContains(response, 'href="/blog/">Blog</a>')
+
+    @override_settings(SOCIAL_LINKS={
+        "Facebook": "https://www.facebook.com/example",
+        "Instagram": "http://instagram.example/unsafe",
+        "Telegram": "javascript:alert(1)",
+        "YouTube": "",
+    })
+    def test_footer_renders_only_configured_https_social_links_safely(self):
+        """Only optional HTTPS profiles render, with safe external-link attributes."""
+        response = self.client.get(reverse("home"))
+
+        self.assertContains(response, "Follow Us")
+        self.assertContains(response, 'href="https://www.facebook.com/example" target="_blank" rel="noopener noreferrer"')
+        self.assertNotContains(response, "instagram.example")
+        self.assertNotContains(response, "javascript:")
 
     def test_health_check_is_minimal_and_uncached(self):
         """Health output confirms service availability without database details."""

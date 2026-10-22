@@ -14,4 +14,5 @@
     {% else %}<p class="empty-state">No published subjects are available for this examination yet.</p>{% endif %}
 </section>
 {% if resources %}<section aria-labelledby="other-resources-heading"><h2 id="other-resources-heading">Other study materials</h2><ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3>{% if resource.resource and resource.resource.stage and resource.resource.year %}<a href="{% url 'content:resource_detail' category.slug resource.resource.stage.slug resource.resource.year resource.resource.resource_type resource.slug %}">{{ resource.title }}</a>{% else %}<a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a>{% endif %}</h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+{% include 'content/share_controls.html' with share_title=category.name %}
 {% endblock %}

@@ -68,6 +68,16 @@ The command only runs when `DEBUG=True`, creates missing rows by stable slugs, r
 
 Try `/free-resources/`, `/free-resources/wbpsc-clerkship/`, `/free-resources/wbpsc-clerkship/history/`, and `/free-resources/wbpsc-clerkship/history/demo-wbpsc-clerkship-history-2023-previous-question-paper/`. Existing stage/year/resource archives under `/free-resources/` remain available.
 
+## Blog publishing and social profiles
+
+The blog reuses `ContentPage` for article text, slug, excerpt (`summary`), publication status/date and SEO fields. Create categories under **Blog categories** in Django admin, then create a **Content page** and select a blog category. Set the author display name, optional featured image and descriptive image alt text. Save as a draft to preview through the existing staff-only preview link. Publish by checking **Is published**; public URLs use `/blog/<article-slug>/`, category archives use `/blog/category/<category-slug>/`, and `/blog/` lists published articles. A featured image is optional; accepted uploads are JPG, PNG or WebP up to 5 MB, and published images require alt text. Images are stored under `MEDIA_ROOT` and served through publication-checked Django routes, not a public media alias.
+
+Published blog articles appear in `/sitemap.xml` with only categories that have published articles. Public articles and free study-material pages include share and copy-link controls; native sharing is used when the browser supports it, and copy status is announced accessibly. These controls use browser APIs only and do not load a social feed or third-party script.
+
+The footer's **Follow Us** links are optional and blank by default. Configure verified profile URLs with `SOCIAL_FACEBOOK_URL`, `SOCIAL_INSTAGRAM_URL`, `SOCIAL_TELEGRAM_URL`, and `SOCIAL_YOUTUBE_URL` in the local process environment or the protected production environment file. Only HTTPS destinations are rendered, and links open with `noopener noreferrer`. YouTube stays in the footer so the main navigation remains focused.
+
+For new deployments, review the additive `content.0002` migration with `python manage.py migrate --plan`, back up the database and uploaded media, then apply it using the documented release procedure in [deploy/README.md](deploy/README.md). Existing records remain valid and no blog data is seeded automatically.
+
 ## Verification commands
 
 ```powershell

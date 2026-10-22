@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .forms import ContentPageForm, ResourceFileForm, ResourceMetadataForm, TopicForm
-from .models import ContentPage, ExamCategory, ExamStage, ResourceFile, ResourceMetadata, Subject, Topic
+from .models import BlogCategory, ContentPage, ExamCategory, ExamStage, ResourceFile, ResourceMetadata, Subject, Topic
 
 
 class ResourceMetadataInline(admin.StackedInline):
@@ -21,13 +21,18 @@ class ContentPageAdmin(admin.ModelAdmin):
     """Support draft editing, preview, publication and unpublication."""
 
     form = ContentPageForm
-    list_display = ["title", "language", "is_published", "published_at", "updated_at"]
-    list_filter = ["is_published", "language", "published_at"]
+    list_display = ["title", "blog_category", "language", "is_published", "published_at", "updated_at"]
+    list_filter = ["is_published", "language", "published_at", "blog_category"]
     search_fields = ["title", "slug", "summary", "body"]
     prepopulated_fields = {"slug": ("title",)}
     inlines = [ResourceMetadataInline]
     readonly_fields = ["created_at", "updated_at", "preview_link"]
-    fieldsets = [(None, {"fields": ("title", "slug", "summary", "body", "language")}), ("Publication and search", {"fields": ("is_published", "published_at", "seo_title", "seo_description", "preview_link")}), ("Audit", {"fields": ("created_by", "updated_by", "created_at", "updated_at"), "classes": ["collapse"]})]
+    fieldsets = [
+        (None, {"fields": ("title", "slug", "summary", "body", "language")}),
+        ("Blog article (optional)", {"fields": ("blog_category", "author_name", "featured_image", "featured_image_alt")}),
+        ("Publication and search", {"fields": ("is_published", "published_at", "seo_title", "seo_description", "preview_link")}),
+        ("Audit", {"fields": ("created_by", "updated_by", "created_at", "updated_at"), "classes": ["collapse"]}),
+    ]
 
     @admin.display(description="Staff preview")
     def preview_link(self, obj):
@@ -78,3 +83,12 @@ class TopicAdmin(admin.ModelAdmin):
 
 
 admin.site.register([ExamCategory, ExamStage, Subject])
+
+
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    """Maintain the separate editorial category taxonomy for blog articles."""
+
+    list_display = ["name", "slug"]
+    search_fields = ["name", "slug"]
+    prepopulated_fields = {"slug": ("name",)}

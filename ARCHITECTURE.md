@@ -41,6 +41,8 @@ Implemented modules are `exam_engine.models` (six exam entities), `exam_engine.s
 | `content.admin` | Staff editing, classification inline, preview link, publication controls and file visibility administration. |
 | `content.tests` | PostgreSQL-backed route, rendering, publication and preview boundary tests. |
 
+The blog extends `content.models.ContentPage` with optional blog category, byline, and featured-image fields; `BlogCategory` is the editorial taxonomy because exam `Topic` is scoped to subject content. `content.views`/`content.urls` own public blog pages and publication-checked image delivery, while `content.sitemaps` lists only public articles and non-empty categories. `config.views.social_links_context` exposes validated optional HTTPS profile URLs from deployment configuration. Keep blog content in this existing content boundary; do not create a parallel blog app or content table.
+
 ### Accounts and access modules (Phase 4)
 
 `accounts.apps`, `accounts.forms`, `accounts.views`, `accounts.urls`, and `accounts.tests` implement student registration, owner-only account details, password changes, and authorization regression coverage using Django's existing user model. Templates are in `templates/accounts/`; the existing `templates/registration/login.html` remains the login page. Do not add a custom account model, profile table, reset-email flow, or role framework without an approved requirement. Lost-password recovery is administrator-assisted until verified email recovery and mail delivery are approved.
