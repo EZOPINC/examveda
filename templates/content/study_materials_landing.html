@@ -1,26 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}Free WBPSC Study Materials and Previous-year Papers{% endblock %}
-{% block meta_description %}Browse free WBPSC study materials, previous-year question paper demonstrations and resources by examination and subject.{% endblock %}
-{% block og_title %}Free WBPSC Study Materials and Previous-year Papers{% endblock %}
-{% block og_description %}Browse free WBPSC resources by examination and subject.{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Free WBPSC Study Materials and Previous-year Papers" %}{% endblock %}
+{% block meta_description %}{% trans "Browse free WBPSC study materials, previous-year question paper demonstrations and resources by examination and subject." %}{% endblock %}
+{% block og_title %}{% trans "Free WBPSC Study Materials and Previous-year Papers" %}{% endblock %}
+{% block og_description %}{% trans "Browse free WBPSC resources by examination and subject." %}{% endblock %}
 {% block robots %}index, follow{% endblock %}
 {% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
 {% block content %}
-<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li aria-current="page">Free Study Materials</li></ol></nav>
-<p class="eyebrow">Free learning resources</p>
-<h1>Free Study Materials</h1>
-<p class="lead">Choose an examination, then browse available subjects and previous-year paper demonstrations.</p>
+<nav class="breadcrumbs" aria-label="{% trans 'Breadcrumb' %}"><ol><li aria-current="page">{% trans "Free Study Materials" %}</li></ol></nav>
+<p class="eyebrow">{% trans "Free learning resources" %}</p>
+<h1>{% trans "Free Study Materials" %}</h1>
+<p class="lead">{% trans "Choose an examination, then browse available subjects and previous-year paper demonstrations." %}</p>
 <section aria-labelledby="exams-heading">
-    <h2 id="exams-heading">Examinations</h2>
+    <h2 id="exams-heading">{% trans "Examinations" %}</h2>
     {% if categories %}<ul class="resource-list">
-        {% for exam in categories %}<li class="resource-card"><span class="resource-badge">Examination</span><h3><a href="{% url 'content:category_list' exam.slug %}">{{ exam.name }}</a></h3>
+        {% for exam in categories %}<li class="resource-card"><span class="resource-badge">{% trans "Examination" %}</span><h3><a href="{% url 'content:category_list' exam.slug %}">{{ exam.name }}</a></h3>
             {% if exam.description %}<p>{{ exam.description }}</p>{% endif %}
             <p class="resource-meta">{{ exam.subject_count }} subject{{ exam.subject_count|pluralize }} · {{ exam.paper_count }} paper{{ exam.paper_count|pluralize }}</p>
         </li>{% endfor %}
-    </ul>{% else %}<p class="empty-state">No published study materials are available yet.</p>{% endif %}
+    </ul>{% else %}<p class="empty-state">{% trans "No published study materials are available yet." %}</p>{% endif %}
 </section>
 {% if resources %}<section aria-labelledby="other-materials-heading">
-    <h2 id="other-materials-heading">Other free materials</h2>
+    <h2 id="other-materials-heading">{% trans "Other free materials" %}</h2>
     <ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3><a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a></h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul>
 </section>{% endif %}
 {% include 'content/share_controls.html' with share_title="Free WBPSC Study Materials" %}

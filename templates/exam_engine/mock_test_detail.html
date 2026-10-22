@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}{{ mock_test.title }} | WBPSC Mock Tests{% endblock %}
-{% block meta_description %}{{ mock_test.description|default:mock_test.title }} Timed WBPSC mock test: {{ question_count }} questions in {{ mock_test.duration_minutes }} minutes.{% endblock %}
-{% block og_title %}{{ mock_test.title }} | WBPSC Mock Tests{% endblock %}
-{% block og_description %}{{ mock_test.description|default:mock_test.title }}{% endblock %}
+{% load i18n %}
+{% block title %}{{ test_content.title }} | {% trans "WBPSC Mock Tests" %}{% endblock %}
+{% block meta_description %}{{ test_content.description|default:test_content.title }} {% blocktrans with count=question_count duration=mock_test.duration_minutes %}Timed WBPSC mock test: {{ count }} questions in {{ duration }} minutes.{% endblocktrans %}{% endblock %}
+{% block og_title %}{{ test_content.title }} | {% trans "WBPSC Mock Tests" %}{% endblock %}
+{% block og_description %}{{ test_content.description|default:test_content.title }}{% endblock %}
 {% block robots %}index, follow{% endblock %}
 {% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
 {% block content %}
-<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a></li><li aria-current="page">{{ mock_test.title }}</li></ol></nav>
-<section class="article" aria-labelledby="test-title"><p class="eyebrow">Timed practice</p><h1 id="test-title">{{ mock_test.title }}</h1>
-    {% if mock_test.description %}<p class="lead">{{ mock_test.description }}</p>{% endif %}
-    <dl class="paper-details"><div><dt>Questions</dt><dd>{{ question_count }}</dd></div><div><dt>Time allowed</dt><dd>{{ mock_test.duration_minutes }} minutes</dd></div><div><dt>Format</dt><dd>Single choice</dd></div></dl>
-    {% if is_available %}<form method="post" action="{% url 'exam_engine:start_test' mock_test.slug %}">{% csrf_token %}<button type="submit">{% if user.is_authenticated %}Start or resume test{% else %}Sign in to start{% endif %}</button></form>{% else %}<p class="notice">This test is not currently open.</p>{% endif %}
+<nav class="breadcrumbs" aria-label="{% trans 'Breadcrumb' %}"><ol><li><a href="{% url 'exam_engine:mock_test_list' %}">{% trans "Mock tests" %}</a></li><li aria-current="page">{{ test_content.title }}</li></ol></nav>
+<section class="article" aria-labelledby="test-title"><p class="eyebrow">{% trans "Timed practice" %}</p><h1 id="test-title">{{ test_content.title }}</h1>
+    {% if test_content.description %}<p class="lead">{{ test_content.description }}</p>{% endif %}
+    {% if test_content.instructions %}<section aria-labelledby="test-instructions-heading"><h2 id="test-instructions-heading">{% trans "Instructions" %}</h2><div>{{ test_content.instructions|linebreaks }}</div></section>{% endif %}
+    <dl class="paper-details"><div><dt>{% trans "Questions" %}</dt><dd>{{ question_count }}</dd></div><div><dt>{% trans "Time allowed" %}</dt><dd>{{ mock_test.duration_minutes }} {% trans "minutes" %}</dd></div><div><dt>{% trans "Format" %}</dt><dd>{% trans "Single choice" %}</dd></div></dl>
+    <form method="get" class="language-choice"><label for="test-language">{% trans "Test language" %}</label><select id="test-language" name="lang">{% for code, label in available_languages %}<option value="{{ code }}"{% if code == language_code %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button type="submit" class="button-secondary">{% trans "Preview language" %}</button></form>
+    {% if is_available %}<form method="post" action="{% url 'exam_engine:start_test' mock_test.slug %}">{% csrf_token %}<input type="hidden" name="language_code" value="{{ language_code }}"><button type="submit">{% if user.is_authenticated %}{% trans "Start or resume test" %}{% else %}{% trans "Sign in to start" %}{% endif %}</button></form>{% else %}<p class="notice">{% trans "This test is not currently open." %}</p>{% endif %}
 </section>
 {% endblock %}

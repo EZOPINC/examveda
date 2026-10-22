@@ -11,6 +11,7 @@ urlpatterns = [
     path("mock-tests/attempts/", views.attempt_history, name="attempt_history"),
     path("mock-tests/attempts/<int:attempt_id>/", views.attempt_detail, name="attempt_detail"),
     path("mock-tests/attempts/<int:attempt_id>/responses/", views.save_answer, name="save_answer"),
+    path("mock-tests/attempts/<int:attempt_id>/language/", views.change_test_language, name="change_test_language"),
     path("mock-tests/attempts/<int:attempt_id>/submit/", views.submit_test_attempt, name="submit_attempt"),
     path("mock-tests/<slug:test_slug>/", views.mock_test_detail, name="mock_test_detail"),
     path("mock-tests/<slug:test_slug>/start/", views.start_test, name="start_test"),

@@ -44,6 +44,16 @@ Registration uses Django's built-in user model and creates ordinary student acco
 
 Exam logic stays in the existing `exam_engine` modules: `models.py`, `services.py`, `views.py`, `urls.py`, `forms.py`, `admin.py`, and `tests.py`. Templates and browser assets are under `templates/exam_engine/` and `static/exam_engine/`. Do not create duplicate model or service modules; future work should extend these named boundaries unless an approved requirement demonstrates a responsibility they cannot own.
 
+### Mock-exam languages
+
+The site interface and mock exams support English, Hindi, and Bengali. Use the language selector in the shared header for the interface and choose a test language on its public detail page before starting. During an attempt, use **Change exam language**; pending answer saves are completed first, and the server retains the original deadline and response IDs. Free study-material and previous-year-paper records remain in their current English/Bengali workflow; this does not translate their authored text or PDFs.
+
+In Django admin, set the source language on each question and mock test. Add question translations from the Question admin's **Manage question translations** link; provide a prompt, every option label, and an explanation whenever the source has one. The preview and completeness status are staff-only. Add test metadata translations in the MockTest translation inline. The **Ready languages** column and public page list only complete, published test variants. Existing tests receive no guessed language during migration and remain unavailable until reviewed by staff. A test/question graph with prior attempts is immutable; keep it for history and author new question/test records if its language cannot safely be assigned without changing historical meaning.
+
+The source catalogs are `locale/hi/LC_MESSAGES/django.po` and `locale/bn/LC_MESSAGES/django.po`; the compiled `.mo` files are committed for runtime use. When editing catalogs, run `python manage.py makemessages -l hi -l bn`, update translations, then run `python manage.py compilemessages -l hi -l bn` with GNU gettext available. Commit both catalog sources and compiled files. No new Python dependency is needed.
+
+The additive migration is `exam_engine.0002_mocktest_instructions_mocktest_language_and_more`. Review its plan and back up the target database before applying it in a deployment. It preserves old records but does not infer source-language metadata or seed translations. See [Decision 0007](docs/decisions/0007-multilingual-mock-exams.md) for the data model, admin workflow, and rollout notes.
+
 ## Content editorial workflow
 
 1. Sign in to `/admin/` with an authorized staff account.

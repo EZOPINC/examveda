@@ -19,6 +19,9 @@
 - Scope attempt access to the owner and explicitly permitted staff. Never rely on an identifier being hard to guess.
 - Enforce test availability and eligibility on the server. Do not trust client-provided ownership, score, entitlement, price, or timestamps.
 - Do not expose answer keys, explanations, private tests, unpublished materials, or another student's attempt through HTML, JavaScript, APIs, exports, or logs before policy permits it.
+- Store one correct-answer key on the stable shared `QuestionOption`; localized option labels must reference that option identity and cannot define or change correctness. Keep locale selection server-side on `TestAttempt` and never let a language switch alter saved response IDs, test timing, or score state.
+- Fail closed when a test locale, question prompt, option label, required explanation, or translated test metadata is missing or unpublished. Never fill a missing translation from another language. Existing attempts may continue to render their already-selected text after a locale is closed, while new starts and switches require a currently published, complete variant.
+- Treat all Hindi/Bengali user-facing strings and authored question text as UTF-8. Verify stored and rendered Unicode through the configured PostgreSQL database before release; SQLite-only checks do not establish PostgreSQL encoding behavior.
 - Define collection, retention, deletion, and access rules for personal and attempt data before production.
 
 ## Exam integrity and request handling
@@ -69,6 +72,7 @@
 
 - Content phase: unpublished content and protected downloads are inaccessible anonymously.
 - Exam phase: cross-user attempt access is denied; malformed responses are rejected; expiry, duplicate save/submission, score authority, and answer reveal behavior are tested.
+- Multilingual exam extension: only complete and published variants are advertised or selected; stable option correctness is shared; switching locale preserves answer IDs and server timestamps; UTF-8 round-trip is verified against PostgreSQL before deployment.
 - Accounts/access phase: permission and entitlement boundaries are tested, including revoked/expired access.
 - Deployment phase: HTTPS and secure settings are checked, database exposure is reviewed, backup restore is demonstrated, and secrets are absent from tracked files and logs.
 - Before launch: conduct a focused threat review of account recovery, admin permissions, file delivery, and exam answer exposure; track findings and remediation.

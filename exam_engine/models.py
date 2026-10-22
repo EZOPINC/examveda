@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from content.models import Subject, Topic
 
@@ -21,13 +22,14 @@ class Question(models.Model):
 
     class Language(models.TextChoices):
         ENGLISH = "en", "English"
+        HINDI = "hi", "Hindi"
         BENGALI = "bn", "Bengali"
 
     subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name="questions")
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.PROTECT, related_name="questions")
     prompt = models.TextField()
     explanation = models.TextField(blank=True)
-    language = models.CharField(max_length=2, choices=Language.choices, default=Language.ENGLISH)
+    language = models.CharField(max_length=10, choices=Language.choices, default=Language.ENGLISH)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -40,7 +42,7 @@ class Question(models.Model):
         """Ensure optional topic taxonomy belongs to the chosen subject."""
         super().clean()
         if self.topic_id and self.subject_id and self.topic.subject_id != self.subject_id:
-            raise ValidationError({"topic": "Topic must belong to the selected subject."})
+            raise ValidationError({"topic": _("Topic must belong to the selected subject.")})
 
     def _has_started_attempt(self):
         """Return whether any frozen test graph contains this question."""
@@ -53,12 +55,65 @@ class Question(models.Model):
             test_ids = list(MockTestQuestion.objects.filter(question_id=self.pk).values_list("mock_test_id", flat=True).distinct())
             list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
             if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
-                raise ValidationError("Questions used by a started test cannot be changed; create a new question.")
+                raise ValidationError(_("Questions used by a started test cannot be changed; create a new question."))
         super().save(*args, **kwargs)
 
     def __str__(self):
         """Return a short prompt label for staff forms."""
         return self.prompt[:80]
+
+
+class QuestionTranslation(models.Model):
+    """Store one translated prompt and explanation for a logical question."""
+
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="translations")
+    language_code = models.CharField(max_length=10, choices=Question.Language.choices)
+    prompt = models.TextField()
+    explanation = models.TextField(blank=True)
+    is_published = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["language_code"]
+        constraints = [models.UniqueConstraint(fields=["question", "language_code"], name="exam_question_translation_lang_uniq")]
+
+    def clean(self):
+        """Reject empty translations and duplicate the source language."""
+        super().clean()
+        if self.question_id and self.language_code == self.question.language:
+            raise ValidationError({"language_code": _("Use the question's source fields for its source language.")})
+        if not self.prompt.strip():
+            raise ValidationError({"prompt": _("A translated question prompt is required.")})
+
+    def _lock_question_tests(self):
+        """Lock every test using this question before protecting translation edits."""
+        test_ids = list(MockTestQuestion.objects.filter(question_id=self.question_id).values_list("mock_test_id", flat=True).distinct())
+        list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
+        return TestAttempt.objects.filter(mock_test_id__in=test_ids).exists()
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Freeze translated wording after the question enters an attempt."""
+        has_attempts = self._lock_question_tests()
+        if has_attempts:
+            if not self.pk:
+                raise ValidationError(_("Translations cannot be added after a question enters an attempt."))
+            old = type(self).objects.get(pk=self.pk)
+            if (old.question_id, old.language_code, old.prompt, old.explanation) != (
+                self.question_id, self.language_code, self.prompt, self.explanation
+            ):
+                raise ValidationError(_("Question translations used by an attempt cannot be edited."))
+        super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Preserve translated question text referenced by attempt history."""
+        if self._lock_question_tests():
+            raise ValidationError(_("Question translations used by an attempt cannot be deleted."))
+        return super().delete(*args, **kwargs)
+
+    def __str__(self):
+        """Identify the translated question and language for staff."""
+        return f"Question {self.question_id} ({self.language_code})"
 
 
 class QuestionOption(models.Model):
@@ -83,7 +138,7 @@ class QuestionOption(models.Model):
         test_ids = list(MockTestQuestion.objects.filter(question_id__in=locked_question_ids).values_list("mock_test_id", flat=True).distinct())
         list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
         if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
-            raise ValidationError("Options used by a started test cannot be changed; create a new question.")
+            raise ValidationError(_("Options used by a started test cannot be changed; create a new question."))
         super().save(*args, **kwargs)
 
     @transaction.atomic
@@ -92,12 +147,63 @@ class QuestionOption(models.Model):
         test_ids = list(MockTestQuestion.objects.filter(question_id=self.question_id).values_list("mock_test_id", flat=True).distinct())
         list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
         if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
-            raise ValidationError("Options used by a started test cannot be deleted.")
+            raise ValidationError(_("Options used by a started test cannot be deleted."))
         return super().delete(*args, **kwargs)
 
     def __str__(self):
         """Return the option position and owning question label."""
         return f"Option {self.position}: {self.question}"
+
+
+class QuestionOptionTranslation(models.Model):
+    """Translate one stable option identity within a question translation."""
+
+    question_translation = models.ForeignKey(QuestionTranslation, on_delete=models.CASCADE, related_name="option_translations")
+    option = models.ForeignKey(QuestionOption, on_delete=models.CASCADE, related_name="translations")
+    text = models.TextField()
+
+    class Meta:
+        ordering = ["option__position"]
+        constraints = [models.UniqueConstraint(fields=["question_translation", "option"], name="exam_option_translation_uniq")]
+
+    def clean(self):
+        """Ensure the translated option belongs to the translated question."""
+        super().clean()
+        if self.question_translation_id and self.option_id:
+            if self.question_translation.question_id != self.option.question_id:
+                raise ValidationError({"option": _("The option must belong to the translated question.")})
+        if not self.text.strip():
+            raise ValidationError({"text": _("Translated option text is required.")})
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Freeze option translations after their question enters an attempt."""
+        question_id = self.question_translation.question_id
+        test_ids = list(MockTestQuestion.objects.filter(question_id=question_id).values_list("mock_test_id", flat=True).distinct())
+        list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
+        if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
+            if not self.pk:
+                raise ValidationError(_("Option translations cannot be added after a question enters an attempt."))
+            old = type(self).objects.get(pk=self.pk)
+            if (old.question_translation_id, old.option_id, old.text) != (
+                self.question_translation_id, self.option_id, self.text
+            ):
+                raise ValidationError(_("Option translations used by an attempt cannot be edited."))
+        super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Preserve translated option labels for attempt review."""
+        question_id = self.question_translation.question_id
+        test_ids = list(MockTestQuestion.objects.filter(question_id=question_id).values_list("mock_test_id", flat=True).distinct())
+        list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
+        if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
+            raise ValidationError(_("Option translations used by an attempt cannot be deleted."))
+        return super().delete(*args, **kwargs)
+
+    def __str__(self):
+        """Identify the localized text and stable answer position."""
+        return f"{self.question_translation} option {self.option.position}"
 
 
 class MockTest(models.Model):
@@ -106,6 +212,8 @@ class MockTest(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=180, unique=True)
     description = models.TextField(blank=True)
+    instructions = models.TextField(blank=True)
+    language = models.CharField(max_length=10, choices=Question.Language.choices, null=True, blank=True)
     duration_minutes = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(240)])
     available_from = models.DateTimeField(null=True, blank=True)
     available_until = models.DateTimeField(null=True, blank=True)
@@ -122,7 +230,7 @@ class MockTest(models.Model):
         """Require a forward availability interval when both bounds are set."""
         super().clean()
         if self.available_from and self.available_until and self.available_from >= self.available_until:
-            raise ValidationError({"available_until": "Availability end must be after its start."})
+            raise ValidationError({"available_until": _("Availability end must be after its start.")})
 
     def _has_started_attempt(self):
         """Return whether any student has started this test."""
@@ -134,14 +242,62 @@ class MockTest(models.Model):
         if self.pk:
             original_test = type(self).objects.select_for_update().filter(pk=self.pk).first()
             if original_test and original_test._has_started_attempt():
-                immutable_fields = ("title", "slug", "description", "duration_minutes")
+                immutable_fields = ("title", "slug", "description", "instructions", "language", "duration_minutes")
                 if any(getattr(original_test, field) != getattr(self, field) for field in immutable_fields):
-                    raise ValidationError("Test details and duration cannot change after an attempt starts; create a new test.")
+                    raise ValidationError(_("Test details and duration cannot change after an attempt starts; create a new test."))
         super().save(*args, **kwargs)
 
     def __str__(self):
         """Return the test title."""
         return self.title
+
+
+class MockTestTranslation(models.Model):
+    """Store localized test metadata and its independent publication state."""
+
+    mock_test = models.ForeignKey(MockTest, on_delete=models.CASCADE, related_name="translations")
+    language_code = models.CharField(max_length=10, choices=Question.Language.choices)
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    instructions = models.TextField(blank=True)
+    is_published = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["language_code"]
+        constraints = [models.UniqueConstraint(fields=["mock_test", "language_code"], name="exam_test_translation_lang_uniq")]
+
+    def clean(self):
+        """Require a title and keep source metadata in the test's own fields."""
+        super().clean()
+        if self.mock_test_id and self.language_code == self.mock_test.language:
+            raise ValidationError({"language_code": _("Use the test's source fields for its source language.")})
+        if not self.title.strip():
+            raise ValidationError({"title": _("A translated test title is required.")})
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Freeze translated test metadata after attempts while allowing closure."""
+        mock_test = MockTest.objects.select_for_update().get(pk=self.mock_test_id)
+        if mock_test._has_started_attempt():
+            if not self.pk:
+                raise ValidationError(_("Test translations cannot be added after the test has attempts."))
+            old = type(self).objects.get(pk=self.pk)
+            if (old.mock_test_id, old.language_code, old.title, old.description, old.instructions) != (
+                self.mock_test_id, self.language_code, self.title, self.description, self.instructions
+            ):
+                raise ValidationError(_("Test translations used by an attempt cannot be edited."))
+        super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Preserve localized test metadata for attempt history."""
+        if self.mock_test._has_started_attempt():
+            raise ValidationError(_("Test translations used by an attempt cannot be deleted."))
+        return super().delete(*args, **kwargs)
+
+    def __str__(self):
+        """Identify the localized test title and language for staff."""
+        return f"{self.title} ({self.language_code})"
 
 
 class MockTestQuestion(models.Model):
@@ -168,10 +324,10 @@ class MockTestQuestion(models.Model):
         super().clean()
         if self.question_id:
             if not self.question.is_published:
-                raise ValidationError({"question": "Only published questions can be added to a test."})
+                raise ValidationError({"question": _("Only published questions can be added to a test." )})
             option_totals = self.question.options.aggregate(total=models.Count("id"), correct=models.Count("id", filter=Q(is_correct=True)))
             if option_totals["total"] < 2 or option_totals["correct"] != 1:
-                raise ValidationError({"question": "Question must have at least two options and exactly one correct option."})
+                raise ValidationError({"question": _("Question must have at least two options and exactly one correct option.")})
 
     @transaction.atomic
     def save(self, *args, **kwargs):
@@ -182,7 +338,7 @@ class MockTestQuestion(models.Model):
             test_ids.add(old_test_id)
         list(MockTest.objects.select_for_update().filter(pk__in=test_ids).order_by("pk"))
         if TestAttempt.objects.filter(mock_test_id__in=test_ids).exists():
-            raise ValidationError("Questions in a test with attempts cannot be changed.")
+            raise ValidationError(_("Questions in a test with attempts cannot be changed."))
         super().save(*args, **kwargs)
 
     @transaction.atomic
@@ -190,7 +346,7 @@ class MockTestQuestion(models.Model):
         """Prevent removing a question from a test with attempt history."""
         list(MockTest.objects.select_for_update().filter(pk=self.mock_test_id))
         if TestAttempt.objects.filter(mock_test_id=self.mock_test_id).exists():
-            raise ValidationError("Questions in a test with attempts cannot be deleted.")
+            raise ValidationError(_("Questions in a test with attempts cannot be deleted."))
         return super().delete(*args, **kwargs)
 
     def __str__(self):
@@ -202,12 +358,13 @@ class TestAttempt(models.Model):
     """Record one student's server-timed attempt and final score summary."""
 
     class State(models.TextChoices):
-        IN_PROGRESS = "in_progress", "In progress"
-        SUBMITTED = "submitted", "Submitted"
-        EXPIRED = "expired", "Expired"
+        IN_PROGRESS = "in_progress", _("In progress")
+        SUBMITTED = "submitted", _("Submitted")
+        EXPIRED = "expired", _("Expired")
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="mock_test_attempts")
     mock_test = models.ForeignKey(MockTest, on_delete=models.PROTECT, related_name="attempts")
+    language_code = models.CharField(max_length=10, choices=Question.Language.choices, null=True, blank=True)
     state = models.CharField(max_length=16, choices=State.choices, default=State.IN_PROGRESS, db_index=True)
     started_at = models.DateTimeField()
     expires_at = models.DateTimeField(db_index=True)
@@ -245,7 +402,7 @@ class AttemptResponse(models.Model):
         super().clean()
         if self.selected_option_id and self.mock_test_question_id:
             if self.selected_option.question_id != self.mock_test_question.question_id:
-                raise ValidationError({"selected_option": "Selected option does not belong to this question."})
+                raise ValidationError({"selected_option": _("Selected option does not belong to this question.")})
 
     def __str__(self):
         """Return the response's attempt and question position."""

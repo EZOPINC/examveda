@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block html_lang %}{{ content_page.language }}{% endblock %}
 {% block title %}{% if is_preview %}Staff content preview | WBPSC Exam Prep{% else %}{{ content_page.seo_title|default:content_page.title }} | WBPSC Exam Prep{% endif %}{% endblock %}
 {% block meta_description %}{% if is_preview %}Staff-only content preview.{% else %}{{ content_page.seo_description|default:content_page.summary|default:content_page.title }}{% endif %}{% endblock %}
 {% block og_title %}{% if is_preview %}WBPSC staff preview{% else %}{{ content_page.seo_title|default:content_page.title }}{% endif %}{% endblock %}
@@ -16,7 +15,7 @@
         <h1>{{ content_page.title }}</h1>
         {% if paper_category and paper_subject %}<dl class="paper-details"><div><dt>Exam</dt><dd>{{ paper_category.name }}</dd></div><div><dt>Subject</dt><dd>{{ paper_subject.name }}</dd></div><div><dt>Year</dt><dd>{{ content_page.resource.year }}</dd></div></dl>{% endif %}
         {% if content_page.summary %}<p class="lead">{{ content_page.summary }}</p>{% endif %}
-        <div class="article-body">{{ content_page.body|linebreaks }}</div>
+        <div class="article-body" lang="{{ content_page.language }}">{{ content_page.body|linebreaks }}</div>
     </article>
     {% if paper_category and paper_subject %}<nav class="back-links" aria-label="More study-material navigation"><a href="{% url 'content:exam_subject_list' paper_category.slug paper_subject.slug %}">Back to {{ paper_subject.name }} papers</a><a href="{% url 'content:category_list' paper_category.slug %}">Back to {{ paper_category.name }} subjects</a><a href="{% url 'content:resource_list' %}">All Free Study Materials</a></nav>{% endif %}
     {% if content_page.resource.files.all %}<section aria-labelledby="documents-heading"><h2 id="documents-heading">Documents</h2><ul>{% for resource_file in content_page.resource.files.all %}{% if resource_file.visibility == 'public' and content_page.is_published %}<li><a href="{% url 'content:public_file' resource_file.pk %}">{{ resource_file.original_filename|default:'View PDF' }}</a> (PDF)</li>{% elif is_preview and resource_file.visibility == 'restricted' %}<li>{{ resource_file.original_filename|default:'Restricted PDF' }} (restricted file, not available for public delivery)</li>{% endif %}{% endfor %}</ul></section>{% endif %}

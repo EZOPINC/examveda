@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}My Mock Test Attempts | WBPSC Exam Prep{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "My Mock Test Attempts | WBPSC Exam Prep" %}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
 {% block content %}
-<p class="eyebrow">Your progress</p><h1>My attempts</h1>
-{% if attempts %}<ul class="resource-list">{% for attempt in attempts %}<li class="resource-card"><span class="resource-badge">{{ attempt.get_state_display }}</span><h2><a href="{% url 'exam_engine:attempt_detail' attempt.pk %}">{{ attempt.mock_test.title }}</a></h2><p class="resource-meta">Started {{ attempt.started_at }}</p>{% if attempt.score != None %}<p><strong>Score:</strong> {{ attempt.score }}</p>{% endif %}</li>{% endfor %}</ul>{% else %}<p class="empty-state">You have not started a mock test yet.</p>{% endif %}
-{% if page_obj.has_other_pages %}<nav aria-label="Attempt history pages" class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">Next</a>{% endif %}</nav>{% endif %}
-<p><a class="button button-secondary" href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
+<p class="eyebrow">{% trans "Your progress" %}</p><h1>{% trans "My attempts" %}</h1>
+{% if attempt_cards %}<ul class="resource-list">{% for card in attempt_cards %}<li class="resource-card"><span class="resource-badge">{{ card.attempt.get_state_display }}</span><h2><a href="{% url 'exam_engine:attempt_detail' card.attempt.pk %}">{{ card.title }}</a></h2><p class="resource-meta">{% blocktrans with started=card.attempt.started_at %}Started {{ started }}{% endblocktrans %}{% if card.attempt.language_code %} · {{ card.attempt.get_language_code_display }}{% endif %}</p>{% if card.attempt.score != None %}<p><strong>{% trans "Score:" %}</strong> {{ card.attempt.score }}</p>{% endif %}</li>{% endfor %}</ul>{% else %}<p class="empty-state">{% trans "You have not started a mock test yet." %}</p>{% endif %}
+{% if page_obj.has_other_pages %}<nav aria-label="{% trans 'Attempt history pages' %}" class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">{% trans "Previous" %}</a>{% endif %}<span>{% blocktrans with number=page_obj.number pages=page_obj.paginator.num_pages %}Page {{ number }} of {{ pages }}{% endblocktrans %}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">{% trans "Next" %}</a>{% endif %}</nav>{% endif %}
+<p><a class="button button-secondary" href="{% url 'exam_engine:mock_test_list' %}">{% trans "Browse mock tests" %}</a></p>
 {% endblock %}

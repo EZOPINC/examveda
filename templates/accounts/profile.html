@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}My account | WBPSC Exam Prep{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "My account" %} | WBPSC Exam Prep{% endblock %}
 {% block content %}
 <section class="article" aria-labelledby="page-title">
-    <p class="eyebrow">Student account</p><h1 id="page-title">My account</h1>
-    <div class="form-card"><p>Username: <strong>{{ request.user.username }}</strong></p>
-        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Save account details</button></form>
+    <p class="eyebrow">{% trans "Student account" %}</p><h1 id="page-title">{% trans "My account" %}</h1>
+    <div class="form-card"><p>{% trans "Username:" %} <strong>{{ request.user.username }}</strong></p>
+        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{% trans "Save account details" %}</button></form>
     </div>
-    <nav class="back-links" aria-label="Account links"><a href="{% url 'accounts:password_change' %}">Change password</a><a href="{% url 'exam_engine:attempt_history' %}">My mock-test attempts</a></nav>
-    <p class="resource-meta">Password recovery is currently handled by an administrator after identity verification.</p>
+    <nav class="back-links" aria-label="{% trans 'Account links' %}"><a href="{% url 'accounts:password_change' %}">{% trans "Change password" %}</a><a href="{% url 'exam_engine:attempt_history' %}">{% trans "My mock-test attempts" %}</a></nav>
+    <p class="resource-meta">{% trans "Password recovery is currently handled by an administrator after identity verification." %}</p>
 </section>
 {% endblock %}

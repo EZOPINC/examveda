@@ -12,6 +12,7 @@
     const saveStatus = document.getElementById("answer-save-status");
     const pendingSaves = new Set();
     const unsavedForms = new Set();
+    const messages = saveStatus.dataset;
 
     function showQuestion(index) {
         questionPanels.forEach((panel, panelIndex) => {
@@ -27,7 +28,7 @@
     async function saveAnswer(form) {
         const csrfInput = form.querySelector("[name=csrfmiddlewaretoken]");
         const payload = new URLSearchParams(new FormData(form));
-        saveStatus.textContent = "Saving answer…";
+        saveStatus.textContent = messages.saving;
         try {
             const response = await fetch(form.action, {
                 method: "POST",
@@ -37,17 +38,17 @@
             });
             const result = await response.json();
             if (!response.ok) {
-                saveStatus.textContent = result.error || "Answer could not be saved.";
+                saveStatus.textContent = response.status === 409 ? messages.locked : messages.saveError;
                 if (response.status === 409) {
                     window.location.assign(examPage.dataset.attemptUrl);
                 }
                 return false;
             }
             unsavedForms.delete(form);
-            saveStatus.textContent = "Answer saved.";
+            saveStatus.textContent = messages.saved;
             return true;
         } catch (error) {
-            saveStatus.textContent = "Connection interrupted. Change or save the answer again to retry.";
+            saveStatus.textContent = messages.connectionError;
             return false;
         }
     }
@@ -76,9 +77,29 @@
         });
     });
 
+    const languageForm = document.getElementById("attempt-language-form");
+    if (languageForm) {
+        languageForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const button = languageForm.querySelector("button[type=submit]");
+            button.disabled = true;
+            saveStatus.textContent = languageForm.dataset.waitingMessage;
+            while (pendingSaves.size > 0 || unsavedForms.size > 0) {
+                Array.from(unsavedForms).forEach((form) => queueSave(form));
+                const saveOutcomes = await Promise.all(Array.from(pendingSaves));
+                if (saveOutcomes.some((wasSaved) => !wasSaved)) {
+                    saveStatus.textContent = languageForm.dataset.failedMessage;
+                    button.disabled = false;
+                    return;
+                }
+            }
+            HTMLFormElement.prototype.submit.call(languageForm);
+        });
+    }
+
     document.getElementById("submit-attempt-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        if (!window.confirm("Submit this examination now? You cannot change answers after submission.")) {
+        if (!window.confirm(messages.submitConfirm)) {
             return;
         }
         const submitForm = event.currentTarget;
@@ -95,7 +116,7 @@
         }
         if (saveFailed || unsavedForms.size > 0) {
             submitButton.disabled = false;
-            saveStatus.textContent = "An answer was not saved. Retry the save before submitting.";
+            saveStatus.textContent = messages.retrySubmit;
             return;
         }
         document.querySelectorAll(".answer-form input, .answer-form button").forEach((control) => { control.disabled = true; });
@@ -109,9 +130,9 @@
         const remainingSeconds = Math.max(0, Math.ceil((deadline - serverNow) / 1000));
         const minutes = Math.floor(remainingSeconds / 60);
         const seconds = remainingSeconds % 60;
-        countdown.textContent = `${minutes}:${String(seconds).padStart(2, "0")} remaining`;
+        countdown.textContent = `${minutes}:${String(seconds).padStart(2, "0")} ${countdown.dataset.remainingLabel}`;
         if (remainingSeconds === 0) {
-            countdown.textContent = "Checking server deadline…";
+            countdown.textContent = countdown.dataset.checkingLabel;
             window.location.assign(examPage.dataset.attemptUrl);
             return;
         }

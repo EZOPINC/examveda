@@ -2,6 +2,13 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-22 — English, Hindi, and Bengali mock exams
+
+- Added `QuestionTranslation`, `QuestionOptionTranslation`, and `MockTestTranslation` in `exam_engine`; stable option rows and one shared correctness key continue to drive scoring. Migration `exam_engine.0002` is additive and leaves legacy test/attempt language fields nullable for staff review.
+- Added complete-language availability checks, explicit language selection before start, attempt-level language persistence/switching, localized active/review views, and staff translation preview/completeness controls. Incomplete or unpublished language variants are not listed, started, or newly selected.
+- Added Django interface catalogs for Hindi and Bengali with compiled runtime catalogs, shared language controls, account/home and mock-exam UI translations, and local script-font fallbacks. Free previous-year-paper text/PDF workflow remains unchanged and does not receive Hindi translations.
+- Added regression coverage for language completeness, publication, shared correctness, answer/timer preservation during switching, localized rendering, legacy-safe locale handling, and source-question publication. No app, dependency, payment, PDF, or production-data change.
+
 ## 2026-10-22 — Blog and social integration
 
 - Added public blog index, category and article routes using the existing `ContentPage` editorial lifecycle, plus a dedicated editorial `BlogCategory` and optional author/featured-image fields in additive migration `content.0002`.

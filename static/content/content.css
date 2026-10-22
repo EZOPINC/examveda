@@ -1,7 +1,7 @@
 /* Shared interface styles for public content, account pages and examination workflows. */
 :root {
     color-scheme: light;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: Inter, "Noto Sans Bengali", "Noto Sans Devanagari", "Nirmala UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: #172b3a;
     background: #f5f7f8;
     font-synthesis: none;
@@ -45,6 +45,10 @@ button:hover, .button:hover, input[type="submit"]:hover { border-color: var(--br
 .primary-nav .nav-register:hover { background: var(--brand-dark); }
 .nav-logout-form { margin: 0; }
 .nav-logout { cursor: pointer; }
+.language-switcher, .language-choice { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; margin: 0; }
+.language-switcher label, .language-choice label { flex-basis: 100%; font-weight: 700; }
+.language-switcher select, .language-choice select { min-height: 2.8rem; max-width: 100%; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: .5rem; background: #fff; }
+.language-switcher button, .language-choice button { min-height: 2.8rem; }
 .page-shell { width: min(100% - 2rem, 72rem); margin: 0 auto; padding: 2.25rem 0 4rem; }
 .article { max-width: 54rem; }
 h1, h2, h3, h4 { color: var(--ink); line-height: 1.22; letter-spacing: -.025em; }

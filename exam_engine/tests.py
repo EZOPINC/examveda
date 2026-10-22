@@ -13,8 +13,8 @@ from django.utils import timezone
 
 from content.models import Subject
 
-from .models import AttemptResponse, MockTest, MockTestQuestion, Question, QuestionOption, TestAttempt
-from .services import TestUnavailable, save_answer, start_test, submit_attempt
+from .models import AttemptResponse, MockTest, MockTestQuestion, MockTestTranslation, Question, QuestionOption, QuestionOptionTranslation, QuestionTranslation, TestAttempt
+from .services import TestUnavailable, available_test_languages, change_attempt_language, save_answer, start_test, submit_attempt, test_language_content
 
 
 class ExamEngineWorkflowTests(TestCase):
@@ -35,7 +35,7 @@ class ExamEngineWorkflowTests(TestCase):
             question.is_published = True
             question.save()
         cls.mock_test = MockTest.objects.create(
-            title="WBCS practice", slug="wbcs-practice", description="Practice questions.", duration_minutes=5, is_published=True
+            title="WBCS practice", slug="wbcs-practice", description="Practice questions.", language="en", duration_minutes=5, is_published=True
         )
         cls.test_questions = []
         for index, question in enumerate(cls.questions, start=1):
@@ -47,9 +47,285 @@ class ExamEngineWorkflowTests(TestCase):
                 negative_marks=Decimal("0.50"),
             ))
 
-    def start_for(self, user=None, now=None):
+    def start_for(self, user=None, now=None, language_code="en"):
         """Create an attempt through the approved transactional start service."""
-        return start_test(user or self.student, self.mock_test.slug, now=now)
+        return start_test(user or self.student, self.mock_test.slug, language_code=language_code, now=now)
+
+    def add_test_translation(self, language_code="hi", complete=True):
+        """Create translated metadata, question prompts, and stable option labels."""
+        MockTestTranslation.objects.create(
+            mock_test=self.mock_test,
+            language_code=language_code,
+            title="डब्ल्यूबीसीएस अभ्यास" if language_code == "hi" else "ডব্লিউবিসিএস অনুশীলন",
+            description="अभ्यास प्रश्न।" if language_code == "hi" else "অনুশীলনের প্রশ্ন।",
+            is_published=True,
+        )
+        for question_index, question in enumerate(self.questions, start=1):
+            translation = QuestionTranslation.objects.create(
+                question=question,
+                language_code=language_code,
+                prompt=(f"प्रश्न {question_index}?" if language_code == "hi" else f"প্রশ্ন {question_index}?"),
+                explanation=(f"व्याख्या {question_index}." if language_code == "hi" else f"ব্যাখ্যা {question_index}."),
+                is_published=True,
+            )
+            options = list(question.options.order_by("position"))
+            for option_index, option in enumerate(options, start=1):
+                if complete or not (question_index == 1 and option_index == 2):
+                    label = (f"विकल्प {option_index}" if language_code == "hi" else f"বিকল্প {option_index}")
+                    QuestionOptionTranslation.objects.create(question_translation=translation, option=option, text=label)
+
+    def test_language_translation_is_complete_and_preserves_shared_option_key(self):
+        """Hindi variants render localized text while correctness stays on source option rows."""
+        self.add_test_translation("hi")
+        available = dict(available_test_languages(self.mock_test))
+        self.assertIn("hi", available)
+        attempt = self.start_for(language_code="hi")
+        self.assertEqual(attempt.language_code, "hi")
+        localized = test_language_content(self.mock_test, "hi")
+        source_question = self.questions[0]
+        correct_source_option = source_question.options.get(is_correct=True)
+        localized_options = dict(localized["questions"][0]["options"])
+        self.assertEqual(localized_options[correct_source_option], "विकल्प 1")
+        self.assertEqual(sum(option.is_correct for option, _label in localized["questions"][0]["options"]), 1)
+
+    def test_incomplete_translation_cannot_be_advertised_or_started(self):
+        """Missing translated option text fails closed without falling back to English."""
+        self.add_test_translation("hi", complete=False)
+        self.assertNotIn("hi", dict(available_test_languages(self.mock_test)))
+        with self.assertRaises(TestUnavailable):
+            self.start_for(language_code="hi")
+
+    def test_language_switch_preserves_attempt_timer_and_saved_answer(self):
+        """Changing only the presentation language retains identity, timing, answer and key."""
+        self.add_test_translation("hi")
+        attempt = self.start_for()
+        started_at, expires_at = attempt.started_at, attempt.expires_at
+        selected = self.questions[0].options.get(is_correct=True)
+        save_answer(self.student, attempt.pk, self.test_questions[0].pk, selected.pk)
+        self.assertTrue(change_attempt_language(self.student, attempt.pk, "hi"))
+        attempt.refresh_from_db()
+        self.assertEqual(attempt.language_code, "hi")
+        self.assertEqual((attempt.started_at, attempt.expires_at), (started_at, expires_at))
+        self.assertEqual(attempt.responses.get(mock_test_question=self.test_questions[0]).selected_option_id, selected.pk)
+        self.assertTrue(selected.is_correct)
+        finalized = submit_attempt(self.student, attempt.pk)
+        self.assertEqual(finalized.score, Decimal("2.00"))
+
+    def test_active_attempt_cannot_switch_to_unpublished_language(self):
+        """An existing attempt keeps its locale, while switching requires current publication."""
+        self.add_test_translation("hi")
+        attempt = self.start_for(language_code="en")
+        localized_test = self.mock_test.translations.get(language_code="hi")
+        localized_test.is_published = False
+        localized_test.save()
+        with self.assertRaises(ValidationError):
+            change_attempt_language(self.student, attempt.pk, "hi")
+        attempt.refresh_from_db()
+        self.assertEqual(attempt.language_code, "en")
+
+    def test_existing_attempt_keeps_its_language_after_locale_is_closed(self):
+        """Unpublishing a locale stops new selection but does not strand its active attempt."""
+        self.add_test_translation("hi")
+        attempt = self.start_for(language_code="hi")
+        localized_test = self.mock_test.translations.get(language_code="hi")
+        localized_test.is_published = False
+        localized_test.save()
+        self.client.force_login(self.student)
+        response = self.client.get(reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertContains(response, "डब्ल्यूबीसीएस अभ्यास")
+        self.assertContains(response, "प्रश्न 1?")
+
+    def test_active_attempt_can_switch_language_after_test_closes_to_new_starts(self):
+        """Closing a test to new students does not disable complete locales for active attempts."""
+        self.add_test_translation("hi")
+        attempt = self.start_for(language_code="en")
+        self.mock_test.is_published = False
+        self.mock_test.save()
+        self.assertTrue(change_attempt_language(self.student, attempt.pk, "hi"))
+        attempt.refresh_from_db()
+        self.assertEqual(attempt.language_code, "hi")
+        self.assertEqual(available_test_languages(self.mock_test), [])
+        available_codes = [
+            code for code, _label in available_test_languages(
+                self.mock_test, allow_test_closed=True
+            )
+        ]
+        self.assertEqual(available_codes, ["en", "hi"])
+
+    def test_translated_question_must_include_explanation_when_source_has_one(self):
+        """A localized test is unavailable when authored source explanations are omitted."""
+        self.add_test_translation("hi")
+        translation = self.questions[0].translations.get(language_code="hi")
+        translation.explanation = ""
+        translation.save()
+        self.assertNotIn("hi", dict(available_test_languages(self.mock_test)))
+
+    def test_mock_test_translation_needs_published_metadata_for_availability(self):
+        """A question set alone cannot advertise a test without its translated title."""
+        self.add_test_translation("hi")
+        test_translation = self.mock_test.translations.get(language_code="hi")
+        test_translation.is_published = False
+        test_translation.save()
+        self.assertNotIn("hi", dict(available_test_languages(self.mock_test)))
+
+    def test_student_can_select_language_before_start_and_switch_over_http(self):
+        """Public language choice and active language changes use the same attempt."""
+        self.add_test_translation("hi")
+        self.client.force_login(self.student)
+        detail_url = reverse("exam_engine:mock_test_detail", args=[self.mock_test.slug])
+        self.assertContains(self.client.get(detail_url), 'name="language_code" value="en"')
+        start = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]), {"language_code": "en"})
+        attempt = TestAttempt.objects.get(user=self.student, mock_test=self.mock_test)
+        selected = self.questions[0].options.get(is_correct=True)
+        save_answer(self.student, attempt.pk, self.test_questions[0].pk, selected.pk)
+        change = self.client.post(reverse("exam_engine:change_test_language", args=[attempt.pk]), {"language_code": "hi"})
+        attempt.refresh_from_db()
+        self.assertRedirects(start, reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertRedirects(change, reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertEqual(attempt.language_code, "hi")
+        self.assertEqual(attempt.responses.get(mock_test_question=self.test_questions[0]).selected_option_id, selected.pk)
+        self.assertContains(self.client.get(change.url), "प्रश्न 1?")
+
+    def test_incomplete_question_language_never_falls_back_to_source_language(self):
+        """A test with even one untranslated prompt is hidden in that language."""
+        self.add_test_translation("hi")
+        self.questions[1].translations.get(language_code="hi").delete()
+        self.assertNotIn("hi", dict(available_test_languages(self.mock_test)))
+
+    def test_published_translation_cannot_bypass_unpublished_source_question(self):
+        """A translated variant remains unavailable while its logical source question is draft."""
+        self.add_test_translation("hi")
+        question = self.questions[0]
+        question.is_published = False
+        question.save()
+        self.assertNotIn("hi", dict(available_test_languages(self.mock_test)))
+
+    def test_global_language_switch_localizes_shared_ui(self):
+        """The standard Django language endpoint changes interface copy without changing content records."""
+        home = reverse("home")
+        localized_labels = {
+            "hi": ("निःशुल्क अध्ययन सामग्री", 'lang="hi"'),
+            "bn": ("বিনামূল্যে পড়ার উপকরণ", 'lang="bn"'),
+        }
+        for language_code, (label, html_language) in localized_labels.items():
+            self.client.post(reverse("set_language"), {"language": language_code, "next": home})
+            response = self.client.get(home)
+            self.assertContains(response, label)
+            self.assertContains(response, html_language)
+
+    def test_bengali_mock_exam_uses_one_rendered_language(self):
+        """Bengali prompt/options and document language render without source-language text."""
+        self.add_test_translation("bn")
+        self.client.force_login(self.student)
+        attempt = self.start_for(language_code="bn")
+        response = self.client.get(reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertContains(response, "ডব্লিউবিসিএস অনুশীলন")
+        self.assertContains(response, "প্রশ্ন 1?")
+        self.assertContains(response, "বিকল্প 1")
+        self.assertContains(response, 'lang="bn"')
+        self.assertNotContains(response, "Question 1?")
+
+    def test_staff_can_open_question_and_test_translation_editors(self):
+        """Admin translation forms expose localized preview and test metadata in place."""
+        self.add_test_translation("hi")
+        staff = get_user_model().objects.create_superuser(username="translation-admin", password="test-password", email="translation-admin@example.test")
+        self.client.force_login(staff)
+        question_translation = self.questions[0].translations.get(language_code="hi")
+        question_admin = self.client.get(reverse("admin:exam_engine_questiontranslation_change", args=[question_translation.pk]))
+        test_admin = self.client.get(reverse("admin:exam_engine_mocktest_change", args=[self.mock_test.pk]))
+        self.assertEqual(question_admin.status_code, 200)
+        self.assertContains(question_admin, "Translation completeness")
+        self.assertContains(question_admin, "विकल्प 1")
+        self.assertEqual(test_admin.status_code, 200)
+        self.assertContains(test_admin, "डब्ल्यूबीसीएस अभ्यास")
+
+    def test_admin_cannot_publish_translation_with_missing_option_label(self):
+        """The admin formset checks submitted publication state, not only saved state."""
+        translation = QuestionTranslation.objects.create(
+            question=self.questions[0], language_code="hi", prompt="प्रश्न?", is_published=False
+        )
+        first_option = self.questions[0].options.order_by("position").first()
+        localized_option = QuestionOptionTranslation.objects.create(
+            question_translation=translation, option=first_option, text="विकल्प"
+        )
+        staff = get_user_model().objects.create_superuser(username="translation-publish-admin", password="test-password", email="publish-admin@example.test")
+        self.client.force_login(staff)
+        change_url = reverse("admin:exam_engine_questiontranslation_change", args=[translation.pk])
+        page = self.client.get(change_url)
+        prefix = page.context["inline_admin_formsets"][0].formset.prefix
+        payload = {
+            "question": self.questions[0].pk,
+            "language_code": "hi",
+            "prompt": "प्रश्न?",
+            "explanation": "",
+            "is_published": "on",
+            "id": translation.pk,
+            "_save": "Save",
+            f"{prefix}-TOTAL_FORMS": "1",
+            f"{prefix}-INITIAL_FORMS": "1",
+            f"{prefix}-MIN_NUM_FORMS": "0",
+            f"{prefix}-MAX_NUM_FORMS": "1000",
+            f"{prefix}-0-id": localized_option.pk,
+            f"{prefix}-0-option": first_option.pk,
+            f"{prefix}-0-text": "विकल्प",
+        }
+        response = self.client.post(change_url, payload)
+        translation.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(translation.is_published)
+        self.assertContains(response, "Every answer option needs translated text")
+
+    def test_admin_translation_content_is_read_only_after_first_attempt(self):
+        """Admin continues to show historical translation previews without offering text edits."""
+        self.add_test_translation("hi")
+        self.start_for()
+        staff = get_user_model().objects.create_superuser(username="frozen-translation-admin", password="test-password", email="frozen-admin@example.test")
+        self.client.force_login(staff)
+        question_translation = self.questions[0].translations.get(language_code="hi")
+        question_admin = self.client.get(reverse("admin:exam_engine_questiontranslation_change", args=[question_translation.pk]))
+        test_admin = self.client.get(reverse("admin:exam_engine_mocktest_change", args=[self.mock_test.pk]))
+        self.assertEqual(question_admin.status_code, 200)
+        self.assertEqual(test_admin.status_code, 200)
+        self.assertContains(question_admin, "प्रश्न 1?")
+        self.assertContains(test_admin, "डब्ल्यूबीसीएस अभ्यास")
+
+    def test_missing_language_choice_is_rejected_for_a_new_attempt(self):
+        """A new attempt must carry an explicit language supported by the complete test."""
+        with self.assertRaises(TestUnavailable):
+            start_test(self.student, self.mock_test.slug)
+        with self.assertRaises(TestUnavailable):
+            self.start_for(language_code="fr")
+
+    def test_legacy_test_requires_explicit_source_language_assignment(self):
+        """A translation row cannot silently activate a legacy test with unknown source language."""
+        self.add_test_translation("hi")
+        self.mock_test.language = None
+        self.mock_test.save()
+        self.assertEqual(available_test_languages(self.mock_test), [])
+        with self.assertRaises(TestUnavailable):
+            self.start_for(language_code="hi")
+
+    def test_legacy_attempt_without_locale_keeps_source_text(self):
+        """Old attempts with a null language remain renderable without guessing a test locale."""
+        attempt = self.start_for()
+        attempt.language_code = None
+        attempt.save(update_fields=["language_code"])
+        self.client.force_login(self.student)
+        response = self.client.get(reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertContains(response, "WBCS practice")
+        self.assertContains(response, "Question 1?")
+
+    def test_active_exam_response_uses_attempt_language_and_hides_answer_key(self):
+        """The active page renders one complete chosen locale and no correctness metadata."""
+        self.add_test_translation("hi")
+        self.client.force_login(self.student)
+        attempt = self.start_for(language_code="hi")
+        response = self.client.get(reverse("exam_engine:attempt_detail", args=[attempt.pk]))
+        self.assertContains(response, "डब्ल्यूबीसीएस अभ्यास")
+        self.assertContains(response, "प्रश्न 1?")
+        self.assertContains(response, "विकल्प 1")
+        self.assertNotContains(response, "Explanation 1.")
+        self.assertNotContains(response, "Correct answer:")
 
     def test_start_records_server_times_and_reuses_active_attempt(self):
         """Repeated starts resume the same active attempt without extending time."""
@@ -64,7 +340,7 @@ class ExamEngineWorkflowTests(TestCase):
     def test_authenticated_start_endpoint_creates_attempt(self):
         """The student HTTP action delegates creation to the server service."""
         self.client.force_login(self.student)
-        response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]))
+        response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]), {"language_code": "en"})
         attempt = TestAttempt.objects.get(user=self.student, mock_test=self.mock_test)
         self.assertRedirects(response, reverse("exam_engine:attempt_detail", args=[attempt.pk]))
         self.assertEqual(attempt.state, TestAttempt.State.IN_PROGRESS)
@@ -72,7 +348,7 @@ class ExamEngineWorkflowTests(TestCase):
     def test_student_completes_exam_workflow_over_http(self):
         """A student can start, view, save, submit and review one attempt."""
         self.client.force_login(self.student)
-        start_response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]))
+        start_response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]), {"language_code": "en"})
         attempt = TestAttempt.objects.get(user=self.student, mock_test=self.mock_test)
         self.assertRedirects(start_response, reverse("exam_engine:attempt_detail", args=[attempt.pk]))
 
@@ -109,7 +385,7 @@ class ExamEngineWorkflowTests(TestCase):
         """The public test page is visible but starting needs authentication."""
         response = self.client.get(reverse("exam_engine:mock_test_detail", args=[self.mock_test.slug]))
         self.assertContains(response, self.mock_test.title)
-        start_response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]))
+        start_response = self.client.post(reverse("exam_engine:start_test", args=[self.mock_test.slug]), {"language_code": "en"})
         self.assertRedirects(start_response, f"/accounts/login/?next=/mock-tests/{self.mock_test.slug}/")
         self.assertEqual(self.client.get(start_response.url).status_code, 200)
         self.assertFalse(TestAttempt.objects.exists())
@@ -148,6 +424,7 @@ class ExamEngineWorkflowTests(TestCase):
         self.client.force_login(self.other_student)
         self.assertEqual(self.client.get(reverse("exam_engine:attempt_detail", args=[attempt.pk])).status_code, 404)
         self.assertEqual(self.client.post(reverse("exam_engine:submit_attempt", args=[attempt.pk])).status_code, 404)
+        self.assertEqual(self.client.post(reverse("exam_engine:change_test_language", args=[attempt.pk]), {"language_code": "en"}).status_code, 404)
         self.assertEqual(self.client.post(reverse("exam_engine:save_answer", args=[attempt.pk]), {
             "mock_test_question_id": self.test_questions[0].pk,
             "selected_option_id": self.questions[0].options.get(is_correct=True).pk,
@@ -299,4 +576,4 @@ class ExamAuthoringValidationTests(TestCase):
         mock_test = MockTest.objects.create(title="Draft", slug="draft-mock", duration_minutes=20, is_published=False)
         client = Client()
         client.force_login(student)
-        self.assertEqual(client.post(reverse("exam_engine:start_test", args=[mock_test.slug])).status_code, 404)
+        self.assertEqual(client.post(reverse("exam_engine:start_test", args=[mock_test.slug]), {"language_code": "en"}).status_code, 404)

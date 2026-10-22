@@ -1,5 +1,6 @@
-<div class="share-controls" data-share-controls data-share-title="{{ share_title }}" data-share-url="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" hidden>
-    <button type="button" class="button button-secondary" data-share-page>Share</button>
-    <button type="button" class="button button-secondary" data-copy-page-link>Copy link</button>
+{% load i18n %}
+<div class="share-controls" data-share-controls data-share-title="{{ share_title }}" data-share-url="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" data-share-error="{% trans 'Sharing is unavailable in this browser. You can copy the page link instead.' %}" data-copy-failed="{% trans 'Could not copy the link. Select and copy the page address from your browser.' %}" data-copy-success="{% trans 'Link copied to clipboard.' %}" hidden>
+    <button type="button" class="button button-secondary" data-share-page>{% trans "Share" %}</button>
+    <button type="button" class="button button-secondary" data-copy-page-link>{% trans "Copy link" %}</button>
     <p class="share-status" data-share-status role="status" aria-live="polite"></p>
 </div>

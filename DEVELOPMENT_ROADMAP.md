@@ -1,8 +1,8 @@
 # Development Roadmap
 
-**Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 code review is complete with operational gates open. Phase 6 is authorized; deployment configuration and runbook preparation are underway. No OCI resources have been provisioned.
+**Status:** Phases 2, 3, and 4 are owner-approved (Phase 3 and 4 approval explicitly confirmed on 2026-10-20). Phase 5 code review is complete with operational gates open. Phase 6 deployment preparation is documented; no OCI resources have been provisioned here. The multilingual mock-exam extension was approved on 2026-10-22 and is under implementation review; it does not close deployment or production-readiness gates.
 
-**Current task:** Phase 6 deployment configuration and operations documentation. The Phase 5 report's restore, load, proxy, monitoring, and rate-limit gates remain open and are not resolved by local deployment preparation.
+**Current task:** Multilingual application UI and mock-exam support in the existing `exam_engine` boundary. The Phase 5 report's restore, load, proxy, monitoring, and rate-limit gates remain open and are not resolved by this work.
 
 ## Working rules for every phase
 

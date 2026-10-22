@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
-{% load exam_engine_tags %}
-{% block title %}Result | {{ attempt.mock_test.title }}{% endblock %}
+{% load exam_engine_tags i18n %}
+{% block title %}{% trans "Result" %} | {{ test_metadata.title }}{% endblock %}
 {% block content %}
-<section class="article" aria-labelledby="result-title">
-    <p class="eyebrow">Your result</p><h1 id="result-title">{{ attempt.mock_test.title }} result</h1>
-    <p class="resource-meta">Attempt status: {{ attempt.get_state_display }}</p>
-    <dl class="score-summary"><dt>Score</dt><dd>{{ attempt.score }}</dd><dt>Correct</dt><dd>{{ attempt.correct_count }}</dd><dt>Incorrect</dt><dd>{{ attempt.incorrect_count }}</dd><dt>Unanswered</dt><dd>{{ attempt.unanswered_count }}</dd></dl>
-    <h2>Answer review</h2>
-    {% for test_question in test_questions %}{% with response=responses|get_item:test_question.pk %}<section class="question-panel">
-        <h3>Question {{ forloop.counter }}</h3><div>{{ test_question.question.prompt|linebreaks }}</div>
-        <ul>{% for option in test_question.question.options.all %}<li>{% if option.is_correct %}<strong>Correct answer:</strong> {% elif response and response.selected_option_id == option.pk %}<strong>Your answer:</strong> {% endif %}{{ option.text }}</li>{% endfor %}</ul>
-        {% if test_question.question.explanation %}<p><strong>Explanation:</strong> {{ test_question.question.explanation|linebreaks }}</p>{% endif %}
+<section class="article" aria-labelledby="result-title" lang="{{ attempt.language_code|default:'en' }}">
+    <p class="eyebrow">{% trans "Your result" %}</p><h1 id="result-title">{{ test_metadata.title }} {% trans "result" %}</h1>
+    <p class="resource-meta">{% blocktrans with language=language_label state=attempt.get_state_display %}Language: {{ language }} · Attempt status: {{ state }}{% endblocktrans %}</p>
+    <dl class="score-summary"><dt>{% trans "Score" %}</dt><dd>{{ attempt.score }}</dd><dt>{% trans "Correct" %}</dt><dd>{{ attempt.correct_count }}</dd><dt>{% trans "Incorrect" %}</dt><dd>{{ attempt.incorrect_count }}</dd><dt>{% trans "Unanswered" %}</dt><dd>{{ attempt.unanswered_count }}</dd></dl>
+    <h2>{% trans "Answer review" %}</h2>
+    {% for question in localized_questions %}{% with response=responses|get_item:question.test_question.pk %}<section class="question-panel">
+        <h3>{% blocktrans with number=forloop.counter %}Question {{ number }}{% endblocktrans %}</h3><div>{{ question.prompt|linebreaks }}</div>
+        <ul>{% for option in question.options %}<li>{% if option.is_correct %}<strong>{% trans "Correct answer:" %}</strong> {% elif response and response.selected_option_id == option.id %}<strong>{% trans "Your answer:" %}</strong> {% endif %}{{ option.text }}</li>{% endfor %}</ul>
+        {% if question.explanation %}<p><strong>{% trans "Explanation:" %}</strong> {{ question.explanation|linebreaks }}</p>{% endif %}
     </section>{% endwith %}{% endfor %}
-    <nav class="back-links" aria-label="Result navigation"><a href="{% url 'exam_engine:attempt_history' %}">My attempts</a><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></nav>
+    <nav class="back-links" aria-label="{% trans 'Result navigation' %}"><a href="{% url 'exam_engine:attempt_history' %}">{% trans "My attempts" %}</a><a href="{% url 'exam_engine:mock_test_list' %}">{% trans "Browse mock tests" %}</a></nav>
 </section>
 {% endblock %}

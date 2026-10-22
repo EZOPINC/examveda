@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}WBPSC Mock Tests | Online Exam Practice{% endblock %}
-{% block meta_description %}Browse available WBPSC mock tests. Practise with timed examinations and review results after submission.{% endblock %}
-{% block og_title %}WBPSC Mock Tests | Online Exam Practice{% endblock %}
-{% block og_description %}Browse available WBPSC mock tests and practise online.{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "WBPSC Mock Tests | Online Exam Practice" %}{% endblock %}
+{% block meta_description %}{% trans "Browse available WBPSC mock tests. Practise with timed examinations and review results after submission." %}{% endblock %}
+{% block og_title %}{% trans "WBPSC Mock Tests | Online Exam Practice" %}{% endblock %}
+{% block og_description %}{% trans "Browse available WBPSC mock tests and practise online." %}{% endblock %}
 {% block robots %}index, follow{% endblock %}
 {% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% if page_obj.number > 1 %}?page={{ page_obj.number }}{% endif %}">{% endblock %}
 {% block content %}
-<p class="eyebrow">Timed practice</p><h1>Mock tests</h1>
-<p class="lead">Choose a published test to practise. Your responses are saved by the server and reviewed after submission.</p>
-{% if mock_tests %}<ul class="resource-list">{% for mock_test in mock_tests %}<li class="resource-card"><span class="resource-badge">{{ mock_test.duration_minutes }} minutes</span><h2><a href="{% url 'exam_engine:mock_test_detail' mock_test.slug %}">{{ mock_test.title }}</a></h2>{% if mock_test.description %}<p>{{ mock_test.description }}</p>{% endif %}<a href="{% url 'exam_engine:mock_test_detail' mock_test.slug %}" aria-label="View {{ mock_test.title }}">View test <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>{% else %}<p class="empty-state">No mock tests are currently available.</p>{% endif %}
-{% if page_obj.has_other_pages %}<nav aria-label="Mock test pages" class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">Next</a>{% endif %}</nav>{% endif %}
+<p class="eyebrow">{% trans "Timed practice" %}</p><h1>{% trans "Mock tests" %}</h1>
+<p class="lead">{% trans "Choose a published test to practise. Your responses are saved by the server and reviewed after submission." %}</p>
+{% if test_cards %}<ul class="resource-list">{% for card in test_cards %}<li class="resource-card"><span class="resource-badge">{{ card.test.duration_minutes }} {% trans "minutes" %}</span><h2><a href="{% url 'exam_engine:mock_test_detail' card.test.slug %}">{{ card.content.title }}</a></h2>{% if card.content.description %}<p>{{ card.content.description }}</p>{% endif %}<p class="resource-meta">{% trans "Available languages:" %} {% for code, label in card.languages %}{{ label }}{% if not forloop.last %}, {% endif %}{% endfor %}</p><a href="{% url 'exam_engine:mock_test_detail' card.test.slug %}" aria-label="{% blocktrans with title=card.content.title %}View {{ title }}{% endblocktrans %}">{% trans "View test" %} <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>{% else %}<p class="empty-state">{% trans "No mock tests are currently available." %}</p>{% endif %}
+{% if page_obj.has_other_pages %}<nav aria-label="{% trans 'Mock test pages' %}" class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">{% trans "Previous" %}</a>{% endif %}<span>{% blocktrans with number=page_obj.number pages=page_obj.paginator.num_pages %}Page {{ number }} of {{ pages }}{% endblocktrans %}</span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">{% trans "Next" %}</a>{% endif %}</nav>{% endif %}
 {% endblock %}

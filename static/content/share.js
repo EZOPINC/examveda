@@ -22,7 +22,7 @@
                 await navigator.share(shareData);
             } catch (error) {
                 if (error.name !== "AbortError") {
-                    status.textContent = "Sharing is unavailable in this browser. You can copy the page link instead.";
+                    status.textContent = group.dataset.shareError;
                 }
             }
         });
@@ -44,9 +44,9 @@
                         throw new Error("Copy command failed");
                     }
                 }
-                status.textContent = "Link copied to clipboard.";
+                status.textContent = group.dataset.copySuccess;
             } catch (error) {
-                status.textContent = "Could not copy the link. Select and copy the page address from your browser.";
+                status.textContent = group.dataset.copyFailed;
             }
         });
     });

@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Create student account | WBPSC Exam Prep{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Create student account | WBPSC Exam Prep" %}{% endblock %}
 {% block content %}
 <section class="article" aria-labelledby="page-title">
-    <p class="eyebrow">Get started</p><h1 id="page-title">Create a student account</h1>
-    <p class="lead">Save your mock-test activity and return to your preparation when it suits you.</p>
-    <div class="form-card"><p>New accounts are students. Administrative access is granted separately by an administrator.</p>
-        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Create account</button></form>
+    <p class="eyebrow">{% trans "Get started" %}</p><h1 id="page-title">{% trans "Create a student account" %}</h1>
+    <p class="lead">{% trans "Save your mock-test activity and return to your preparation when it suits you." %}</p>
+    <div class="form-card"><p>{% trans "New accounts are students. Administrative access is granted separately by an administrator." %}</p>
+        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">{% trans "Create account" %}</button></form>
     </div>
-    <p>Already registered? <a href="{% url 'login' %}">Sign in</a>.</p>
+    <p>{% trans "Already registered?" %} <a href="{% url 'login' %}">{% trans "Sign in" %}</a>.</p>
 </section>
 {% endblock %}

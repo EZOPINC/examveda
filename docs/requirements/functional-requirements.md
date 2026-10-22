@@ -25,6 +25,14 @@ The blog and social extension adds public editorial browsing using the existing 
 
 ## Free content and public URLs
 
+### Language scope
+
+- The shared application interface and mock-test workflow support English (`en`), Hindi (`hi`), and Bengali (`bn`). UI strings are served through Django internationalization catalogs and UTF-8 templates.
+- Free educational and previous-year-paper records remain in their current English/Bengali content workflow. Do not add Hindi translations or rewrite PDFs as part of mock-exam localization.
+- A mock exam uses one complete language at a time. Prompt, option labels, instructions, result labels, and permitted explanations follow the selected attempt language; no missing string is silently borrowed from another language.
+- Public test descriptions offer only currently published, complete languages. Students choose before starting. An in-progress attempt stores its selected language and can switch to another currently available language without creating a new attempt or changing saved answers, answer identities, start time, or deadline.
+- Legacy tests and attempts are not assigned languages by inference. A staff member may assign a verified source language to an existing test only if it has no attempts. A test/question graph with attempt history remains frozen for historical meaning; retain it for review and author new question/test records when it must be reintroduced. Old attempts with no stored locale continue to show their source question wording.
+
 - Public content has stable, lowercase, hyphenated slugs and can be linked directly. The Phase 2 content URL scheme is approved as follows:
   - `/free-resources/` — all published free materials.
   - `/free-resources/<exam>/` — an exam category such as WBCS.
@@ -51,9 +59,11 @@ The blog and social extension adds public editorial browsing using the existing 
 
 ## Questions, tests, attempts, and responses
 
-- A question belongs to the appropriate subject/topic taxonomy and contains prompt content, answer options, explanation, language, and publication state. Phase 3 supports single-choice questions only. A published question must have at least two options and exactly one correct option.
-- A test defines ordered published questions, duration, availability, and per-question marks and negative marks. Duration is 1–240 minutes; positive marks are required; negative marks range from zero through the question's positive marks.
-- Every authenticated student may make unlimited attempts. Starting an available test resumes that student's existing unexpired attempt; after a terminal attempt, another start creates a new attempt.
+- A question belongs to the appropriate subject/topic taxonomy and contains source prompt content, answer options, explanation, source language, and publication state. Phase 3 supports single-choice questions only. A published question must have at least two options and exactly one correct option.
+- One `QuestionTranslation` stores prompt/explanation text per locale; `QuestionOptionTranslation` stores labels against stable `QuestionOption` rows. The one source option's `is_correct` value remains authoritative across all languages. A translated explanation is required only when the source question has one.
+- A test defines source language, localized metadata, ordered published questions, duration, availability, and per-question marks and negative marks. Duration remains 1–240 minutes; positive marks are required; negative marks range from zero through the question's positive marks.
+- A language is considered available only when test metadata and every question prompt, every option label, and every required explanation are complete and published for that language. The source question must itself be published. No test can mix text from other locales to fill a gap.
+- Every authenticated student may make unlimited attempts. Before start, the student selects a complete, available language. On start, the server checks the selected language and records `language_code` with server timestamps. Starting an available test resumes that student's existing unexpired attempt; after a terminal attempt, another start creates a new attempt.
 - A response selects one option or clears the selection. It is unique per attempt/question and can be changed only while the attempt is in progress and before its server deadline.
 - Correct responses earn the configured marks, incorrect responses lose the configured negative marks, and unanswered responses earn zero. There is no partial credit. Scores may be negative; the server records score and correct/incorrect/unanswered counts at finalization.
 - Result scores/counts and answer key/explanation review become available immediately after student submission or expiry finalization. No result details or answer key are sent in the active exam response.
@@ -78,7 +88,7 @@ Proposed states: `in_progress`, `submitted`, and `expired`. A separate pre-start
 4. Before the deadline, student submission finalizes and scores atomically. `submitted_at` records student submission; `finalized_at` records the terminal transition for either submitted or expired attempts.
 5. Repeated answer saves update the single attempt/question response. Repeated submission returns the same persisted result and cannot create duplicate results.
 6. Result scores/counts and answer explanations are immediately available after finalization. No pause or extension behavior is supported.
-7. Test identity/description/duration and question/scoring content are locked after the first attempt starts. Staff can still close or unpublish a test for new starts; existing attempts remain available until their own deadline. Editorial revisions use new Question and MockTest records; immutable version/snapshot tables are deferred unless evidence shows this workflow is insufficient.
+7. Test identity/description/duration, all localized test/question wording, options, answer key, and scoring content are locked after the first attempt starts. Staff can still close a test or locale for new starts/selections; an existing attempt keeps rendering its selected locale until its own deadline. Editorial revisions use new Question and MockTest records; immutable version/snapshot tables are deferred unless evidence shows this workflow is insufficient.
 
 ## Authentication and authorization
 
