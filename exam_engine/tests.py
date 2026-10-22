@@ -79,6 +79,7 @@ class ExamEngineWorkflowTests(TestCase):
         exam_response = self.client.get(start_response.url)
         self.assertContains(exam_response, "Question 1?")
         self.assertNotContains(exam_response, "Explanation 1.")
+        self.assertContains(exam_response, 'name="robots" content="noindex, nofollow"')
         save_response = self.client.post(reverse("exam_engine:save_answer", args=[attempt.pk]), {
             "mock_test_question_id": self.test_questions[0].pk,
             "selected_option_id": self.questions[0].options.get(is_correct=True).pk,
@@ -92,6 +93,7 @@ class ExamEngineWorkflowTests(TestCase):
         self.assertContains(result_response, "Score")
         self.assertContains(result_response, "2.00")
         self.assertContains(result_response, "Explanation 1.")
+        self.assertContains(result_response, 'name="robots" content="noindex, nofollow"')
 
     def test_active_attempt_resumes_after_test_is_closed_for_new_starts(self):
         """Closing availability stops new attempts without stranding a student."""

@@ -1,31 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WBPSC Mock Exam Platform</title>
-</head>
-<body>
-    <header class="site-header">
-        <a href="{% url 'home' %}">WBPSC Mock Exam Platform</a>
-        <nav aria-label="Main navigation">
-            <a href="{% url 'content:resource_list' %}">Free Study Materials</a>
-            <a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'accounts:profile' %}">My account</a>
-            {% else %}
-                <a href="{% url 'login' %}">Sign in</a>
-                <a href="{% url 'accounts:register' %}">Register</a>
-            {% endif %}
-        </nav>
-    </header>
-    <main>
-        <h1>WBPSC Mock Exam Platform</h1>
-        <p>Learning resources and mock examinations are being prepared.</p>
-        <p><a href="{% url 'content:resource_list' %}">Browse Free Study Materials</a></p>
-        <p><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
-        {% if user.is_authenticated %}<p><a href="{% url 'accounts:profile' %}">My account</a> · <a href="{% url 'exam_engine:attempt_history' %}">My attempts</a></p>{% else %}<p><a href="{% url 'login' %}">Sign in</a> · <a href="{% url 'accounts:register' %}">Create a student account</a></p>{% endif %}
-        <p><a href="{% url 'exam_engine:mock_test_list' %}">Browse mock tests</a></p>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}WBPSC Exam Preparation | Free Study Materials and Mock Tests{% endblock %}
+{% block meta_description %}Prepare for WBPSC examinations with free study materials, previous-year question paper demonstrations and online mock tests.{% endblock %}
+{% block og_title %}WBPSC Exam Preparation | Free Study Materials and Mock Tests{% endblock %}
+{% block og_description %}Explore free WBPSC study materials, previous-year paper demonstrations and mock tests.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="home-title">
+    <div>
+        <p class="eyebrow">Your preparation, one step at a time</p>
+        <h1 id="home-title">Build confidence for your next WBPSC exam</h1>
+        <p class="hero-copy">Browse free study materials and practise with timed mock tests, all in one place.</p>
+        <div class="hero-actions"><a class="button" href="{% url 'content:resource_list' %}">Explore study materials</a><a class="button button-secondary" href="{% url 'exam_engine:mock_test_list' %}">View mock tests</a></div>
+    </div>
+    <aside class="hero-aside" aria-label="Ways to prepare">
+        <h2>Study at your pace</h2>
+        <ul><li>Browse by examination and subject</li><li>Review previous-year paper demonstrations</li><li>Track your own mock-test attempts</li></ul>
+    </aside>
+</section>
+<section aria-labelledby="start-heading">
+    <h2 id="start-heading">Choose where to begin</h2>
+    <div class="feature-grid">
+        <article class="feature-card"><p class="eyebrow">Free learning</p><h3><a href="{% url 'content:resource_list' %}">Study materials</a></h3><p>Find published resources and browse papers by exam and subject.</p></article>
+        <article class="feature-card"><p class="eyebrow">Practice</p><h3><a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a></h3><p>Try timed examinations and review your results after submission.</p></article>
+        <article class="feature-card"><p class="eyebrow">Your progress</p>{% if user.is_authenticated %}<h3><a href="{% url 'exam_engine:attempt_history' %}">My attempts</a></h3><p>Return to your account and see your examination history.</p>{% else %}<h3><a href="{% url 'accounts:register' %}">Create a student account</a></h3><p>Register to save answers and keep your mock-test history.</p>{% endif %}</article>
+    </div>
+</section>
+{% endblock %}

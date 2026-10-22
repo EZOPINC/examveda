@@ -41,6 +41,8 @@ class ContentPublicationTests(TestCase):
         detail = self.client.get(reverse("content:resource_detail", args=["wbcs", "prelims", 2024, "solutions", self.published.slug]))
         self.assertContains(listing, "WBCS 2024 Solutions")
         self.assertContains(detail, "Solution body")
+        self.assertContains(detail, 'name="robots" content="index, follow"')
+        self.assertContains(detail, '<link rel="canonical" href="http://testserver/free-resources/wbcs/prelims/2024/solutions/wbcs-2024-solutions/">')
 
     def test_draft_is_visible_only_in_staff_preview(self):
         """Staff can preview a draft while anonymous users cannot."""
@@ -48,6 +50,9 @@ class ContentPublicationTests(TestCase):
         response = self.client.get(reverse("content:preview_page", args=[self.draft.pk]))
         self.assertContains(response, "Private draft")
         self.assertContains(response, "not published publicly")
+        self.assertContains(response, 'name="robots" content="noindex, nofollow"')
+        self.assertContains(response, '<meta property="og:title" content="WBPSC staff preview">')
+        self.assertNotContains(response, '<meta property="og:title" content="Draft notes">')
 
     def test_staff_without_content_permission_cannot_preview(self):
         """Staff status alone does not grant the content view permission."""
@@ -212,7 +217,7 @@ class DemoStudyMaterialNavigationTests(TestCase):
         """The public landing links to both exams and previews subject/paper counts."""
         home = self.client.get(reverse("home"))
         self.assertContains(home, reverse("content:resource_list"))
-        self.assertContains(home, '<nav aria-label="Main navigation">')
+        self.assertContains(home, '<nav aria-label="Main navigation"')
         self.assertContains(home, '<a href="/free-resources/">Free Study Materials</a>')
 
         response = self.client.get(reverse("content:resource_list"))

@@ -1,30 +1,26 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Free Study Materials | WBPSC Mock Exam Platform</title>
-    <meta name="description" content="Browse free WBPSC study materials and previous-year question paper demos by exam and subject.">
-    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a><nav aria-label="Main navigation"><a href="{% url 'content:resource_list' %}" aria-current="page">Free Study Materials</a> <a href="{% url 'exam_engine:mock_test_list' %}">Mock tests</a>{% if user.is_authenticated %}<a href="{% url 'accounts:profile' %}">My account</a>{% else %}<a href="{% url 'login' %}">Sign in</a> <a href="{% url 'accounts:register' %}">Register</a>{% endif %}</nav></header>
-    <main class="page-shell">
-        <h1>Free Study Materials</h1>
-        <p class="lead">Choose an examination, then browse available subjects and previous-year paper demonstrations.</p>
-        <section aria-labelledby="exams-heading">
-            <h2 id="exams-heading">Examinations</h2>
-            {% if categories %}<ul class="resource-list">
-                {% for exam in categories %}<li class="resource-card"><h3><a href="{% url 'content:category_list' exam.slug %}">{{ exam.name }}</a></h3>
-                    {% if exam.description %}<p>{{ exam.description }}</p>{% endif %}
-                    <p class="resource-meta">{{ exam.subject_count }} subject{{ exam.subject_count|pluralize }} · {{ exam.paper_count }} paper{{ exam.paper_count|pluralize }}</p>
-                </li>{% endfor %}
-            </ul>{% else %}<p class="empty-state">No published study materials are available yet.</p>{% endif %}
-        </section>
-        {% if resources %}<section aria-labelledby="other-materials-heading">
-            <h2 id="other-materials-heading">Other free materials</h2>
-            <ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3><a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a></h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul>
-        </section>{% endif %}
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Free WBPSC Study Materials and Previous-year Papers{% endblock %}
+{% block meta_description %}Browse free WBPSC study materials, previous-year question paper demonstrations and resources by examination and subject.{% endblock %}
+{% block og_title %}Free WBPSC Study Materials and Previous-year Papers{% endblock %}
+{% block og_description %}Browse free WBPSC resources by examination and subject.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li aria-current="page">Free Study Materials</li></ol></nav>
+<p class="eyebrow">Free learning resources</p>
+<h1>Free Study Materials</h1>
+<p class="lead">Choose an examination, then browse available subjects and previous-year paper demonstrations.</p>
+<section aria-labelledby="exams-heading">
+    <h2 id="exams-heading">Examinations</h2>
+    {% if categories %}<ul class="resource-list">
+        {% for exam in categories %}<li class="resource-card"><span class="resource-badge">Examination</span><h3><a href="{% url 'content:category_list' exam.slug %}">{{ exam.name }}</a></h3>
+            {% if exam.description %}<p>{{ exam.description }}</p>{% endif %}
+            <p class="resource-meta">{{ exam.subject_count }} subject{{ exam.subject_count|pluralize }} · {{ exam.paper_count }} paper{{ exam.paper_count|pluralize }}</p>
+        </li>{% endfor %}
+    </ul>{% else %}<p class="empty-state">No published study materials are available yet.</p>{% endif %}
+</section>
+{% if resources %}<section aria-labelledby="other-materials-heading">
+    <h2 id="other-materials-heading">Other free materials</h2>
+    <ul class="resource-list">{% for resource in resources %}<li class="resource-card"><h3><a href="{% url 'content:editorial_detail' resource.slug %}">{{ resource.title }}</a></h3>{% if resource.summary %}<p>{{ resource.summary }}</p>{% endif %}</li>{% endfor %}</ul>
+</section>{% endif %}
+{% endblock %}

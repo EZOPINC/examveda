@@ -13,6 +13,9 @@ class FoundationPageTests(SimpleTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "WBPSC Mock Exam Platform")
+        self.assertContains(response, 'name="robots" content="index, follow"')
+        self.assertContains(response, '<link rel="canonical" href="http://testserver/">')
+        self.assertContains(response, '<meta property="og:title" content="WBPSC Exam Preparation | Free Study Materials and Mock Tests">')
 
     def test_health_check_is_minimal_and_uncached(self):
         """Health output confirms service availability without database details."""

@@ -1,20 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My account | WBPSC Mock Exam Platform</title>
-    {% load static %}<link rel="stylesheet" href="{% static 'content/content.css' %}">
-</head>
-<body>
-    <header class="site-header"><a href="{% url 'home' %}">WBPSC Mock Exam Platform</a></header>
-    <main class="page-shell article">
-        <h1>My account</h1>
-        <p>Username: {{ request.user.username }}</p>
+{% extends 'base.html' %}
+{% block title %}My account | WBPSC Exam Prep{% endblock %}
+{% block content %}
+<section class="article" aria-labelledby="page-title">
+    <p class="eyebrow">Student account</p><h1 id="page-title">My account</h1>
+    <div class="form-card"><p>Username: <strong>{{ request.user.username }}</strong></p>
         <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Save account details</button></form>
-        <p><a href="{% url 'accounts:password_change' %}">Change password</a></p>
-        <p><a href="{% url 'exam_engine:attempt_history' %}">My mock test attempts</a></p>
-        <p>Password recovery is currently handled by an administrator after identity verification.</p>
-    </main>
-</body>
-</html>
+    </div>
+    <nav class="back-links" aria-label="Account links"><a href="{% url 'accounts:password_change' %}">Change password</a><a href="{% url 'exam_engine:attempt_history' %}">My mock-test attempts</a></nav>
+    <p class="resource-meta">Password recovery is currently handled by an administrator after identity verification.</p>
+</section>
+{% endblock %}

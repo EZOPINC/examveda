@@ -61,6 +61,49 @@ For each release, first run tests and deploy checks in CI or a disposable Postgr
 
 Run management commands as short-lived systemd jobs so systemd reads the root-protected environment file without printing it. Use `/etc/wbpsc-platform/release-environment` instead for `migrate` commands; it contains the same Django settings values but uses the release DB role.
 
+### Admin account and database consistency
+
+Django admin, Django authentication, and the platform's application models all use the same Django database alias, `default`. This project has no database router or separate admin database. The `config.settings.production` settings define `default` as PostgreSQL and have no SQLite fallback. A superuser created with a different settings module or different `DB_NAME`/`DB_HOST`/`DB_USER` environment can therefore exist in a different database from the one Gunicorn serves. A `.env` file is not loaded automatically.
+
+First confirm which environment file Gunicorn uses without printing its contents:
+
+```sh
+sudo systemctl show wbpsc-platform --property=EnvironmentFiles --no-pager
+```
+
+The expected runtime file is `/etc/wbpsc-platform/environment`. Use that exact file and the same release path/virtualenv for a read-only check of the effective Django settings and connected database identity. This prints database identifiers only, never a password:
+
+```sh
+sudo systemd-run --wait --pipe --collect --unit=wbpsc-db-identity \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py shell -c \
+  'import os; from django.db import connection; connection.ensure_connection(); print({"settings_module": os.environ.get("DJANGO_SETTINGS_MODULE"), "alias": "default", "engine": connection.settings_dict["ENGINE"], "name": connection.settings_dict["NAME"], "host": connection.settings_dict["HOST"], "port": connection.settings_dict["PORT"]})'
+```
+
+Compare the reported database name, host, and port with the intended production database. The command uses Gunicorn's environment file, so it is the relevant identity for the deployed app. Do not use the release environment for user creation: it may use a different PostgreSQL role and exists only for schema migrations.
+
+If the account may already exist in this same database, inspect only its access flags (replace the username; do not print the whole user object or password fields):
+
+```sh
+sudo systemd-run --wait --pipe --collect --unit=wbpsc-admin-user-check \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py shell -c \
+  'from django.contrib.auth import get_user_model; print(get_user_model().objects.filter(username="ADMIN_USERNAME").values("is_active", "is_staff", "is_superuser").first())'
+```
+
+If no record is returned, create the admin user in the same runtime database, not from an SSH shell with an assumed settings module. This prompts interactively and does not put the password in shell history:
+
+```sh
+sudo systemd-run --wait --pty --collect --unit=wbpsc-create-superuser \
+  -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \
+  -p EnvironmentFile=/etc/wbpsc-platform/environment \
+  /srv/wbpsc-platform/venv/bin/python manage.py createsuperuser
+```
+
+If the account exists but its password is uncertain, run `manage.py changepassword ADMIN_USERNAME` in the same `systemd-run` form with the same `EnvironmentFile`; it prompts for the new password. Never create or reset an administrator account by editing database rows directly. A login form reporting invalid credentials points to a rejected password/account or a database mismatch; a CSRF 403 or repeated login redirect should be investigated as a proxy, HTTPS, cookie, or session issue instead. See [the troubleshooting guide](../TROUBLESHOOTING.md).
+
 ```sh
 sudo systemd-run --wait --pipe --collect --unit=wbpsc-deploy-check \
   -p User=wbpsc-platform -p WorkingDirectory=/srv/wbpsc-platform/current \

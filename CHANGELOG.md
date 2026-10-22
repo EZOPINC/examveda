@@ -2,6 +2,20 @@
 
 Notable project changes are recorded here.
 
+## 2026-10-22 — Application-wide UI and SEO refresh
+
+- Added a shared responsive Django base template with consistent navigation, skip link, footer, typography, controls, cards, breadcrumbs, forms, and page metadata.
+- Reworked home, study-material, mock-test, account, result, error, and examination templates while retaining named URLs, form actions, access checks, content fields, and exam JavaScript hooks.
+- Added unique public page titles/descriptions, canonical URLs, Open Graph tags, and public/private `robots` policies; staff previews use generic SEO metadata and are marked `noindex`.
+- Added regression assertions for public metadata and private-page indexing. No model, migration, dependency, URL, or runtime setting changes.
+
+## 2026-10-22 — OCI admin database diagnosis
+
+- Documented that Django admin and application data share the single PostgreSQL `default` alias; there is no admin-only SQLite connection or database router.
+- Added safe OCI runbook steps to inspect Gunicorn's effective database identity and account flags, and to create/reset an administrator using the exact runtime EnvironmentFile.
+- Added troubleshooting guidance. The live OCI cause remains unconfirmed until the instance's runtime database identity and user flags are checked by an authorized operator.
+- No application settings, database data, credentials, or production infrastructure were changed.
+
 ## 2026-10-21 — Phase 6 OCI deployment preparation
 
 - Added a pinned Gunicorn dependency and initial systemd/Nginx configuration for a single-host pilot, with Gunicorn and PostgreSQL limited to loopback and no public media alias.
