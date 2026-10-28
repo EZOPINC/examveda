@@ -1,0 +1,1510 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$UgE7RNVY3HxXtqsh3Hdis3$ySxR4x1p915D53e0m5rjqjNg7urwP2OyAGjQ+lSzf8c=",
+    "last_login": "2026-10-22T22:17:04.681Z",
+    "is_superuser": false,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-22T20:19:03.159Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "a4z2ngoaqmcjzca09j04e21gn3k0n3za",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGln-xR9Kes5g7a4dHEC2FCcV4u5gKQVIr3ozmheLsG8l7j2vcUnszCQ7_X4I9Mh1gHSHemucWt3WBflQ-EE7v7aUn5fD_QsU6GVkPaBNAYT2yWOQBEkYJyflrLJGTwGMQ_cdKkcwCxm8QidJeaszzYK9P8zuN0E:1xK15s:85bV9TKjbfEWxHfwIUdJ35qWWKCN_K8gLac0aFP78A8",
+    "expire_date": "2026-11-05T22:17:04.683Z"
+  }
+},
+{
+  "model": "content.examcategory",
+  "pk": 1,
+  "fields": {
+    "name": "WBPSC Clerkship",
+    "slug": "wbpsc-clerkship",
+    "description": "",
+    "is_active": true,
+    "display_order": 0
+  }
+},
+{
+  "model": "content.examcategory",
+  "pk": 2,
+  "fields": {
+    "name": "WBCS",
+    "slug": "wbcs",
+    "description": "",
+    "is_active": true,
+    "display_order": 0
+  }
+},
+{
+  "model": "content.subject",
+  "pk": 1,
+  "fields": {
+    "name": "History",
+    "slug": "history",
+    "description": "",
+    "is_active": true
+  }
+},
+{
+  "model": "content.subject",
+  "pk": 2,
+  "fields": {
+    "name": "General Studies",
+    "slug": "general-studies",
+    "description": "",
+    "is_active": true
+  }
+},
+{
+  "model": "content.subject",
+  "pk": 3,
+  "fields": {
+    "name": "Mathematics",
+    "slug": "mathematics",
+    "description": "",
+    "is_active": true
+  }
+},
+{
+  "model": "content.subject",
+  "pk": 4,
+  "fields": {
+    "name": "Geography",
+    "slug": "geography",
+    "description": "",
+    "is_active": true
+  }
+},
+{
+  "model": "content.subject",
+  "pk": 5,
+  "fields": {
+    "name": "Demo Mock Test History",
+    "slug": "demo-mock-test-history",
+    "description": "Local mock-test demo taxonomy.",
+    "is_active": true
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 1,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship History Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbpsc-clerkship-history-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative History questions — Demo Year 2023\n\n1. In this illustrative exercise, which source would most directly help a historian study an ancient ruler's public orders?\n\nA. An inscription commissioned by the ruler\n\nB. A modern weather chart\n\nC. A present-day travel review\n\nD. A fictional story written centuries later\n\nIllustrative answer: A. An inscription commissioned by the ruler — An inscription can preserve a ruler's public orders.\n\n2. A researcher compares two dated letters from the same period. Which skill is being practiced?\n\nA. Source comparison\n\nB. Map projection\n\nC. Mental arithmetic\n\nD. Plant classification\n\nIllustrative answer: A. Source comparison — Comparing contemporary records is a basic historical method.\n\n3. Which arrangement places these broad periods from earlier to later?\n\nA. Ancient, medieval, modern\n\nB. Modern, ancient, medieval\n\nC. Medieval, modern, ancient\n\nD. Modern, medieval, ancient\n\nIllustrative answer: A. Ancient, medieval, modern — This is the conventional broad chronological order.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.674Z",
+    "seo_title": "DEMO — WBPSC Clerkship History Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.674Z",
+    "updated_at": "2026-10-21T17:13:29.674Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 2,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship History Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbpsc-clerkship-history-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative History questions — Demo Year 2022\n\n1. For a local-history study, which item is an example of a primary source?\n\nA. A diary written during the event\n\nB. A recent summary article\n\nC. A classroom revision guide\n\nD. A modern novel inspired by the event\n\nIllustrative answer: A. A diary written during the event — A contemporary diary is a first-hand source.\n\n2. A timeline helps a reader mainly to understand\n\nA. the order of events over time\n\nB. the height of a mountain\n\nC. the area of a field\n\nD. the temperature of a river\n\nIllustrative answer: A. the order of events over time — Timelines arrange events chronologically.\n\n3. When two accounts disagree, a careful researcher should first\n\nA. compare their dates, authors, and evidence\n\nB. discard both without review\n\nC. choose the longer account\n\nD. assume the newest account is always correct\n\nIllustrative answer: A. compare their dates, authors, and evidence — Source context and evidence help assess conflicting accounts.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.684Z",
+    "seo_title": "DEMO — WBPSC Clerkship History Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.684Z",
+    "updated_at": "2026-10-21T17:13:29.684Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 3,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship General Studies Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbpsc-clerkship-general-studies-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative General Studies questions — Demo Year 2023\n\n1. In a fictional civic exercise, which body is described as making laws for a state?\n\nA. The state legislature\n\nB. A local weather station\n\nC. A public library\n\nD. A sports association\n\nIllustrative answer: A. The state legislature — The state legislature is the law-making body at state level.\n\n2. Which everyday action best supports water conservation?\n\nA. Repairing a leaking tap\n\nB. Leaving a hose running\n\nC. Washing a few items under a constant stream\n\nD. Ignoring a broken pipe\n\nIllustrative answer: A. Repairing a leaking tap — Repairing leaks prevents avoidable water loss.\n\n3. A public notice should be written so that it is\n\nA. clear and accessible to its intended readers\n\nB. intentionally ambiguous\n\nC. missing its date\n\nD. limited to unexplained abbreviations\n\nIllustrative answer: A. clear and accessible to its intended readers — Clear wording helps readers understand public information.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.687Z",
+    "seo_title": "DEMO — WBPSC Clerkship General Studies Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.687Z",
+    "updated_at": "2026-10-21T17:13:29.687Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 4,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship General Studies Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbpsc-clerkship-general-studies-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative General Studies questions — Demo Year 2022\n\n1. Which source is most appropriate for checking a current municipal office schedule?\n\nA. The municipality's official notice\n\nB. An undated anonymous message\n\nC. A fictional story\n\nD. A years-old personal note\n\nIllustrative answer: A. The municipality's official notice — An official current notice is the most direct source.\n\n2. The main purpose of a household budget is to\n\nA. plan income and expenses\n\nB. measure rainfall\n\nC. record a map scale\n\nD. identify a rock type\n\nIllustrative answer: A. plan income and expenses — A budget helps organize income and spending.\n\n3. Which practice makes a public meeting more inclusive?\n\nA. Sharing the time and venue in advance\n\nB. Changing the venue without notice\n\nC. Restricting information to a few attendees\n\nD. Removing the agenda\n\nIllustrative answer: A. Sharing the time and venue in advance — Advance notice gives people a fair chance to participate.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.689Z",
+    "seo_title": "DEMO — WBPSC Clerkship General Studies Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.689Z",
+    "updated_at": "2026-10-21T17:13:29.689Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 5,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship Mathematics Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbpsc-clerkship-mathematics-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative Mathematics questions — Demo Year 2023\n\n1. A notebook costs 80 units. After a 25% discount, what is its price?\n\nA. 60 units\n\nB. 55 units\n\nC. 65 units\n\nD. 75 units\n\nIllustrative answer: A. 60 units — 25% of 80 is 20; 80 minus 20 is 60.\n\n2. What is the mean of 4, 6, and 8?\n\nA. 6\n\nB. 5\n\nC. 7\n\nD. 18\n\nIllustrative answer: A. 6 — The sum is 18, and 18 divided by 3 is 6.\n\n3. A box contains 3 red and 2 blue counters. What fraction are blue?\n\nA. 2/5\n\nB. 3/5\n\nC. 1/2\n\nD. 2/3\n\nIllustrative answer: A. 2/5 — There are 2 blue counters among 5 counters in total.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.692Z",
+    "seo_title": "DEMO — WBPSC Clerkship Mathematics Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.692Z",
+    "updated_at": "2026-10-21T17:13:29.692Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 6,
+  "fields": {
+    "title": "DEMO — WBPSC Clerkship Mathematics Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbpsc-clerkship-mathematics-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative Mathematics questions — Demo Year 2022\n\n1. What is 15% of 200?\n\nA. 30\n\nB. 15\n\nC. 20\n\nD. 45\n\nIllustrative answer: A. 30 — 0.15 multiplied by 200 equals 30.\n\n2. A 12-metre rope is cut into 4 equal lengths. How long is each piece?\n\nA. 3 metres\n\nB. 4 metres\n\nC. 8 metres\n\nD. 48 metres\n\nIllustrative answer: A. 3 metres — 12 divided by 4 equals 3.\n\n3. A value rises from 40 to 50. By how much did it increase?\n\nA. 10\n\nB. 5\n\nC. 25\n\nD. 90\n\nIllustrative answer: A. 10 — The difference is 50 minus 40, which equals 10.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.695Z",
+    "seo_title": "DEMO — WBPSC Clerkship Mathematics Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBPSC Clerkship paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.695Z",
+    "updated_at": "2026-10-21T17:13:29.695Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 7,
+  "fields": {
+    "title": "DEMO — WBCS History Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbcs-history-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative History questions — Demo Year 2023\n\n1. In this illustrative exercise, which source would most directly help a historian study an ancient ruler's public orders?\n\nA. An inscription commissioned by the ruler\n\nB. A modern weather chart\n\nC. A present-day travel review\n\nD. A fictional story written centuries later\n\nIllustrative answer: A. An inscription commissioned by the ruler — An inscription can preserve a ruler's public orders.\n\n2. A researcher compares two dated letters from the same period. Which skill is being practiced?\n\nA. Source comparison\n\nB. Map projection\n\nC. Mental arithmetic\n\nD. Plant classification\n\nIllustrative answer: A. Source comparison — Comparing contemporary records is a basic historical method.\n\n3. Which arrangement places these broad periods from earlier to later?\n\nA. Ancient, medieval, modern\n\nB. Modern, ancient, medieval\n\nC. Medieval, modern, ancient\n\nD. Modern, medieval, ancient\n\nIllustrative answer: A. Ancient, medieval, modern — This is the conventional broad chronological order.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.699Z",
+    "seo_title": "DEMO — WBCS History Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.699Z",
+    "updated_at": "2026-10-21T17:13:29.699Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 8,
+  "fields": {
+    "title": "DEMO — WBCS History Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbcs-history-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative History questions — Demo Year 2022\n\n1. For a local-history study, which item is an example of a primary source?\n\nA. A diary written during the event\n\nB. A recent summary article\n\nC. A classroom revision guide\n\nD. A modern novel inspired by the event\n\nIllustrative answer: A. A diary written during the event — A contemporary diary is a first-hand source.\n\n2. A timeline helps a reader mainly to understand\n\nA. the order of events over time\n\nB. the height of a mountain\n\nC. the area of a field\n\nD. the temperature of a river\n\nIllustrative answer: A. the order of events over time — Timelines arrange events chronologically.\n\n3. When two accounts disagree, a careful researcher should first\n\nA. compare their dates, authors, and evidence\n\nB. discard both without review\n\nC. choose the longer account\n\nD. assume the newest account is always correct\n\nIllustrative answer: A. compare their dates, authors, and evidence — Source context and evidence help assess conflicting accounts.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.701Z",
+    "seo_title": "DEMO — WBCS History Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.701Z",
+    "updated_at": "2026-10-21T17:13:29.701Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 9,
+  "fields": {
+    "title": "DEMO — WBCS Geography Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbcs-geography-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative Geography questions — Demo Year 2023\n\n1. On a standard map, which direction is usually at the top?\n\nA. North\n\nB. South\n\nC. East\n\nD. West\n\nIllustrative answer: A. North — Most standard maps place north at the top unless a compass indicates otherwise.\n\n2. A map scale is used to relate map distance to\n\nA. distance on the ground\n\nB. air temperature\n\nC. population age\n\nD. river depth\n\nIllustrative answer: A. distance on the ground — A scale represents the relationship between map and ground distances.\n\n3. Which instrument is commonly used to show wind direction?\n\nA. A wind vane\n\nB. A rain gauge\n\nC. A thermometer\n\nD. A measuring tape\n\nIllustrative answer: A. A wind vane — A wind vane indicates the direction from which wind blows.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.703Z",
+    "seo_title": "DEMO — WBCS Geography Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.703Z",
+    "updated_at": "2026-10-21T17:13:29.703Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 10,
+  "fields": {
+    "title": "DEMO — WBCS Geography Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbcs-geography-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative Geography questions — Demo Year 2022\n\n1. Which feature is most directly represented by contour lines on a relief map?\n\nA. Elevation and land shape\n\nB. Political party membership\n\nC. Daily exchange rates\n\nD. Road traffic noise\n\nIllustrative answer: A. Elevation and land shape — Contour lines connect points of equal elevation.\n\n2. If a river flows from higher land to lower land, its water moves\n\nA. downhill under gravity\n\nB. toward every compass point equally\n\nC. only toward the equator\n\nD. without following the land\n\nIllustrative answer: A. downhill under gravity — Gravity drives surface water downhill.\n\n3. Which of these is a renewable source of energy?\n\nA. Sunlight\n\nB. Coal\n\nC. Petroleum\n\nD. Natural gas\n\nIllustrative answer: A. Sunlight — Sunlight is naturally replenished on a human timescale.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.705Z",
+    "seo_title": "DEMO — WBCS Geography Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.705Z",
+    "updated_at": "2026-10-21T17:13:29.705Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 11,
+  "fields": {
+    "title": "DEMO — WBCS General Studies Previous-year Question Paper — Demo Year 2023",
+    "slug": "demo-wbcs-general-studies-2023-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative General Studies questions — Demo Year 2023\n\n1. In a fictional civic exercise, which body is described as making laws for a state?\n\nA. The state legislature\n\nB. A local weather station\n\nC. A public library\n\nD. A sports association\n\nIllustrative answer: A. The state legislature — The state legislature is the law-making body at state level.\n\n2. Which everyday action best supports water conservation?\n\nA. Repairing a leaking tap\n\nB. Leaving a hose running\n\nC. Washing a few items under a constant stream\n\nD. Ignoring a broken pipe\n\nIllustrative answer: A. Repairing a leaking tap — Repairing leaks prevents avoidable water loss.\n\n3. A public notice should be written so that it is\n\nA. clear and accessible to its intended readers\n\nB. intentionally ambiguous\n\nC. missing its date\n\nD. limited to unexplained abbreviations\n\nIllustrative answer: A. clear and accessible to its intended readers — Clear wording helps readers understand public information.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.707Z",
+    "seo_title": "DEMO — WBCS General Studies Previous-year Question Paper — Demo Year 2023",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.707Z",
+    "updated_at": "2026-10-21T17:13:29.707Z"
+  }
+},
+{
+  "model": "content.contentpage",
+  "pk": 12,
+  "fields": {
+    "title": "DEMO — WBCS General Studies Previous-year Question Paper — Demo Year 2022",
+    "slug": "demo-wbcs-general-studies-2022-previous-question-paper",
+    "summary": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "body": "DEMO RECORD — illustrative content only. This is not an authentic or verified official WBPSC previous-year paper. Questions and answers below were written as original placeholders for navigation testing.\n\nIllustrative General Studies questions — Demo Year 2022\n\n1. Which source is most appropriate for checking a current municipal office schedule?\n\nA. The municipality's official notice\n\nB. An undated anonymous message\n\nC. A fictional story\n\nD. A years-old personal note\n\nIllustrative answer: A. The municipality's official notice — An official current notice is the most direct source.\n\n2. The main purpose of a household budget is to\n\nA. plan income and expenses\n\nB. measure rainfall\n\nC. record a map scale\n\nD. identify a rock type\n\nIllustrative answer: A. plan income and expenses — A budget helps organize income and spending.\n\n3. Which practice makes a public meeting more inclusive?\n\nA. Sharing the time and venue in advance\n\nB. Changing the venue without notice\n\nC. Restricting information to a few attendees\n\nD. Removing the agenda\n\nIllustrative answer: A. Sharing the time and venue in advance — Advance notice gives people a fair chance to participate.",
+    "language": "en",
+    "is_published": true,
+    "published_at": "2026-10-21T17:13:29.709Z",
+    "seo_title": "DEMO — WBCS General Studies Previous-year Question Paper — Demo Year 2022",
+    "seo_description": "DEMO RECORD — illustrative content only; not an authentic or verified official WBCS paper.",
+    "blog_category": null,
+    "author_name": "",
+    "featured_image": "",
+    "featured_image_alt": "",
+    "created_by": null,
+    "updated_by": null,
+    "created_at": "2026-10-21T17:13:29.709Z",
+    "updated_at": "2026-10-21T17:13:29.709Z"
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 1,
+  "fields": {
+    "page": 1,
+    "category": 1,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 1,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 2,
+  "fields": {
+    "page": 2,
+    "category": 1,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 1,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 3,
+  "fields": {
+    "page": 3,
+    "category": 1,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 2,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 4,
+  "fields": {
+    "page": 4,
+    "category": 1,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 2,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 5,
+  "fields": {
+    "page": 5,
+    "category": 1,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 3,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 6,
+  "fields": {
+    "page": 6,
+    "category": 1,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 3,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 7,
+  "fields": {
+    "page": 7,
+    "category": 2,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 1,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 8,
+  "fields": {
+    "page": 8,
+    "category": 2,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 1,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 9,
+  "fields": {
+    "page": 9,
+    "category": 2,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 4,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 10,
+  "fields": {
+    "page": 10,
+    "category": 2,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 4,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 11,
+  "fields": {
+    "page": 11,
+    "category": 2,
+    "stage": null,
+    "year": 2023,
+    "resource_type": "previous-questions",
+    "subject": 2,
+    "topic": null
+  }
+},
+{
+  "model": "content.resourcemetadata",
+  "pk": 12,
+  "fields": {
+    "page": 12,
+    "category": 2,
+    "stage": null,
+    "year": 2022,
+    "resource_type": "previous-questions",
+    "subject": 2,
+    "topic": null
+  }
+},
+{
+  "model": "exam_engine.question",
+  "pk": 1,
+  "fields": {
+    "subject": 5,
+    "topic": null,
+    "prompt": "Which Indus Valley site is especially known for the Great Bath?",
+    "explanation": "The Great Bath is a major public structure excavated at Mohenjo-daro.",
+    "language": "en",
+    "is_published": true,
+    "created_at": "2026-10-22T22:06:31.314Z",
+    "updated_at": "2026-10-22T22:06:31.314Z"
+  }
+},
+{
+  "model": "exam_engine.question",
+  "pk": 2,
+  "fields": {
+    "subject": 5,
+    "topic": null,
+    "prompt": "Most of Emperor Ashoka's inscriptions were written in which language?",
+    "explanation": "Many Ashokan edicts in the subcontinent use Prakrit, commonly written in Brahmi script.",
+    "language": "en",
+    "is_published": true,
+    "created_at": "2026-10-22T22:06:31.401Z",
+    "updated_at": "2026-10-22T22:06:31.401Z"
+  }
+},
+{
+  "model": "exam_engine.question",
+  "pk": 3,
+  "fields": {
+    "subject": 5,
+    "topic": null,
+    "prompt": "In which year was the Indian National Congress founded?",
+    "explanation": "The Indian National Congress was founded in 1885.",
+    "language": "en",
+    "is_published": true,
+    "created_at": "2026-10-22T22:06:31.458Z",
+    "updated_at": "2026-10-22T22:06:31.458Z"
+  }
+},
+{
+  "model": "exam_engine.question",
+  "pk": 4,
+  "fields": {
+    "subject": 5,
+    "topic": null,
+    "prompt": "The Battle of Plassey took place in which year?",
+    "explanation": "The Battle of Plassey was fought in 1757.",
+    "language": "en",
+    "is_published": true,
+    "created_at": "2026-10-22T22:06:31.513Z",
+    "updated_at": "2026-10-22T22:06:31.513Z"
+  }
+},
+{
+  "model": "exam_engine.question",
+  "pk": 5,
+  "fields": {
+    "subject": 5,
+    "topic": null,
+    "prompt": "Who introduced the Permanent Settlement in Bengal in 1793?",
+    "explanation": "The Permanent Settlement was introduced under Governor-General Lord Cornwallis in 1793.",
+    "language": "en",
+    "is_published": true,
+    "created_at": "2026-10-22T22:06:31.577Z",
+    "updated_at": "2026-10-22T22:06:31.577Z"
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 1,
+  "fields": {
+    "question": 1,
+    "language_code": "hi",
+    "prompt": "सिंधु घाटी का कौन-सा स्थल विशाल स्नानागार के लिए विशेष रूप से प्रसिद्ध है?",
+    "explanation": "मोहनजोदड़ो में खुदाई के दौरान विशाल स्नानागार नामक प्रमुख सार्वजनिक संरचना मिली थी।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 2,
+  "fields": {
+    "question": 1,
+    "language_code": "bn",
+    "prompt": "সিন্ধু সভ্যতার কোন স্থানটি বৃহৎ স্নানাগারের জন্য বিশেষভাবে পরিচিত?",
+    "explanation": "মহেঞ্জোদারোতে খননের সময় বৃহৎ স্নানাগার নামে একটি গুরুত্বপূর্ণ জনসাধারণের স্থাপনা পাওয়া যায়।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 3,
+  "fields": {
+    "question": 2,
+    "language_code": "hi",
+    "prompt": "सम्राट अशोक के अधिकांश अभिलेख किस भाषा में लिखे गए थे?",
+    "explanation": "उपमहाद्वीप में अशोक के अनेक शिलालेख प्राकृत भाषा में हैं और सामान्यतः ब्राह्मी लिपि में लिखे गए हैं।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 4,
+  "fields": {
+    "question": 2,
+    "language_code": "bn",
+    "prompt": "সম্রাট অশোকের অধিকাংশ শিলালিপি কোন ভাষায় লেখা হয়েছিল?",
+    "explanation": "উপমহাদেশে অশোকের বহু শিলালিপি প্রাকৃত ভাষায় এবং সাধারণত ব্রাহ্মী লিপিতে লেখা।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 5,
+  "fields": {
+    "question": 3,
+    "language_code": "hi",
+    "prompt": "भारतीय राष्ट्रीय कांग्रेस की स्थापना किस वर्ष हुई थी?",
+    "explanation": "भारतीय राष्ट्रीय कांग्रेस की स्थापना 1885 में हुई थी।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 6,
+  "fields": {
+    "question": 3,
+    "language_code": "bn",
+    "prompt": "ভারতীয় জাতীয় কংগ্রেস কোন সালে প্রতিষ্ঠিত হয়েছিল?",
+    "explanation": "ভারতীয় জাতীয় কংগ্রেস ১৮৮৫ সালে প্রতিষ্ঠিত হয়েছিল।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 7,
+  "fields": {
+    "question": 4,
+    "language_code": "hi",
+    "prompt": "प्लासी का युद्ध किस वर्ष हुआ था?",
+    "explanation": "प्लासी का युद्ध 1757 में लड़ा गया था।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 8,
+  "fields": {
+    "question": 4,
+    "language_code": "bn",
+    "prompt": "পলাশীর যুদ্ধ কোন সালে হয়েছিল?",
+    "explanation": "পলাশীর যুদ্ধ ১৭৫৭ সালে হয়েছিল।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 9,
+  "fields": {
+    "question": 5,
+    "language_code": "hi",
+    "prompt": "1793 में बंगाल में स्थायी बंदोबस्त किसने लागू किया था?",
+    "explanation": "1793 में गवर्नर-जनरल लॉर्ड कॉर्नवालिस के शासनकाल में स्थायी बंदोबस्त लागू किया गया था।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questiontranslation",
+  "pk": 10,
+  "fields": {
+    "question": 5,
+    "language_code": "bn",
+    "prompt": "১৭৯৩ সালে বাংলায় চিরস্থায়ী বন্দোবস্ত কে চালু করেছিলেন?",
+    "explanation": "১৭৯৩ সালে গভর্নর-জেনারেল লর্ড কর্নওয়ালিসের আমলে চিরস্থায়ী বন্দোবস্ত চালু হয়।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 1,
+  "fields": {
+    "question": 1,
+    "text": "Mohenjo-daro",
+    "position": 1,
+    "is_correct": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 2,
+  "fields": {
+    "question": 1,
+    "text": "Lothal",
+    "position": 2,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 3,
+  "fields": {
+    "question": 1,
+    "text": "Kalibangan",
+    "position": 3,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 4,
+  "fields": {
+    "question": 1,
+    "text": "Dholavira",
+    "position": 4,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 5,
+  "fields": {
+    "question": 2,
+    "text": "Prakrit",
+    "position": 1,
+    "is_correct": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 6,
+  "fields": {
+    "question": 2,
+    "text": "Persian",
+    "position": 2,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 7,
+  "fields": {
+    "question": 2,
+    "text": "Tamil",
+    "position": 3,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 8,
+  "fields": {
+    "question": 2,
+    "text": "Greek",
+    "position": 4,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 9,
+  "fields": {
+    "question": 3,
+    "text": "1885",
+    "position": 1,
+    "is_correct": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 10,
+  "fields": {
+    "question": 3,
+    "text": "1857",
+    "position": 2,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 11,
+  "fields": {
+    "question": 3,
+    "text": "1905",
+    "position": 3,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 12,
+  "fields": {
+    "question": 3,
+    "text": "1919",
+    "position": 4,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 13,
+  "fields": {
+    "question": 4,
+    "text": "1757",
+    "position": 1,
+    "is_correct": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 14,
+  "fields": {
+    "question": 4,
+    "text": "1764",
+    "position": 2,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 15,
+  "fields": {
+    "question": 4,
+    "text": "1773",
+    "position": 3,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 16,
+  "fields": {
+    "question": 4,
+    "text": "1857",
+    "position": 4,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 17,
+  "fields": {
+    "question": 5,
+    "text": "Lord Cornwallis",
+    "position": 1,
+    "is_correct": true
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 18,
+  "fields": {
+    "question": 5,
+    "text": "Warren Hastings",
+    "position": 2,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 19,
+  "fields": {
+    "question": 5,
+    "text": "Lord Dalhousie",
+    "position": 3,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoption",
+  "pk": 20,
+  "fields": {
+    "question": 5,
+    "text": "Robert Clive",
+    "position": 4,
+    "is_correct": false
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 1,
+  "fields": {
+    "question_translation": 1,
+    "option": 1,
+    "text": "मोहनजोदड़ो"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 2,
+  "fields": {
+    "question_translation": 1,
+    "option": 2,
+    "text": "लोथल"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 3,
+  "fields": {
+    "question_translation": 1,
+    "option": 3,
+    "text": "कालीबंगा"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 4,
+  "fields": {
+    "question_translation": 1,
+    "option": 4,
+    "text": "धोलावीरा"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 5,
+  "fields": {
+    "question_translation": 2,
+    "option": 1,
+    "text": "মহেঞ্জোদারো"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 6,
+  "fields": {
+    "question_translation": 2,
+    "option": 2,
+    "text": "লোথাল"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 7,
+  "fields": {
+    "question_translation": 2,
+    "option": 3,
+    "text": "কালিবঙ্গান"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 8,
+  "fields": {
+    "question_translation": 2,
+    "option": 4,
+    "text": "ধোলাভিরা"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 9,
+  "fields": {
+    "question_translation": 3,
+    "option": 5,
+    "text": "प्राकृत"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 10,
+  "fields": {
+    "question_translation": 3,
+    "option": 6,
+    "text": "फ़ारसी"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 11,
+  "fields": {
+    "question_translation": 3,
+    "option": 7,
+    "text": "तमिल"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 12,
+  "fields": {
+    "question_translation": 3,
+    "option": 8,
+    "text": "यूनानी"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 13,
+  "fields": {
+    "question_translation": 4,
+    "option": 5,
+    "text": "প্রাকৃত"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 14,
+  "fields": {
+    "question_translation": 4,
+    "option": 6,
+    "text": "ফারসি"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 15,
+  "fields": {
+    "question_translation": 4,
+    "option": 7,
+    "text": "তামিল"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 16,
+  "fields": {
+    "question_translation": 4,
+    "option": 8,
+    "text": "গ্রিক"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 17,
+  "fields": {
+    "question_translation": 5,
+    "option": 9,
+    "text": "1885"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 18,
+  "fields": {
+    "question_translation": 5,
+    "option": 10,
+    "text": "1857"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 19,
+  "fields": {
+    "question_translation": 5,
+    "option": 11,
+    "text": "1905"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 20,
+  "fields": {
+    "question_translation": 5,
+    "option": 12,
+    "text": "1919"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 21,
+  "fields": {
+    "question_translation": 6,
+    "option": 9,
+    "text": "১৮৮৫"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 22,
+  "fields": {
+    "question_translation": 6,
+    "option": 10,
+    "text": "১৮৫৭"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 23,
+  "fields": {
+    "question_translation": 6,
+    "option": 11,
+    "text": "১৯০৫"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 24,
+  "fields": {
+    "question_translation": 6,
+    "option": 12,
+    "text": "১৯১৯"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 25,
+  "fields": {
+    "question_translation": 7,
+    "option": 13,
+    "text": "1757"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 26,
+  "fields": {
+    "question_translation": 7,
+    "option": 14,
+    "text": "1764"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 27,
+  "fields": {
+    "question_translation": 7,
+    "option": 15,
+    "text": "1773"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 28,
+  "fields": {
+    "question_translation": 7,
+    "option": 16,
+    "text": "1857"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 29,
+  "fields": {
+    "question_translation": 8,
+    "option": 13,
+    "text": "১৭৫৭"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 30,
+  "fields": {
+    "question_translation": 8,
+    "option": 14,
+    "text": "১৭৬৪"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 31,
+  "fields": {
+    "question_translation": 8,
+    "option": 15,
+    "text": "১৭৭৩"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 32,
+  "fields": {
+    "question_translation": 8,
+    "option": 16,
+    "text": "১৮৫৭"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 33,
+  "fields": {
+    "question_translation": 9,
+    "option": 17,
+    "text": "लॉर्ड कॉर्नवालिस"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 34,
+  "fields": {
+    "question_translation": 9,
+    "option": 18,
+    "text": "वॉरेन हेस्टिंग्स"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 35,
+  "fields": {
+    "question_translation": 9,
+    "option": 19,
+    "text": "लॉर्ड डलहौज़ी"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 36,
+  "fields": {
+    "question_translation": 9,
+    "option": 20,
+    "text": "रॉबर्ट क्लाइव"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 37,
+  "fields": {
+    "question_translation": 10,
+    "option": 17,
+    "text": "লর্ড কর্নওয়ালিস"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 38,
+  "fields": {
+    "question_translation": 10,
+    "option": 18,
+    "text": "ওয়ারেন হেস্টিংস"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 39,
+  "fields": {
+    "question_translation": 10,
+    "option": 19,
+    "text": "লর্ড ডালহৌসি"
+  }
+},
+{
+  "model": "exam_engine.questionoptiontranslation",
+  "pk": 40,
+  "fields": {
+    "question_translation": 10,
+    "option": 20,
+    "text": "রবার্ট ক্লাইভ"
+  }
+},
+{
+  "model": "exam_engine.mocktest",
+  "pk": 1,
+  "fields": {
+    "title": "DEMO — WBPSC History Practice (English / हिन्दी / বাংলা)",
+    "slug": "demo-wbpsc-multilingual-practice",
+    "description": "Local demo test with five original illustrative questions; not an official or verified WBPSC paper.",
+    "instructions": "This is a local demo. Select answers, save them, and submit to view the stored answer key and explanations.",
+    "language": "en",
+    "duration_minutes": 10,
+    "available_from": null,
+    "available_until": null,
+    "is_published": true,
+    "created_by": null,
+    "created_at": "2026-10-22T22:06:31.279Z",
+    "updated_at": "2026-10-22T22:06:31.279Z"
+  }
+},
+{
+  "model": "exam_engine.mocktesttranslation",
+  "pk": 1,
+  "fields": {
+    "mock_test": 1,
+    "language_code": "hi",
+    "title": "डेमो — WBPSC इतिहास अभ्यास",
+    "description": "पाँच मौलिक उदाहरणात्मक प्रश्नों वाला स्थानीय डेमो टेस्ट; यह आधिकारिक या सत्यापित WBPSC प्रश्नपत्र नहीं है।",
+    "instructions": "यह स्थानीय डेमो है। उत्तर चुनें, उन्हें सहेजें और जमा करने के बाद उत्तर-कुंजी तथा व्याख्याएँ देखें।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.mocktesttranslation",
+  "pk": 2,
+  "fields": {
+    "mock_test": 1,
+    "language_code": "bn",
+    "title": "ডেমো — WBPSC ইতিহাস অনুশীলন",
+    "description": "পাঁচটি মৌলিক উদাহরণমূলক প্রশ্নসহ স্থানীয় ডেমো পরীক্ষা; এটি কোনো সরকারি বা যাচাইকৃত WBPSC প্রশ্নপত্র নয়।",
+    "instructions": "এটি একটি স্থানীয় ডেমো। উত্তর নির্বাচন করে সংরক্ষণ করুন এবং জমা দেওয়ার পরে উত্তরসূচি ও ব্যাখ্যা দেখুন।",
+    "is_published": true
+  }
+},
+{
+  "model": "exam_engine.mocktestquestion",
+  "pk": 1,
+  "fields": {
+    "mock_test": 1,
+    "question": 1,
+    "position": 1,
+    "marks": "1.00",
+    "negative_marks": "0.25"
+  }
+},
+{
+  "model": "exam_engine.mocktestquestion",
+  "pk": 2,
+  "fields": {
+    "mock_test": 1,
+    "question": 2,
+    "position": 2,
+    "marks": "1.00",
+    "negative_marks": "0.25"
+  }
+},
+{
+  "model": "exam_engine.mocktestquestion",
+  "pk": 3,
+  "fields": {
+    "mock_test": 1,
+    "question": 3,
+    "position": 3,
+    "marks": "1.00",
+    "negative_marks": "0.25"
+  }
+},
+{
+  "model": "exam_engine.mocktestquestion",
+  "pk": 4,
+  "fields": {
+    "mock_test": 1,
+    "question": 4,
+    "position": 4,
+    "marks": "1.00",
+    "negative_marks": "0.25"
+  }
+},
+{
+  "model": "exam_engine.mocktestquestion",
+  "pk": 5,
+  "fields": {
+    "mock_test": 1,
+    "question": 5,
+    "position": 5,
+    "marks": "1.00",
+    "negative_marks": "0.25"
+  }
+},
+{
+  "model": "exam_engine.testattempt",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "mock_test": 1,
+    "language_code": "en",
+    "state": "submitted",
+    "started_at": "2026-10-22T22:17:10.319Z",
+    "expires_at": "2026-10-22T22:27:10.319Z",
+    "submitted_at": "2026-10-22T22:17:33.273Z",
+    "finalized_at": "2026-10-22T22:17:33.273Z",
+    "score": "5.00",
+    "correct_count": 5,
+    "incorrect_count": 0,
+    "unanswered_count": 0,
+    "created_at": "2026-10-22T22:17:10.344Z"
+  }
+},
+{
+  "model": "exam_engine.testattempt",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "mock_test": 1,
+    "language_code": "hi",
+    "state": "submitted",
+    "started_at": "2026-10-22T22:18:02.293Z",
+    "expires_at": "2026-10-22T22:28:02.293Z",
+    "submitted_at": "2026-10-22T22:18:18.240Z",
+    "finalized_at": "2026-10-22T22:18:18.240Z",
+    "score": "-1.25",
+    "correct_count": 0,
+    "incorrect_count": 5,
+    "unanswered_count": 0,
+    "created_at": "2026-10-22T22:18:02.306Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 1,
+  "fields": {
+    "attempt": 1,
+    "mock_test_question": 1,
+    "selected_option": 1,
+    "saved_at": "2026-10-22T22:17:18.758Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 2,
+  "fields": {
+    "attempt": 1,
+    "mock_test_question": 2,
+    "selected_option": 5,
+    "saved_at": "2026-10-22T22:17:23.430Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 3,
+  "fields": {
+    "attempt": 1,
+    "mock_test_question": 3,
+    "selected_option": 9,
+    "saved_at": "2026-10-22T22:17:25.008Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 4,
+  "fields": {
+    "attempt": 1,
+    "mock_test_question": 4,
+    "selected_option": 13,
+    "saved_at": "2026-10-22T22:17:26.763Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 5,
+  "fields": {
+    "attempt": 1,
+    "mock_test_question": 5,
+    "selected_option": 17,
+    "saved_at": "2026-10-22T22:17:30.662Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 6,
+  "fields": {
+    "attempt": 2,
+    "mock_test_question": 1,
+    "selected_option": 2,
+    "saved_at": "2026-10-22T22:18:08.248Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 7,
+  "fields": {
+    "attempt": 2,
+    "mock_test_question": 2,
+    "selected_option": 8,
+    "saved_at": "2026-10-22T22:18:10.684Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 8,
+  "fields": {
+    "attempt": 2,
+    "mock_test_question": 3,
+    "selected_option": 11,
+    "saved_at": "2026-10-22T22:18:12.625Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 9,
+  "fields": {
+    "attempt": 2,
+    "mock_test_question": 4,
+    "selected_option": 15,
+    "saved_at": "2026-10-22T22:18:14.205Z"
+  }
+},
+{
+  "model": "exam_engine.attemptresponse",
+  "pk": 10,
+  "fields": {
+    "attempt": 2,
+    "mock_test_question": 5,
+    "selected_option": 19,
+    "saved_at": "2026-10-22T22:18:16.500Z"
+  }
+}
+]
