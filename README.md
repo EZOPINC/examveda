@@ -17,18 +17,25 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Set `DJANGO_SECRET_KEY` and the PostgreSQL values in the ignored `.env`. Create a local PostgreSQL role and database first; the role needs permission to create temporary test databases when running Django's test runner. The application does not load `.env` automatically. Set values in the process environment before invoking Django, or use environment variables in the IDE run configuration. Never commit `.env`.
+Set `DJANGO_SECRET_KEY` and the PostgreSQL values in the ignored `.env`. Create a local PostgreSQL role and database first; the role needs permission to create temporary test databases when running Django's test runner. Development settings require PostgreSQL and fail with a clear configuration error if `DB_NAME`, `DB_USER`, `DB_PASSWORD`, or `DB_HOST` is missing. The application does not load `.env` automatically. Load those values into the process environment before invoking Django, or use environment variables in the IDE run configuration. Never commit `.env`.
 
 ```powershell
+# Load the ignored .env into this PowerShell process without printing its values.
+Get-Content .env | ForEach-Object {
+    if ($_ -match '^\s*([^#=][^=]*)=(.*)$') {
+        $name = $matches[1].Trim()
+        $value = $matches[2].Trim().Trim('"')
+        [Environment]::SetEnvironmentVariable($name, $value, 'Process')
+    }
+}
 $env:DJANGO_SETTINGS_MODULE = "config.settings.development"
-# Set DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, and DJANGO_SECRET_KEY in this process.
 python manage.py check --database default
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/`, `/free-resources/`, or `/admin/`. Development settings may use SQLite if `DB_NAME` is unset; PostgreSQL is the intended application database and must be used to verify PostgreSQL behavior. Tests create a separate temporary database.
+Open `http://127.0.0.1:8000/`, `/free-resources/`, or `/admin/`. Both local development and production use PostgreSQL through the same `default` database alias. Tests create a separate temporary PostgreSQL test database; they do not seed or modify the configured development database.
 
 ## Mock exams (Phase 3)
 

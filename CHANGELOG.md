@@ -2,6 +2,11 @@
 
 Notable project changes are recorded here.
 
+## 2026-11-02 — PostgreSQL-only local development
+
+- Removed the shared SQLite default and configured development settings to require PostgreSQL credentials and fail clearly when they are absent. Production remains on its existing PostgreSQL configuration and the single `default` alias.
+- Changed `.env.example` to identify development settings and documented loading its values in PowerShell. Added a regression check that local settings use PostgreSQL; changed a streamed-file lifecycle test to `TransactionTestCase` so it behaves correctly with PostgreSQL connection cleanup. No schema or data migration was made.
+
 ## 2026-10-22 — Runtime dependency markers
 
 - Reviewed Python imports and deployment configuration; the pinned Django, Psycopg, and Gunicorn packages cover the runtime with no extra Python dependency required.

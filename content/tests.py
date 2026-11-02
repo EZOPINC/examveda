@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command, CommandError
-from django.test import TestCase, override_settings
+from django.test import TestCase, TransactionTestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from pathlib import Path
@@ -431,7 +431,7 @@ class BlogPublishingTests(TestCase):
         self.assertNotContains(response, unsafe_title)
 
 
-class BlogFeaturedImageAccessTests(TestCase):
+class BlogFeaturedImageAccessTests(TransactionTestCase):
     """Verify image type checks and publication-aware featured-image delivery."""
 
     VALID_PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 16

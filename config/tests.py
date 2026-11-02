@@ -1,5 +1,6 @@
 """Test the foundation's public home and low-information health endpoints."""
 
+from django.conf import settings
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
@@ -49,6 +50,14 @@ class FoundationPageTests(SimpleTestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, "Page not found", status_code=404)
+
+
+class DevelopmentDatabaseSettingsTests(SimpleTestCase):
+    """Keep local development on the same PostgreSQL engine as production."""
+
+    def test_development_default_database_backend_is_postgresql(self):
+        """A local settings regression must not silently reintroduce SQLite."""
+        self.assertEqual(settings.DATABASES["default"]["ENGINE"], "django.db.backends.postgresql")
 
 
 class StaticAssetURLTests(TestCase):
