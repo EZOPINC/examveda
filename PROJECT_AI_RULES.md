@@ -350,3 +350,15 @@ If a requirement conflicts with this baseline, stop and explain the conflict bef
 An approved change must be documented in `docs/decisions/` and reflected in the relevant project documents.
 
 Never rename, remove, relocate, or replace an established module, function, class, variable, URL, database field, or configuration key merely to improve style. Make such changes only when necessary, reviewed, and explicitly approved.
+
+## 17. Proposed modular extensions and decision safety
+
+- Read approved Decisions 0001–0007 before changing established app boundaries, question models, attempt lifecycle, translations, publication rules, or access policies.
+- `ADR-001-modular-exam-platform.md` is a proposal. Do not interpret its conceptual modules as authorization to create Django apps or move models.
+- Existing `exam_engine` questions, options, translation rows, and scoring keys remain canonical; preserve IDs and historical attempted graphs.
+- Existing `content` taxonomy, PDFs, free-resource URLs, and publication workflow remain canonical for previous-year study material.
+- Do not introduce random question assembly, version/snapshot tables, new entitlement storage, practice quotas, or automated PDF-to-question ingestion without an approved decision and impact analysis.
+- If a proposal conflicts with a previously approved decision, stop at the design gate and identify the specific decision to amend.
+- Use PostgreSQL for the configured development/production `default` database; fail clearly if required credentials are missing. Do not silently use SQLite. Preserve migrations and all data.
+- For CRITICAL changes, present the schema/migration plan, regression scope, backup/rollback considerations, and manual verification before implementation.
+- Do not commit, push, deploy, restart services, or alter production data without explicit approval.

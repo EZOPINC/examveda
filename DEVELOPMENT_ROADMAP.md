@@ -35,3 +35,18 @@ Use Django checks and focused automated tests for application behavior. Verify p
 ## Change and naming control
 
 The canonical names are in `ARCHITECTURE.md` and `PROJECT_AI_RULES.md`. Before adding a module or variable, inspect existing code and explain why the current module or name cannot support the requirement. New names must be specific, documented, and approved with the relevant phase; preserve established public interfaces and data names. Do not introduce dependencies or infrastructure preemptively.
+
+## Proposed post-baseline extensions (not authorized for coding)
+
+The current roadmap's Phase 5/6 operational gates remain open. The 2026-10-22 multilingual, blog/social, and UI work is documented in the changelog; this roadmap's `Current task` line is a historical status and should be revalidated against the repository before assigning the next task.
+
+| Proposed gate | Scope | Required exit evidence |
+| --- | --- | --- |
+| E0. Repository/ADR reconciliation | Audit actual models, migrations, routes, history, and conflicting policies | Owner approves precise policy amendments and app/model ownership; no code changes |
+| E1. Question Bank editorial metadata | Reuse `exam_engine` questions and translations; identify only necessary new relationships | Reviewed schema/migration plan, data-preservation strategy, tests, approval |
+| E2. Structured solved papers | Link existing `content` resources to verified ordered questions if required | Source/provenance policy, preserved public URLs/PDF behavior, tests, approval |
+| E3. Random mock tests | Amend Decision 0004 before introducing per-attempt selection | Explicit scoring/selection/history policy, regression tests, approval |
+| E4. Practice | One-at-a-time workflow only after entitlement/quota decisions | Approved policy, access tests, approval |
+| E5. Import/review pipeline | PDF/image extraction and manual review workflow | Approved provenance/security/validation design, tests, approval |
+
+These gates do not imply that a new Django app is needed. None closes the Phase 5 security/reliability or Phase 6 deployment-readiness gates.

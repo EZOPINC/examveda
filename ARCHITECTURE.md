@@ -110,3 +110,31 @@ Use environment-provided secrets, HTTPS, automated PostgreSQL backups to OCI Obj
 - [Security requirements](docs/requirements/security-requirements.md)
 - [Decision record 0001](docs/decisions/0001-initial-architecture.md)
 - [Decision record 0007: multilingual mock exams](docs/decisions/0007-multilingual-mock-exams.md)
+
+## Proposed learning-workflow extensions (design review; not implementation authorization)
+
+The established Django app boundaries remain authoritative: `content` owns exam/subject taxonomy, educational pages, resource metadata and PDFs; `exam_engine` owns canonical questions, stable answer-option identities, translations, mock tests, attempts, responses, timing and scoring. `accounts` and `access_control` retain their existing responsibilities. These are the currently implemented boundaries; **do not create `exams`, `question_bank`, `previous_year`, `mock_tests`, or `practice` apps simply to match conceptual feature names**. An app split requires a separately approved ADR, compatibility plan and migration review.
+
+### Shared question bank (proposed enhancement)
+
+Treat existing `exam_engine.Question` and `QuestionOption` as the canonical exam-question and correctness records, with their established translation rows. The term *Question Bank* describes a capability and editorial workflow, not an approved new Django app or table. Evaluate metadata for difficulty, multi-exam applicability, previous-year provenance, source references, review status, duplicate detection and import audit **against the actual existing schema** before proposing additions. A question may relate to multiple exam categories and historical paper appearances; do not duplicate its answer key or infer that source PDFs are verified exam questions. The current `content` free-resource workflow remains separate from `exam_engine` questions until an explicit linking model is approved.
+
+### Previous-year solved questions (proposed enhancement)
+
+Retain existing `/free-resources/` routes, `ContentPage`, `ResourceMetadata`, and `ResourceFile` PDF/publication workflows. Proposed structured solved-paper browsing may associate an exam/category, subject, year and paper/session with **ordered references** to existing questions. Do not presume all uploaded PDFs are parsed, have answer keys, or have verified solutions. Preserve existing editorial English/Bengali handling; Decision 0007 does not require Hindi translation of PDFs or free-content pages. Public answer/explanation display is appropriate only for explicitly published solved-paper content, not active mock-test answer keys.
+
+### Randomized mock tests (proposal requiring approval)
+
+Decision 0004 currently defines administrator-authored `MockTest` with ordered `MockTestQuestion` links, per-question marks, unlimited attempts, a server-authoritative lifecycle, and graph immutability after the first attempt. Random assembly is **not yet approved or implemented by these documents**. Before changing behavior, design and review: eligible-question filters, question count (50 is a suggested default, not an existing policy), insufficient-bank behavior, deduplication, per-attempt selection and ordering, scoring-rule ownership, concurrency, historical immutability, and multilingual completeness. Do not replace fixed authored tests or add snapshot/version tables without an explicit amendment to Decision 0004 and a migration plan. Keep existing tests and attempt history intact.
+
+### Practice mode (future proposal)
+
+One-question-at-a-time practice with immediate feedback is future scope. Free/paid limits, periods, categories, entitlements, and implementation ownership are undecided. Do not create a placeholder Django app or hardcode quotas; use the established `access_control` boundary if and when access policies are approved.
+
+### Import and review pipeline (future proposal)
+
+PDF/image ingestion, OCR or text extraction, normalized JSON preview, manual correction, provenance, confidence flags, and publication to the canonical question records require a separate approved design. No automatic import or database write should occur from unreviewed extracted content. Preserve source licensing, uploaded-file security, and existing media delivery rules.
+
+### Decision precedence
+
+Approved Decisions 0001–0007 and working implementation govern existing behavior. `ADR-001-modular-exam-platform.md` is a **proposal** and does not supersede those decisions. Any future change must name the decision being amended, describe migration/compatibility risks, and obtain owner approval. Production readiness remains blocked by the open Phase 5/6 operational verification gates.

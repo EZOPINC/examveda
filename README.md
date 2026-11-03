@@ -120,3 +120,11 @@ The account, access, content and exam journeys, permissions, publication rules, 
 ## OCI deployment
 
 The approved single-host OCI pilot layout, Nginx/Gunicorn/systemd configuration, PostgreSQL migration and backup procedures, smoke checks, and rollback guide are in [deploy/README.md](deploy/README.md). The deployment guide is configuration and planning only until it is exercised on an authorized OCI tenancy. Do not claim the backup/restore process is verified until a separate-environment restoration succeeds.
+
+## Proposed learning features (not yet implemented)
+
+The existing platform includes `content`-based study materials and PDFs and `exam_engine`-based authored mock tests with multilingual question/test translations. A centralized *Question Bank* is proposed as an enhanced editorial workflow over the existing canonical `exam_engine` question records—not as a new Django app.
+
+Future design topics include structured solved-paper links to canonical questions, reviewed PDF/image question imports, randomly assembled tests, and one-question-at-a-time Practice. **Do not treat these as implemented features or run migrations for them.** Random tests would change the currently approved ordered `MockTestQuestion` workflow (Decision 0004) and require an explicit policy amendment.
+
+See `ARCHITECTURE.md` and the proposal `ADR-001-modular-exam-platform.md` for open decisions. Existing demo seed commands, PostgreSQL setup, blog/social functionality, and deployment procedures above remain unchanged.

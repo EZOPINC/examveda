@@ -119,3 +119,11 @@ Notable project changes are recorded here.
 - Pinned the Python/Django/PostgreSQL adapter baseline and documented local setup.
 - Production settings now require explicit secrets, allowed hosts, and PostgreSQL environment variables.
 - Verified local SQLite foundation migrations, three initial tests, static collection, and local HTTP smoke requests. Phase 2 also verified authenticated connectivity to local PostgreSQL 18.6.
+
+## 2026-11-03 — Documentation reconciliation (proposed files; not applied to repository)
+
+- Reconciled the modular-platform proposal with existing approved Decisions 0001–0007, keeping `content` and `exam_engine` as established owners.
+- Reclassified the new `ADR-001` as a proposal rather than an overriding approved decision; separated future random tests, structured solved papers, Practice and question import from implemented features.
+- Removed duplicated appended instruction sections from `AGENTS.md`, `PROJECT_AI_RULES.md`, and `README.md`; added concise compatibility and approval gates.
+- Updated architecture and roadmap with proposed extension phases while preserving historical implementation entries.
+- No application code, database, deployment, dependency, or production data was changed. This entry describes this documentation package and must be retained only if the revised files are accepted into the repository.
